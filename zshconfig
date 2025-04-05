@@ -1,1 +1,2 @@
+export XDG_CONFIG_HOME="$HOME/.config/dotfiles"
 eval "$(oh-my-posh init zsh --config ~/.config/dotfiles/omp.config.json)"
