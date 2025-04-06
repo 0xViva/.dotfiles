@@ -1,5 +1,4 @@
-eval "$(oh-my-posh init zsh --config ~/dotfiles/omp.config.json)"
-export XDG_CONFIG_HOME="$HOME/.config"
+eval "$(oh-my-posh init zsh --config ~/dotfiles/oh-my-posh/config.json)"
 export PATH="$HOME:$PATH"
 export GOPATH=$HOME/go
 export GOROOT=/usr/local/go
