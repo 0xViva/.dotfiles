@@ -11,7 +11,7 @@ vim.opt.signcolumn = 'yes'
 vim.opt.colorcolumn = '80'
 vim.opt.termguicolors = true
 vim.opt.mouse = 'a'
-vim.opt.showmode = false
+vim.opt.showmode = true
 vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
