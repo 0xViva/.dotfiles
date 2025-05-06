@@ -1,11 +1,6 @@
-# === Session defaults ===
-# reset border color in default mode
-
 
 :: default : yabai -m config active_window_border_color 0xE0f5c2e7
-# kickstart yabai 
 ralt - y : launchctl kickstart -k "gui/${UID}/homebrew.mxcl.yabai"
-# lock screen immediately
 ralt - escape : pmset displaysleepnow 
 # logout
 # ralt + shift - e : osascript -e 'tell app "System Events" to log out'
@@ -18,23 +13,13 @@ ralt + shift - s : osascript -e 'tell application "System Events" to sleep'
 
 
 # === launch commands ===
-# open kitty terminal, blazingly fast compared to iTerm/ralt
 ralt - return : open -na /Applications/Ghostty.app
-# open firefox
-ralt + shift - return : open -na /Applications/Firefox\ Nightly.app
-# open vscode
-ralt + ctrl - return : open -na /Applications/Visual\ Studio\ Code.app/
-# open finder
+ralt + shift - return : open -na /Applications/Arc.app
 ralt + shift - n : open `pwd`
-# open system preferences
-ralt - c : open -na /Applications/Visual\ Studio\ Code.app/
 # === Resize Mode ===
-# Set resize border color 
 :: resize @ : yabai -m config active_window_border_color 0xFFFF00FF
-# toggle resize mode 
 resize < ralt - r ; default
 default < ralt - r ; resize
-# resize commands
 resize < left : yabai -m window --resize left:-50:0; \
                   yabai -m window --resize right:-50:0
 resize < down : yabai -m window --resize bottom:0:50; \
