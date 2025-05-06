@@ -12,5 +12,5 @@ sbar.bar({
 	y_offset = 0,
 	margin = 0,
 	corner_radius = 15,
-	background_color = colors.with_alpha(colors.bar.bg, 0.40),
+	--background_color = colors.with_alpha(colors.bar.bg, 0.40),
 })

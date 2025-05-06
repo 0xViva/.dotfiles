@@ -25,6 +25,14 @@ cursor-text = #191724
 selection-background = #403d52
 selection-foreground = #e0def4
 
-
 keybind = ctrl+z=close_surface
 keybind = ctrl+d=new_split:right
+
+keybind = alt+up=goto_split:up
+keybind = alt+down=goto_split:down
+keybind = alt+left=goto_split:left
+keybind = alt+right=goto_split:right
+keybind = alt+w=goto_split:up
+keybind = alt+s=goto_split:down
+keybind = alt+a=goto_split:left
+keybind = alt+d=goto_split:right
