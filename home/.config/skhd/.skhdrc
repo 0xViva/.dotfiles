@@ -1,0 +1,21 @@
+
+# window focus (vim-style)
+alt - h : yabai -m window --focus west
+alt - l : yabai -m window --focus east
+alt - j : yabai -m window --focus south
+alt - k : yabai -m window --focus north
+
+# move window
+shift + alt - h : yabai -m window --swap west
+shift + alt - l : yabai -m window --swap east
+shift + alt - j : yabai -m window --swap south
+shift + alt - k : yabai -m window --swap north
+
+# toggle float
+alt - t : yabai -m window --toggle float
+
+# fullscreen
+alt - f : yabai -m window --toggle zoom-fullscreen
+
+# restart yabai
+alt + shift - r : yabai --restart-service
