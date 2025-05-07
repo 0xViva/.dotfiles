@@ -25,6 +25,9 @@ cursor-text = #191724
 selection-background = #403d52
 selection-foreground = #e0def4
 
+background-opacity = 0.95
+
+
 keybind = ctrl+z=close_surface
 keybind = ctrl+d=new_split:right
 
