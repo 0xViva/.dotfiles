@@ -1,1 +1,2 @@
-require '0xviva'
+require 'set'
+require 'lazy_init'

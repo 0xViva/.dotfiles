@@ -10,6 +10,6 @@ vim.opt.rtp:prepend(lazypath)
 -- [[ Configure and install plugins ]]
 --    :Lazy
 require('lazy').setup {
-  spec = '0xviva.lazy',
+  spec = 'plugins',
   change_detection = { notify = true },
 }
