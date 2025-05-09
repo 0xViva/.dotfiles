@@ -1,4 +1,13 @@
-this is my .dotfiles for all my setups.
 
-using Stow
-command: stow --dir="$PWD" --target="$HOME" home
+# Dotfiles symlinked on my machine
+
+### Install with stow:
+```bash
+stow .
+
+.zshenv: 
+
+
+ZDOTDIR=~/.dotfiles/zsh
+```
+
