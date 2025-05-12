@@ -1,0 +1,11 @@
+#!/usr/bin/env zsh
+
+pushd $DOTFILES
+
+for folder in ${(s:,:)STOW_FOLDERS}; do
+    echo "Removing ~/.config/$folder"
+    stow -D -t "$HOME/.config/$folder" "$folder"
+done
+
+popd
+
