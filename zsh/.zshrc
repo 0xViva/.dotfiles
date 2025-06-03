@@ -1,6 +1,28 @@
 VIM="nvim"
 
-eval $(/opt/homebrew/bin/brew shellenv)
+echo "Starting .zshrc"
+OS_TYPE=""
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  OS_TYPE="macOS"
+elif grep -qi microsoft /proc/version 2>/dev/null; then
+  OS_TYPE="WSL"
+elif [[ "$(uname -s)" == "Linux" ]]; then
+  OS_TYPE="Linux"
+else
+  OS_TYPE="Unknown"
+fi
+
+case "$OS_TYPE" in
+  "macOS")
+    echo "Running homebrew for $OS_TYPE"
+    [[ -x "/opt/homebrew/bin/brew" ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+    ;;
+  "WSL"|"Linux")
+    echo "Running homebrew for $OS_TYPE"
+    [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    ;;
+esac
+
 eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/config.json)"
 
 export DOTFILES=$HOME/.dotfiles
@@ -26,3 +48,4 @@ function y() {
 
 # bun completions
 [ -s "/Users/august/.bun/_bun" ] && source "/Users/august/.bun/_bun"
+
