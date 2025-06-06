@@ -1,6 +1,6 @@
 VIM="nvim"
 
-echo "Starting .zshrc"
+echo "Running .zshrc"
 OS_TYPE=""
 if [[ "$(uname -s)" == "Darwin" ]]; then
   OS_TYPE="macOS"
@@ -25,6 +25,7 @@ esac
 
 eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/config.json)"
 
+echo "Run exports..."
 export DOTFILES=$HOME/.dotfiles
 export STOW_FOLDERS="ghostty,nvim,oh-my-posh,sketchybar,skhd,yabai,zsh"
 export GPG_TTY=$(tty)
@@ -35,9 +36,9 @@ export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
 export PATH="$HOME/.foundry/bin:$PATH"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
-
+echo "Source fzf for zsh..."
 source <(fzf --zsh)
-
+echo "make yazi available at function y()..."
 function y() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
 	yazi "$@" --cwd-file="$tmp"
