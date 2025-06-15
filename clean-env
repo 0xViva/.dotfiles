@@ -9,3 +9,13 @@ done
 
 popd
 
+# Then uninstall all Homebrew packages including stow
+if command -v brew >/dev/null 2>&1; then
+  echo "Uninstalling all Homebrew packages..."
+  brew list -1 | xargs -r brew uninstall --force
+
+  echo "Running Homebrew uninstall script..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
+else
+  echo "Homebrew not installed. Skipping..."
+fi

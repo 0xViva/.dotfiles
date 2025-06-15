@@ -1,5 +1,14 @@
 #!/usr/bin/env zsh
 
+if ! command -v brew >/dev/null 2>&1; then
+ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+brew update
+brew bundle --file ./brew/Brewfile
+
+rm -rf $HOME/.zshrc
+ln -sw $HOME/.dotfiles/.zshrc $HOME/.zshrc
 zshenv_path="$HOME/.zshenv"
 echo 'export ZDOTDIR="$HOME/.dotfiles/zsh"' > "$zshenv_path"
 echo ".zshenv created at $zshenv_path with ZDOTDIR set to ~/.dotfiles/zsh"

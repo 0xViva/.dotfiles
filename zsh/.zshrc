@@ -18,6 +18,7 @@ case "$OS_TYPE" in
     [[ -x "/opt/homebrew/bin/brew" ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
     export LUA_PATH="/opt/homebrew/share/lua/5.4/?.lua;/opt/homebrew/share/lua/5.4/?/init.lua;;"
     export LUA_CPATH="/opt/homebrew/lib/lua/5.4/?.so;;"
+export STOW_FOLDERS="ghostty,nvim,oh-my-posh,sketchybar,skhd,yabai,zsh,git"
 
     ;;
   "WSL"|"Linux")
@@ -25,6 +26,7 @@ case "$OS_TYPE" in
     [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     export PATH="/home/linuxbrew/.linuxbrew/opt/rustup/bin:$PATH"
     export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
+export STOW_FOLDERS="nvim,oh-my-posh,zsh,git"
     ;;
 esac
 
@@ -32,7 +34,7 @@ eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/config.json)"
 
 echo "Run exports..."
 export DOTFILES=$HOME/.dotfiles
-export STOW_FOLDERS="ghostty,nvim,oh-my-posh,sketchybar,skhd,yabai,zsh"
+export GIT_CONFIG_GLOBAL="$HOME/.dotfiles/git/.gitconfig"
 export GPG_TTY=$(tty)
 export GOPATH=$HOME/go
 export PATH="$HOME/.foundry/bin:$PATH"
@@ -52,3 +54,5 @@ function y() {
 # bun completions
 [ -s "/Users/august/.bun/_bun" ] && source "/Users/august/.bun/_bun"
 
+
+. "$HOME/.local/bin/env"

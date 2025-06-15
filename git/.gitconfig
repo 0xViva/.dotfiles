@@ -1,0 +1,10 @@
+[user]
+	name = 0xViva
+	email = 0xViva@proton.me
+	signingkey = C64D962517311150
+[commit]
+	gpgsign = true
+[core]
+	editor = nvim
+[url "git@github.com:"]
+    insteadOf = https://github.com/

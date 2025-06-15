@@ -1,13 +1,9 @@
 
 # Dotfiles symlinked on my machine
 
-### Install with stow:
-```bash
-stow .
+Need zsh:
 
-.zshenv: 
+sudo apt update
+sudo apt install -y zsh
 
-
-ZDOTDIR=~/.dotfiles/zsh
-```
-
+then ./ubuntu or ./macos
