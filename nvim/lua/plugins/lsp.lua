@@ -163,9 +163,9 @@ return {
 
       local servers = {
         clangd = {},
-        cmake = {},
-        cssls = {},
-        css_variables = {},
+        cmake = {}, -- kept as 'cmake'
+        cssls = {}, -- css-lsp
+        css_variables = {}, -- css-variables-language-server
         gopls = {},
         html = {
           filetypes = { 'html', 'templ' },
@@ -173,7 +173,15 @@ return {
         htmx = {
           filetypes = { 'html', 'templ' },
         },
-        prettier = {},
+        lua_ls = {
+          settings = {
+            Lua = {
+              completion = {
+                callSnippet = 'Replace',
+              },
+            },
+          },
+        },
         rust_analyzer = {},
         tailwindcss = {
           filetypes = { 'templ', 'astro', 'javascript', 'typescript', 'react' },
@@ -186,25 +194,14 @@ return {
           },
         },
         templ = {},
-        ts_ls = {},
-        lua_ls = {
-          -- :cmd = { ... },
-          -- filetypes = { ... },
-          -- capabilities = {},
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = 'Replace',
-              },
-              -- diagnostics = { disable = { 'missing-fields' } },
-            },
-          },
-        },
+        ts_ls = {}, -- typescript-language-server
       }
 
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        'stylua',
+        'stylua', -- Lua formatter
+        'prettier', -- JavaScript/TypeScript formatter
+        'prettierd', -- Faster prettier daemon formatter
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
