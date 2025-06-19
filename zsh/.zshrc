@@ -37,8 +37,9 @@ export DOTFILES=$HOME/.dotfiles
 export GIT_CONFIG_GLOBAL="$HOME/.dotfiles/git/.gitconfig"
 export GPG_TTY=$(tty)
 export GOPATH=$HOME/go
-export PATH="$HOME/.foundry/bin:$PATH"
 export BUN_INSTALL="$HOME/.bun"
+export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.foundry/bin:$PATH"
 export PATH="$BUN_INSTALL/bin:$PATH"
 echo "Source fzf for zsh..."
 source <(fzf --zsh)
