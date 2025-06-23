@@ -75,11 +75,9 @@ if ! command -v zsh >/dev/null 2>&1; then
   chsh -s "$ZSH_PATH"
 
   echo "Change shell to zsh..."
-  exec zsh
 else
   echo "zsh is already installed."
   echo "Change shell to zsh..."
-  exec zsh
 fi
 
 echo "Cleaning up existing Zsh files..."
@@ -98,4 +96,5 @@ STOW_FOLDERS=$(./OS/${OS_TYPE}) DOTFILES=$DOTFILES ./stow
 
 echo "✅ Done! Your shell is now using zsh with dotfiles."
 
+exec zsh
 source $HOME/.dotfiles/zsh/.zshrc

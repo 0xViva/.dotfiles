@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
 if [[ -z $STOW_FOLDERS ]]; then
-    STOW_FOLDERS="nvim,oh-my-posh,zsh,git,hypr"
+        STOW_FOLDERS="ghostty,nvim,oh-my-posh,zsh,git,hypr"
 fi
 echo "$STOW_FOLDERS"

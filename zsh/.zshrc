@@ -1,13 +1,12 @@
 VIM="nvim"
-
 echo "Running .zshrc"
 OS_TYPE=""
 if [[ "$(uname -s)" == "Darwin" ]]; then
   OS_TYPE="macos"
 elif grep -qi microsoft /proc/version 2>/dev/null; then
   OS_TYPE="wsl"
-elif [[ "$(uname -s)" == "Linux" ]]; then
-  OS_TYPE="linux"
+elif [[ -f /etc/arch-release ]]; then
+  OS_TYPE="arch"
 else
   OS_TYPE="Unknown"
 fi
@@ -20,7 +19,7 @@ case "$OS_TYPE" in
     STOW_FOLDERS="$($HOME/.dotfiles/OS/${OS_TYPE})"
 
     ;;
-  "wsl"|"linux")
+  "wsl"|"arch")
     echo "Running homebrew for $OS_TYPE"
      [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     export PATH="/home/linuxbrew/.linuxbrew/opt/rustup/bin:$PATH"
@@ -30,9 +29,9 @@ case "$OS_TYPE" in
     ;;
 esac
 
-eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/config.json)"
-
 echo "Run exports..."
+eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/config.json)"
+export PATH="$HOME/bin:$PATH"
 export DOTFILES=$HOME/.dotfiles
 export GIT_CONFIG_GLOBAL="$HOME/.dotfiles/git/.gitconfig"
 export GPG_TTY=$(tty)
