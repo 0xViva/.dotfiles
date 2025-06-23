@@ -1,0 +1,4 @@
+if [[ -z $STOW_FOLDERS ]]; then
+    STOW_FOLDERS="ghostty,nvim,oh-my-posh,sketchybar,skhd,yabai,zsh"
+    echo $STOW_FOLDERS
+fi
