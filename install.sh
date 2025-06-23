@@ -55,21 +55,30 @@ brew bundle --file ./brew/Brewfile || true
 echo "Check if zsh is already installed..."
 if ! command -v zsh >/dev/null 2>&1; then
   echo "zsh not found, installing..."
-  sudo apt update
-  sudo apt install -y zsh
+
+  if [[ "$OS_TYPE" == "arch" ]]; then
+    echo "Detected Arch Linux. Installing zsh with pacman..."
+    sudo pacman -Sy --noconfirm zsh
+  else
+    echo "Installing zsh with apt..."
+    sudo apt update
+    sudo apt install -y zsh
+  fi
+
   ZSH_PATH=$(command -v zsh)
   if ! grep -q "^$ZSH_PATH$" /etc/shells; then
-   echo "Adding $ZSH_PATH to /etc/shells..."
-   echo "$ZSH_PATH" | sudo tee -a /etc/shells
-   echo "change shell to zsh..."
-   exec zsh
+    echo "Adding $ZSH_PATH to /etc/shells..."
+    echo "$ZSH_PATH" | sudo tee -a /etc/shells
   fi
 
   echo "Changing default shell to $ZSH_PATH..."
   chsh -s "$ZSH_PATH"
+
+  echo "Change shell to zsh..."
+  exec zsh
 else
   echo "zsh is already installed."
-  echo "change shell to zsh..."
+  echo "Change shell to zsh..."
   exec zsh
 fi
 
