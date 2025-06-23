@@ -3,28 +3,30 @@ VIM="nvim"
 echo "Running .zshrc"
 OS_TYPE=""
 if [[ "$(uname -s)" == "Darwin" ]]; then
-  OS_TYPE="macOS"
+  OS_TYPE="macos"
 elif grep -qi microsoft /proc/version 2>/dev/null; then
-  OS_TYPE="WSL"
+  OS_TYPE="wsl"
 elif [[ "$(uname -s)" == "Linux" ]]; then
-  OS_TYPE="Linux"
+  OS_TYPE="linux"
 else
   OS_TYPE="Unknown"
 fi
-
 case "$OS_TYPE" in
   "macOS")
+[[ -x "/opt/homebrew/bin/brew" ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
     echo "Running homebrew for $OS_TYPE"
     export LUA_PATH="/opt/homebrew/share/lua/5.4/?.lua;/opt/homebrew/share/lua/5.4/?/init.lua;;"
     export LUA_CPATH="/opt/homebrew/lib/lua/5.4/?.so;;"
-export STOW_FOLDERS="ghostty,nvim,oh-my-posh,sketchybar,skhd,yabai,zsh,git"
+    STOW_FOLDERS="$($HOME/.dotfiles/OS/${OS_TYPE})"
 
     ;;
-  "WSL"|"Linux")
+  "wsl"|"linux")
     echo "Running homebrew for $OS_TYPE"
+     [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     export PATH="/home/linuxbrew/.linuxbrew/opt/rustup/bin:$PATH"
     export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
-export STOW_FOLDERS="nvim,oh-my-posh,zsh,git"
+    STOW_FOLDERS="$($HOME/.dotfiles/OS/${OS_TYPE})"
+
     ;;
 esac
 
