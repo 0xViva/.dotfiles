@@ -55,4 +55,4 @@ function y() {
 [ -s "/Users/august/.bun/_bun" ] && source "/Users/august/.bun/_bun"
 
 
-. "$HOME/.local/bin/env"
+#"$HOME/.local/bin/env"
