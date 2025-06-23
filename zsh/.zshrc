@@ -50,9 +50,9 @@ function y() {
 	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
 	rm -f -- "$tmp"
 }
-
+echo "reload hyprland..."
+hyprctl reload
 # bun completions
 [ -s "/Users/august/.bun/_bun" ] && source "/Users/august/.bun/_bun"
 
 
-#"$HOME/.local/bin/env"
