@@ -12,23 +12,8 @@ echo "Cleaning up git configuration..."
 rm -f $HOME/.gitconfig
 rm -f $HOME/.gitignore_global
 rm -rf $HOME/.config/git
-
+echo "unset git settings..."
 unset GIT_CONFIG_GLOBAL
 unset GIT_DIR
 unset GIT_WORK_TREE
 git config --global url."https://github.com/".insteadOf git@github.com:
-# Uninstall all Homebrew packages including stow
-if command -v brew >/dev/null 2>&1; then
-  echo "Uninstalling all Homebrew packages..."
-  brew list -1 | xargs -r brew uninstall --force
-
-  echo "Running Homebrew uninstall script..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
-else
-  echo "Homebrew not installed. Skipping..."
-fi
-
-echo "Switching shell to bash before finishing..."
-exec bash
-
-
