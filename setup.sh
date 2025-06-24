@@ -20,6 +20,7 @@ if [[ "$OS_TYPE" == "arch" ]]; then
 elif [[ "$OS_TYPE" == "wsl" ]]; then
   sudo apt update -y
   sudo apt install -qq -y "${PACKAGES[@]}"
+  sudo apt autoremove
   curl -sS https://ohmyposh.dev/install.sh | bash -s >/dev/null
 
 elif [[ "$OS_TYPE" == "macos" ]]; then
