@@ -1,6 +1,11 @@
-VIM="nvim"
-echo "Running .zshrc"
-OS_TYPE=""
+#!/bin/zsh
+
+# Preferred editor
+export VIM="nvim"
+
+echo "Running .zshrc..."
+
+# Detect OS
 if [[ "$(uname -s)" == "Darwin" ]]; then
   OS_TYPE="macos"
 elif grep -qi microsoft /proc/version 2>/dev/null; then
@@ -8,51 +13,58 @@ elif grep -qi microsoft /proc/version 2>/dev/null; then
 elif [[ -f /etc/arch-release ]]; then
   OS_TYPE="arch"
 else
-  OS_TYPE="Unknown"
+  OS_TYPE="unknown"
 fi
+
+echo "Detected OS_TYPE: $OS_TYPE"
+
 case "$OS_TYPE" in
-  "macOS")
-[[ -x "/opt/homebrew/bin/brew" ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
-    echo "Running homebrew for $OS_TYPE"
-    export LUA_PATH="/opt/homebrew/share/lua/5.4/?.lua;/opt/homebrew/share/lua/5.4/?/init.lua;;"
-    export LUA_CPATH="/opt/homebrew/lib/lua/5.4/?.so;;"
-    STOW_FOLDERS="$($HOME/.dotfiles/OS/${OS_TYPE})"
-
-    ;;
-  "wsl"|"arch")
-    echo "Running homebrew for $OS_TYPE"
-     [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    export PATH="/home/linuxbrew/.linuxbrew/opt/rustup/bin:$PATH"
-    export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
-    STOW_FOLDERS="$($HOME/.dotfiles/OS/${OS_TYPE})"
-
-    ;;
+  "macos")
+    if [[ -x "/opt/homebrew/bin/brew" ]]; then
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
 esac
 
-echo "Run exports..."
-eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/config.json)"
+if [[ -x "$HOME/.dotfiles/OS/${OS_TYPE}" ]]; then
+    source "$HOME/.dotfiles/OS/${OS_TYPE}"
+    STOW_FOLDERS=$STOW_FOLDERS
+fi
+
 export PATH="$HOME/bin:$PATH"
-export DOTFILES=$HOME/.dotfiles
-export GIT_CONFIG_GLOBAL="$HOME/.dotfiles/git/.gitconfig"
-export GPG_TTY=$(tty)
-export GOPATH=$HOME/go
-export BUN_INSTALL="$HOME/.bun"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.foundry/bin:$PATH"
-export PATH="$BUN_INSTALL/bin:$PATH"
-echo "Source fzf for zsh..."
-source <(fzf --zsh)
-echo "make yazi available at function y()..."
-function y() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-	yazi "$@" --cwd-file="$tmp"
-	IFS= read -r -d '' cwd < "$tmp"
-	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
-	rm -f -- "$tmp"
-}
-echo "reload hyprland..."
-hyprctl reload
-# bun completions
-[ -s "/Users/august/.bun/_bun" ] && source "/Users/august/.bun/_bun"
+export PATH="$HOME/.bun/bin:$PATH"
+export DOTFILES="$HOME/.dotfiles"
+export GIT_CONFIG_GLOBAL="$HOME/.dotfiles/git/.gitconfig"
+export GPG_TTY=$(tty)
+export GOPATH="$HOME/go"
 
+# oh-my-posh prompt
+if command -v oh-my-posh >/dev/null 2>&1; then
+  eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/config.json)"
+fi
+
+# fzf integration
+if command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh)
+fi
+
+# yazi wrapper
+y() {
+  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+  yazi "$@" --cwd-file="$tmp"
+  IFS= read -r -d '' cwd < "$tmp"
+  [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+  rm -f -- "$tmp"
+}
+
+if command -v hyprctl >/dev/null 2>&1; then
+  echo "Reloading Hyprland..."
+  hyprctl reload || true
+fi
+
+# Bun shell completions
+if [[ -s "$HOME/.bun/_bun" ]]; then
+  source "$HOME/.bun/_bun"
+fi
 

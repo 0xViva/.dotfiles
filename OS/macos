@@ -1,6 +1,3 @@
 #!/usr/bin/env zsh
-if [[ -z $STOW_FOLDERS ]]; then
-    STOW_FOLDERS="ghostty,nvim,oh-my-posh,sketchybar,skhd,yabai,zsh"
-    echo $STOW_FOLDERS
-fi
-echo "$STOW_FOLDERS"
+export BREWFILE_PATH="./brew/Brewfile"
+export STOW_FOLDERS="ghostty,nvim,oh-my-posh,sketchybar,skhd,yabai,zsh"

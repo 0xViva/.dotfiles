@@ -1,5 +1,11 @@
 #!/usr/bin/env zsh
-if [[ -z $STOW_FOLDERS ]]; then
-        STOW_FOLDERS="ghostty,nvim,oh-my-posh,zsh,git,hypr"
-fi
-echo "$STOW_FOLDERS"
+export PACKAGES(
+ ghostty
+ nvim
+ oh-my-posh
+ zsh
+ git
+ hypr
+)
+export STOW_FOLDERS="ghostty,nvim,oh-my-posh,zsh,git,hypr"
+
