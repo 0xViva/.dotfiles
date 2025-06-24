@@ -1,7 +1,9 @@
 #!/bin/zsh
 
 echo "Running .zshrc..."
-
+echo "Login using ssh:"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
 # Detect OS
 if [[ "$(uname -s)" == "Darwin" ]]; then
   OS_TYPE="macos"

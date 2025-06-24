@@ -19,8 +19,8 @@ if [[ "$OS_TYPE" == "arch" ]]; then
   sudo pacman -Sy --noconfirm "${PACKAGES[@]}"
 elif [[ "$OS_TYPE" == "wsl" ]]; then
   sudo apt update -y
-  sudo apt install -y "${PACKAGES[@]}"
-  curl -s https://ohmyposh.dev/install.sh | bash -s
+  sudo apt install -qq -y "${PACKAGES[@]}"
+  curl -sS https://ohmyposh.dev/install.sh | bash -s >/dev/null
 
 elif [[ "$OS_TYPE" == "macos" ]]; then
   if ! command -v brew >/dev/null 2>&1; then
