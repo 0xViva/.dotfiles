@@ -1,8 +1,5 @@
 #!/bin/zsh
 
-# Preferred editor
-export VIM="nvim"
-
 echo "Running .zshrc..."
 
 # Detect OS

@@ -1,5 +1,4 @@
 PACKAGES=(
- 
  git
  neovim
  stow
