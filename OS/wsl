@@ -1,5 +1,7 @@
-#!/usr/bin/env zsh
-if [[ -z $STOW_FOLDERS ]]; then
-    STOW_FOLDERS="nvim,oh-my-posh,zsh,git"
-fi
-echo "$STOW_FOLDERS"
+export PACKAGES (
+ nvim
+ oh-my-posh
+ zsh
+ git
+ )
+export STOW_FOLDERS="nvim,oh-my-posh,zsh,git"
