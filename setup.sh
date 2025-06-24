@@ -20,6 +20,7 @@ if [[ "$OS_TYPE" == "arch" ]]; then
 elif [[ "$OS_TYPE" == "wsl" ]]; then
   sudo apt update -y
   sudo apt install -y "${PACKAGES[@]}"
+  curl -s https://ohmyposh.dev/install.sh | bash -s
 
 elif [[ "$OS_TYPE" == "macos" ]]; then
   if ! command -v brew >/dev/null 2>&1; then
@@ -75,5 +76,5 @@ STOW_FOLDERS=$STOW_FOLDERS DOTFILES=$DOTFILES ./stow
 
 echo "✅ Done! Your shell is now using zsh with dotfiles."
 
-exec zsh
+exec zsh 
 

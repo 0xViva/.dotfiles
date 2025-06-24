@@ -29,7 +29,7 @@ if [[ -x "$HOME/.dotfiles/OS/${OS_TYPE}" ]]; then
     source "$HOME/.dotfiles/OS/${OS_TYPE}"
     STOW_FOLDERS=$STOW_FOLDERS
 fi
-
+export PATH=$PATH:.local/bin
 export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.foundry/bin:$PATH"

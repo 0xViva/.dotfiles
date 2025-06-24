@@ -1,8 +1,9 @@
 PACKAGES=(
- nvim
- oh-my-posh
- zsh
+ 
  git
+ neovim
+ stow
+ zsh
  )
 export PACKAGES
 export STOW_FOLDERS="nvim,oh-my-posh,zsh,git"
