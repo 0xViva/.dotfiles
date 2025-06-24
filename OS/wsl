@@ -1,4 +1,4 @@
-export PACKAGES (
+export PACKAGES(
  nvim
  oh-my-posh
  zsh
