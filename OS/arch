@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-export PACKAGES(
+PACKAGES=(
  ghostty
  nvim
  oh-my-posh
@@ -7,5 +7,6 @@ export PACKAGES(
  git
  hypr
 )
+export PACKAGES
 export STOW_FOLDERS="ghostty,nvim,oh-my-posh,zsh,git,hypr"
 

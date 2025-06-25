@@ -14,9 +14,17 @@ echo "You passed argument: $OS_TYPE"
 source "./OS/$OS_TYPE"
 
 if [[ "$OS_TYPE" == "arch" ]]; then
-  # pacman install (as before)
-  sudo pacman -Sy --noconfirm
-  sudo pacman -Sy --noconfirm "${PACKAGES[@]}"
+  if ! command -v yay >/dev/null 2>&1; then
+    echo "Installing yay..."
+    sudo pacman -Sy --noconfirm base-devel git
+    git clone https://aur.archlinux.org/yay.git /tmp/yay
+    pushd /tmp/yay
+    makepkg -si --noconfirm
+    popd
+    rm -rf /tmp/yay
+  fi
+
+  yay -Sy --noconfirm "${PACKAGES[@]}"
 elif [[ "$OS_TYPE" == "wsl" ]]; then
   sudo apt update -y
   sudo apt install -qq -y "${PACKAGES[@]}"
