@@ -24,7 +24,9 @@ if [[ "$OS_TYPE" == "arch" ]]; then
     rm -rf /tmp/yay
   fi
 
-  yay -Sy --noconfirm "${PACKAGES[@]}"
+
+  yay -S --noconfirm --needed --quiet "${PACKAGES[@]}" < /dev/null
+
 elif [[ "$OS_TYPE" == "wsl" ]]; then
   sudo apt update -y
   sudo apt install -qq -y "${PACKAGES[@]}"

@@ -1,11 +1,14 @@
 #!/usr/bin/env zsh
 PACKAGES=(
+ stow
  ghostty
  nvim
  oh-my-posh
  zsh
  git
  hypr
+ fzf
+ yabai
 )
 export PACKAGES
 export STOW_FOLDERS="ghostty,nvim,oh-my-posh,zsh,git,hypr"
