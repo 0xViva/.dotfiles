@@ -28,8 +28,8 @@ selection-foreground = #e0def4
 background-opacity = 0.93
 
 
-keybind = ctrl+z=close_surface
-keybind = ctrl+d=new_split:right
+keybind = alt+c=close_surface
+keybind = alt+t=new_split:right
 
 keybind = alt+up=goto_split:up
 keybind = alt+down=goto_split:down
