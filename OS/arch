@@ -8,8 +8,12 @@ PACKAGES=(
  git
  hypr
  fzf
- yabai
+ dunst
+ wlogout
+ tofi
+ waybar
 )
 export PACKAGES
-export STOW_FOLDERS="ghostty,nvim,oh-my-posh,zsh,git,hypr"
+export STOW_FOLDERS="assets,ghostty,nvim,oh-my-posh,zsh,git,hypr,waybar,tofi,dunst,wlogout"
+
 
