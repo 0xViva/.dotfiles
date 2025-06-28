@@ -12,6 +12,7 @@ PACKAGES=(
  wlogout
  tofi
  waybar
+ grimblast-git
 )
 export PACKAGES
 export STOW_FOLDERS="assets,ghostty,nvim,oh-my-posh,zsh,git,hypr,waybar,tofi,dunst,wlogout"
