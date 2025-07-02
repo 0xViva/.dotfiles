@@ -22,6 +22,7 @@ fi
 
 export PATH=$PATH:.local/bin
 export PATH="$HOME/bin:$PATH"
+export PATH="$PATH:$HOME/go/bin"
 export PATH="$PWD/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.foundry/bin:$PATH"
