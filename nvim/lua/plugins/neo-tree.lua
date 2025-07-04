@@ -9,10 +9,13 @@ return {
   cmd = 'Neotree',
   keys = {
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '|', ':Neotree focus<CR>', desc = 'NeoTree reveal', silent = true },
   },
   opts = {
     filesystem = {
       window = {
+        width = 10,
+        auto_expand_width = true,
         mappings = {
           ['\\'] = 'close_window',
         },

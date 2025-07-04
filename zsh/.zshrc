@@ -36,19 +36,30 @@ export GOPATH="$HOME/go"
 if command -v oh-my-posh >/dev/null 2>&1; then
   eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/config.json)"
 fi
-# fzf integration
+
 if command -v fzf >/dev/null 2>&1; then
   source <(fzf --zsh)
 fi
 
-# yazi wrapper
-y() {
-  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-  yazi "$@" --cwd-file="$tmp"
-  IFS= read -r -d '' cwd < "$tmp"
-  [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
-  rm -f -- "$tmp"
+fzf-cd-widget() {
+  local dir
+  dir=$(find ${1:-.} -type d -not -path '*/\.*' 2> /dev/null | fzf +m) || return
+  cd "$dir" || return
+  zle reset-prompt
+  zle accept-line
 }
+zle -N fzf-cd-widget
+bindkey '^T' fzf-cd-widget
+
+fzf-nvim-widget() {
+  local dir
+  dir=$(find ~/code/personal ~/code/public -mindepth 1 -maxdepth 1 -type d | fzf +m) || return
+  nvim "$dir" || return 
+  zle reset-prompt
+  zle accept-line
+}
+zle -N fzf-nvim-widget
+bindkey '^N' fzf-nvim-widget
 
 # Bun shell completions
 if [[ -s "$HOME/.bun/_bun" ]]; then
