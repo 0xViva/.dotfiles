@@ -43,7 +43,9 @@ fi
 
 fzf-cd-widget() {
   local dir
-  dir=$(find ${1:-.} -type d -not -path '*/\.*' 2> /dev/null | fzf +m) || return
+  dir=$(fd "" "${1:-.}" --type d --hidden \
+    2> /dev/null | fzf +m) || return
+
   cd "$dir" || return
   zle reset-prompt
   zle accept-line
@@ -53,13 +55,23 @@ bindkey '^T' fzf-cd-widget
 
 fzf-nvim-widget() {
   local dir
-  dir=$(find ~/code/personal ~/code/public -mindepth 1 -maxdepth 1 -type d | fzf +m) || return
-  nvim "$dir" || return 
+  dir=$(fd . ~/code/personal ~/code/public \
+    --type d \
+    --max-depth 1 \
+    --min-depth 1 \
+    --exclude node_modules \
+    --exclude dist \
+    --exclude target \
+    2> /dev/null | fzf +m) || return
+
+  cd "$dir" || return
+  nvim "$dir" || return
   zle reset-prompt
   zle accept-line
 }
 zle -N fzf-nvim-widget
 bindkey '^N' fzf-nvim-widget
+
 
 # Bun shell completions
 if [[ -s "$HOME/.bun/_bun" ]]; then

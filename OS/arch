@@ -8,6 +8,7 @@ PACKAGES=(
  git
  hypr
  fzf
+ fd
  dunst
  wlogout
  tofi
