@@ -9,10 +9,5 @@ for folder in ${(s:,:)STOW_FOLDERS}; do
     stow -t "$HOME/.config/$folder" "$folder"
 done
 
-echo "stow gpg -> ~/.gnupg"
-mkdir -p "$HOME/.gnupg"
-stow -D -t "$HOME/.gnupg" gpg
-stow -t "$HOME/.gnupg" gpg
-
 popd
 

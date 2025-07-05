@@ -85,6 +85,8 @@ fi
 echo "Running stow for OS type: $OS_TYPE..."
 STOW_FOLDERS=$STOW_FOLDERS DOTFILES=$DOTFILES ./stow
 
+echo "Setup gpg-agent..."
+source "$DOTFILES/gpg/setup.zsh"
 echo "✅ Done! Your shell is now using zsh with dotfiles."
 
 if [[ "$OS_TYPE" == "arch" ]]; then
