@@ -43,8 +43,14 @@ fi
 
 fzf-cd-widget() {
   local dir
-  dir=$(fd "" "${1:-.}" --type d --hidden \
-    2> /dev/null | fzf +m) || return
+  dir=$(fd "" "$HOME" --type d --hidden \
+    --exclude '.rustup' \
+    --exclude '.cargo' \
+    --exclude '.cache' \
+    --exclude 'go' \
+    --exclude '.zen' \
+    --exclude '.npm' \
+    2> /dev/null | fzf --exact +m) || return
 
   cd "$dir" || return
   zle reset-prompt
