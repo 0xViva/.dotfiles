@@ -87,5 +87,10 @@ STOW_FOLDERS=$STOW_FOLDERS DOTFILES=$DOTFILES ./stow
 
 echo "✅ Done! Your shell is now using zsh with dotfiles."
 
+if [[ "$OS_TYPE" == "arch" ]]; then
+  echo "We're on arch, reload hyprland config after setup."
+  hyprctl reload
+fi
 exec zsh 
+
 
