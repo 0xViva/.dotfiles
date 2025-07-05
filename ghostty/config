@@ -27,6 +27,10 @@ selection-foreground = #e0def4
 
 background-opacity = 0.93
 
+macos-option-as-alt = left
+
+keybind = alt+left=unbind
+keybind = alt+right=unbind
 
 keybind = alt+c=close_surface
 keybind = alt+t=new_split:right
