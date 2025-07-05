@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 PACKAGES=(
  git
  neovim
@@ -7,4 +8,4 @@ PACKAGES=(
  fzf
  )
 export PACKAGES
-export STOW_FOLDERS="nvim,oh-my-posh,zsh,git"
+export STOW_FOLDERS="nvim,oh-my-posh,zsh,git,fzf"

@@ -1,3 +1,3 @@
 #!/usr/bin/env zsh
 export BREWFILE_PATH="./brew/Brewfile"
-export STOW_FOLDERS="ghostty,nvim,oh-my-posh,sketchybar,skhd,yabai,zsh"
+export STOW_FOLDERS="ghostty,nvim,oh-my-posh,sketchybar,skhd,yabai,zsh,fzf"

@@ -16,6 +16,6 @@ PACKAGES=(
  grimblast-git
 )
 export PACKAGES
-export STOW_FOLDERS="assets,ghostty,nvim,oh-my-posh,zsh,git,hypr,waybar,tofi,dunst,wlogout"
+export STOW_FOLDERS="assets,ghostty,nvim,oh-my-posh,zsh,git,hypr,waybar,tofi,dunst,wlogout,fzf"
 
 
