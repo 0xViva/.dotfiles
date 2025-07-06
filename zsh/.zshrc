@@ -19,7 +19,8 @@ if [[ -x "$DOTFILES/OS/${OS_TYPE}" ]]; then
     STOW_FOLDERS=$STOW_FOLDERS
 fi
 
-export PATH=$PATH:.local/bin
+export PATH="$PATH:$HOME/.local/bin"
+export PATH="$HOME/.local/bin/env"
 export PATH="$HOME/bin:$PATH"
 export PATH="$PATH:$HOME/go/bin"
 export PATH="$PWD/bin:$PATH"
@@ -48,3 +49,4 @@ if [[ -s "$HOME/.bun/_bun" ]]; then
   source "$HOME/.bun/_bun"
 fi
 export IGNOREEOF=0
+
