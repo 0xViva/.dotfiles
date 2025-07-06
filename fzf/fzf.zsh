@@ -17,7 +17,7 @@ fzf-cd-widget() {
 
 fzf-file-widget() {
   local file
-  file=$(fd "" "$HOME" --type f --hidden \
+  file=$(fd "" "/" --type f --hidden \
     --exclude '.rustup' \
     --exclude '.cargo' \
     --exclude '.cache' \
@@ -92,3 +92,5 @@ bindkey '^P' fzf-projects-widget
 bindkey '^D' fzf-cd-widget
 bindkey '^E' fzf-edit-widget
 bindkey '^N' fzf-nvim-widget
+# Unbind default Ctrl+T
+bindkey -r '^T'
