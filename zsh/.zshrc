@@ -1,4 +1,5 @@
 #!/bin/zsh
+setopt ignore_eof
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
   OS_TYPE="macos"
@@ -40,6 +41,7 @@ if command -v fzf >/dev/null 2>&1; then
   source <(fzf --zsh)
 fi
 
+setopt ignore_eof
 source "$HOME/.config/fzf/fzf.zsh"
 
 
@@ -47,4 +49,3 @@ source "$HOME/.config/fzf/fzf.zsh"
 if [[ -s "$HOME/.bun/_bun" ]]; then
   source "$HOME/.bun/_bun"
 fi
-export IGNOREEOF=0

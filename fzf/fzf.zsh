@@ -1,4 +1,5 @@
 #!/bin/zsh
+  setopt ignore_eof
 fzf-cd-widget() {
   local dir
   dir=$(fd "" "$HOME" --type d --hidden \
@@ -10,9 +11,8 @@ fzf-cd-widget() {
     --exclude '.npm' \
     2> /dev/null | fzf --exact +m) || return
 
-  cd "$dir" || return
+  LBUFFER+="${(q)dir}"
   zle reset-prompt
-  zle accept-line
 }
 
 fzf-file-widget() {
