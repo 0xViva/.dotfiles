@@ -21,6 +21,7 @@ if [[ -x "$DOTFILES/OS/${OS_TYPE}" ]]; then
 fi
 
 export PATH=$PATH:.local/bin
+export PATH=$PATH:/usr/bin
 export PATH="$HOME/bin:$PATH"
 export PATH="$PATH:$HOME/go/bin"
 export PATH="$PWD/bin:$PATH"
