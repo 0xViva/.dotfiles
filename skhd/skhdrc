@@ -2,19 +2,11 @@
 :: default : yabai -m config active_window_border_color 0xE0f5c2e7
 ralt - y : launchctl kickstart -k "gui/${UID}/homebrew.mxcl.yabai"
 ralt - escape : pmset displaysleepnow 
-# logout
-# ralt + shift - e : osascript -e 'tell app "System Events" to log out'
-# power down 
-# ralt + shift - p : osascript -e 'tell app "System Events" to shut down'
-# reboot
-# ralt + shift - b : osascript -e 'tell app "System Events" to restart'
-# sleep 
-ralt + shift - s : osascript -e 'tell application "System Events" to sleep'
 
 
 # === launch commands ===
-ralt - return : open -na /Applications/Ghostty.app
-ralt + shift - return : open -na /Applications/Arc.app
+ralt - t : open -na /Applications/Ghostty.app
+ralt - b : open -na /Applications/Zen.app
 ralt + shift - n : open `pwd`
 # === Resize Mode ===
 :: resize @ : yabai -m config active_window_border_color 0xFFFF00FF

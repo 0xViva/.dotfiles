@@ -3,6 +3,7 @@ vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
 
 -- Appearance / UI
+--
 vim.opt.guicursor = ''
 vim.opt.number = true
 vim.opt.relativenumber = true

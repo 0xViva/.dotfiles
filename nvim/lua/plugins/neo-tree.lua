@@ -10,6 +10,7 @@ return {
   keys = {
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
     { '|', ':Neotree focus<CR>', desc = 'NeoTree reveal', silent = true },
+    { '<Esc>', ':Neotree focus<CR>', desc = 'NeoTree focus (Escape key)', silent = true },
   },
   opts = {
     filesystem = {
