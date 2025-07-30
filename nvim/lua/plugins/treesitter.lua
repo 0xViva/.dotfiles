@@ -18,7 +18,7 @@ return { -- Highlight, edit, and navigate code
       'query',
       'vim',
       'vimdoc',
-      'rust',
+      --'rust',
       'go',
       'templ',
       'css',
