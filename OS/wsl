@@ -4,8 +4,9 @@ PACKAGES=(
  neovim
  stow
  zsh
- yazi
  fzf
+ fd-find
+ ripgrep
  )
 export PACKAGES
 export STOW_FOLDERS="nvim,oh-my-posh,zsh,git,fzf"
