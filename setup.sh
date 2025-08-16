@@ -26,6 +26,7 @@ if [[ "$OS_TYPE" == "arch" ]]; then
 
 
   yay -S --noconfirm --needed --quiet "${PACKAGES[@]}" < /dev/null
+  pacman -S impala
   # Turn on bluetooth by default
   sudo systemctl enable --now bluetooth.service
 

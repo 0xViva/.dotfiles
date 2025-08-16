@@ -1,12 +1,11 @@
 * {
-    background-color: #d8dee9;
-    background: #2e3440;
-
+    background-color: #2e3440;
+    color: #d8dee9;
     border: none;
     border-radius: 0;
     min-height: 0;
     font-family: JetBrainsMono Nerd Font, monospace;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .modules-left {
@@ -35,10 +34,6 @@
 #bluetooth,
 #pulseaudio,
 #clock,
-#custom-omarchy {
-    min-width: 12px;
-    margin: 0 7.5px;
-}
 
 #custom-expand-icon {
     margin-right: 7px;

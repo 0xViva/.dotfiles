@@ -15,9 +15,12 @@ PACKAGES=(
  tofi
  waybar
  swayosd
+ swaybg
  blueberry
  grimblast-git
  power-profiles-daemon
+ impala
+ libinput 
 )
 export PACKAGES
 export STOW_FOLDERS="assets,ghostty,nvim,oh-my-posh,zsh,git,hypr,waybar,tofi,dunst,swayosd,btop,wlogout,fzf"
