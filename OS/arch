@@ -10,12 +10,16 @@ PACKAGES=(
  fzf
  fd
  dunst
+ btop
  wlogout
  tofi
  waybar
+ swayosd
+ blueberry
  grimblast-git
+ power-profiles-daemon
 )
 export PACKAGES
-export STOW_FOLDERS="assets,ghostty,nvim,oh-my-posh,zsh,git,hypr,waybar,tofi,dunst,wlogout,fzf"
+export STOW_FOLDERS="assets,ghostty,nvim,oh-my-posh,zsh,git,hypr,waybar,tofi,dunst,swayosd,btop,wlogout,fzf"
 
 

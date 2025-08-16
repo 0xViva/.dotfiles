@@ -26,6 +26,15 @@ if [[ "$OS_TYPE" == "arch" ]]; then
 
 
   yay -S --noconfirm --needed --quiet "${PACKAGES[@]}" < /dev/null
+  # Turn on bluetooth by default
+  sudo systemctl enable --now bluetooth.service
+
+  if ls /sys/class/power_supply/BAT* &>/dev/null; then
+    powerprofilesctl set balanced || true
+    systemctl --user enable --now omarchy-battery-monitor.timer || true
+  else
+  powerprofilesctl set performance || true
+  fi   
 
 elif [[ "$OS_TYPE" == "wsl" ]]; then
   sudo apt update -y

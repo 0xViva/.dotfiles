@@ -1,0 +1,38 @@
+:root {
+    --background-color: #2E3440;
+    --border-color: #D8DEE9;
+    --label-color: #D8DEE9;
+    --image-color: #D8DEE9;
+    --progress-color: #D8DEE9;
+}
+
+window {
+    border-radius: 0;
+    opacity: 0.97;
+    border: 2px solid var(--border-color);
+    background-color: var(--background-color);
+}
+
+label {
+    font-family: 'JetBrainsMono Nerd Font';
+    font-size: 11pt;
+    color: var(--label-color);
+}
+
+image {
+    color: var(--image-color);
+}
+
+progressbar {
+    border-radius: 0;
+}
+
+progressbar trough {
+    background-color: #3B4252;
+    border-radius: 0;
+}
+
+progressbar progress {
+    background-color: var(--progress-color);
+    border-radius: 0;
+}
