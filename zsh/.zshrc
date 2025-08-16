@@ -38,11 +38,6 @@ if command -v oh-my-posh >/dev/null 2>&1; then
   eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/config.json)"
 fi
 
-if command -v fzf >/dev/null 2>&1; then
-  source <(fzf --zsh)
-fi
-
-setopt ignore_eof
 source "$HOME/.config/fzf/fzf.zsh"
 
 
