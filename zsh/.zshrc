@@ -8,11 +8,12 @@ elif grep -qi microsoft /proc/version 2>/dev/null; then
   OS_TYPE="wsl"
 elif [[ -f /etc/arch-release ]]; then
   OS_TYPE="arch"
-  autoload -Uz compinit
-  compinit
 else
   OS_TYPE="unknown"
 fi
+
+autoload -Uz compinit
+compinit
 
 export DOTFILES="$HOME/.dotfiles"
 if [[ -x "$DOTFILES/OS/${OS_TYPE}" ]]; then

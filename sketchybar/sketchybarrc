@@ -1,14 +1,12 @@
-sketchybar --add event aerospace_workspace_change
+#!/usr/bin/env lua
 
-for sid in $(aerospace list-workspaces --all); do
-    sketchybar --add item space.$sid left \
-        --subscribe space.$sid aerospace_workspace_change \
-        --set space.$sid \
-        background.color=0x44ffffff \
-        background.corner_radius=5 \
-        background.height=20 \
-        background.drawing=off \
-        label="$sid" \
-        click_script="aerospace workspace $sid" \
-        script="$CONFIG_DIR/plugins/aerospace.sh $sid"
-done
+-- Determine the configuration directory
+local config_dir = os.getenv("HOME") .. "/.config/sketchybar"
+
+-- Prepend the configuration directory to the module search paths
+package.path = config_dir .. "/?.lua;" .. config_dir .. "/?/init.lua;" .. package.path
+package.cpath = config_dir .. "/?.so;" .. package.cpath
+
+-- Now require the modules
+require("helpers")
+require("init")
