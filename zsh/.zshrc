@@ -29,6 +29,8 @@ export PATH="$PWD/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.foundry/bin:$PATH"
 export PATH="$HOME/.bun/bin:$PATH"
+export JAVA_HOME=/usr/lib/jvm/microsoft-jdk-21
+export PATH=$JAVA_HOME/bin:$PATH
 
 export GIT_CONFIG_GLOBAL="$HOME/.config/git/.gitconfig"
 export GPG_TTY=$(tty)

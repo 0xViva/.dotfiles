@@ -194,7 +194,9 @@ return {
           },
         },
         templ = {},
-        ts_ls = {}, -- typescript-language-server
+        ts_ls = {},
+        jdtls = {},
+        gradle_ls = {},
       }
 
       local ensure_installed = vim.tbl_keys(servers or {})
@@ -202,6 +204,7 @@ return {
         'stylua', -- Lua formatter
         'prettier', -- JavaScript/TypeScript formatter
         'prettierd', -- Faster prettier daemon formatter
+        'google-java-format',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
