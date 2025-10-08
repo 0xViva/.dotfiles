@@ -4,14 +4,8 @@ setopt ignore_eof
 if [[ "$(uname -s)" == "Darwin" ]]; then
   OS_TYPE="macos"
   eval "$(/opt/homebrew/bin/brew shellenv)"
-  if command -v oh-my-posh >/dev/null 2>&1; then
-    eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/config.json)"
-  fi
 elif grep -qi microsoft /proc/version 2>/dev/null; then
   OS_TYPE="wsl"
-  if command -v oh-my-posh >/dev/null 2>&1; then
-    eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/config.json)"
-  fi
 elif [[ -f /etc/arch-release ]]; then
   OS_TYPE="arch"
 else
@@ -45,9 +39,11 @@ export GPG_TTY=$(tty)
 export GOPATH="$HOME/go"
 
 
+  if command -v oh-my-posh >/dev/null 2>&1; then
+    eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/config.json)"
+  fi
 
 source "$HOME/.config/fzf/fzf.zsh"
-
 
 # Bun shell completions
 if [[ -s "$HOME/.bun/_bun" ]]; then
