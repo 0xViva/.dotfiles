@@ -24,7 +24,6 @@ if [[ "$OS_TYPE" == "arch" ]]; then
     rm -rf /tmp/yay
   fi
 
-
   yay -S --noconfirm --needed --quiet "${PACKAGES[@]}" < /dev/null
   pacman -S impala
   # Turn on bluetooth by default
