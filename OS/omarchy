@@ -2,7 +2,6 @@
 PACKAGES=(
  stow
  zsh
- ghostty
 )
 export PACKAGES
-export STOW_FOLDERS="ghostty,nvim,zsh,git,gpg,fzf"
+export STOW_FOLDERS="nvim,zsh,git,gpg,fzf"
