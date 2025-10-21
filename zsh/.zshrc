@@ -1,4 +1,5 @@
 #!/bin/zsh
+echo ".zshrc loaded"
 setopt ignore_eof
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
@@ -58,6 +59,6 @@ eval "$(mise activate zsh)"
 
 #alias
 alias claude="/home/august/.claude/local/claude"
-alias todo="~/bin/godoit"
+alias todo="~/go/bin/godoit"
 # commands to run:
 godoit -l
