@@ -212,10 +212,25 @@ return {
         ensure_installed = {},
         automatic_installation = true,
         handlers = {
+          -- Default handler (for all servers)
           function(server_name)
-            local server = servers[server_name] or {}
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
+            local server_opts = servers[server_name] or {}
+            server_opts.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_opts.capabilities or {})
+
+            -- Use new API if available (Neovim >= 0.11)
+            if vim.lsp.config and vim.lsp.enable then
+              -- Create a table with server_name as key
+              local config_table = {}
+              config_table[server_name] = server_opts
+              vim.lsp.config(config_table)
+              vim.lsp.enable(server_name)
+            else
+              -- Fallback for old Neovim
+              local ok, lspconfig = pcall(require, 'lspconfig')
+              if ok then
+                lspconfig[server_name].setup(server_opts)
+              end
+            end
           end,
         },
       }
