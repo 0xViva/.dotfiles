@@ -5,4 +5,4 @@ PACKAGES=(
  oh-my-posh
 )
 export PACKAGES
-export STOW_FOLDERS="nvim,oh-my-posh,zsh,git,gpg,fzf"
+export STOW_FOLDERS="nvim,ghostty,oh-my-posh,zsh,git,gpg,fzf"
