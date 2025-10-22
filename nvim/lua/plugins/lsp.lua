@@ -184,11 +184,15 @@ return {
         },
         rust_analyzer = {},
         tailwindcss = {
-          filetypes = { 'templ', 'astro', 'javascript', 'typescript', 'react' },
+          filetypes_exclude = { 'markdown' },
+          filetypes_include = { 'templ' }, -- add any extras you want
           settings = {
             tailwindCSS = {
               includeLanguages = {
                 templ = 'html',
+                elixir = 'html-eex',
+                eelixir = 'html-eex',
+                heex = 'html-eex',
               },
             },
           },
@@ -208,6 +212,21 @@ return {
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+      local function setup_tailwindcss(_, opts)
+        opts.filetypes = opts.filetypes or {}
+
+        -- Add default Tailwind filetypes (from lspconfig)
+        local default_ft = require('lspconfig.server_configurations.tailwindcss').default_config.filetypes
+        vim.list_extend(opts.filetypes, default_ft)
+
+        -- Remove excluded
+        opts.filetypes = vim.tbl_filter(function(ft)
+          return not vim.tbl_contains(opts.filetypes_exclude or {}, ft)
+        end, opts.filetypes)
+
+        -- Add any additional includes
+        vim.list_extend(opts.filetypes, opts.filetypes_include or {})
+      end
       require('mason-lspconfig').setup {
         ensure_installed = {},
         automatic_installation = true,
@@ -217,8 +236,13 @@ return {
             local server_opts = servers[server_name] or {}
             server_opts.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_opts.capabilities or {})
 
+            if server_name == 'tailwindcss' then
+              setup_tailwindcss(server_name, server_opts)
+            end
+
             -- Use new API if available (Neovim >= 0.11)
             if vim.lsp.config and vim.lsp.enable then
+              print 'vim.lsp.config ok'
               -- Create a table with server_name as key
               local config_table = {}
               config_table[server_name] = server_opts
@@ -227,6 +251,7 @@ return {
             else
               -- Fallback for old Neovim
               local ok, lspconfig = pcall(require, 'lspconfig')
+              print 'fell back...'
               if ok then
                 lspconfig[server_name].setup(server_opts)
               end
