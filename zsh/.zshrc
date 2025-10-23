@@ -22,7 +22,7 @@ if [[ -x "$DOTFILES/OS/${OS_TYPE}" ]]; then
     STOW_FOLDERS=$STOW_FOLDERS
 fi
 
-export PATH=$PATH:.local/bin
+export PATH="$PATH:$HOME/.local/bin"
 export PATH=$PATH:/usr/bin
 export PATH="$HOME/bin:$PATH"
 export PATH="$PATH:$HOME/go/bin"
