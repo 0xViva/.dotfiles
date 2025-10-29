@@ -25,7 +25,7 @@ fi
 export PATH="$PATH:$HOME/.local/bin"
 export PATH=$PATH:/usr/bin
 export PATH="$HOME/bin:$PATH"
-export PATH="$PATH:$HOME/go/bin"
+export PATH="$PATH:$(go env GOPATH)/bin"
 export PATH="$PWD/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.foundry/bin:$PATH"
@@ -37,7 +37,6 @@ export PATH="$FLYCTL_INSTALL/bin:$PATH"
 
 export GIT_CONFIG_GLOBAL="$HOME/.config/git/.gitconfig"
 export GPG_TTY=$(tty)
-export GOPATH="$HOME/go"
 
 
   if command -v oh-my-posh >/dev/null 2>&1; then
@@ -61,4 +60,4 @@ eval "$(mise activate zsh)"
 alias claude="/home/august/.claude/local/claude"
 alias todo="~/go/bin/godoit"
 # commands to run:
-godoit -l
+#godoit -l
