@@ -32,6 +32,7 @@ return { -- Autoformat
       lua = { 'stylua' },
       javascript = { 'prettierd', 'prettier', stop_after_first = true },
       java = { 'google-java-format' },
+      json = { 'prettierd', 'prettier', stop_after_first = true },
     },
   },
 }

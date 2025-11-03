@@ -169,6 +169,7 @@ return {
         },
         templ = {},
         ts_ls = {},
+        jsonls = {},
         jdtls = {
           on_attach = function(client, bufnr)
             require('java').setup {}
