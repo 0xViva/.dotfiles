@@ -30,8 +30,6 @@ export PATH="$PWD/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.foundry/bin:$PATH"
 export PATH="$HOME/.bun/bin:$PATH"
-export JAVA_HOME=/usr/lib/jvm/microsoft-jdk-21
-export PATH=$JAVA_HOME/bin:$PATH
 export FLYCTL_INSTALL="/home/august/.fly"
 export PATH="$FLYCTL_INSTALL/bin:$PATH"
 

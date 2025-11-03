@@ -1,8 +1,5 @@
 return {
-  -- LSP Plugins
   {
-    -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
-    -- used for completion, annotations and signatures of Neovim apis
     'folke/lazydev.nvim',
     ft = 'lua',
     opts = {
@@ -21,7 +18,7 @@ return {
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       { 'j-hui/fidget.nvim', opts = {} },
-
+      'mfussenegger/nvim-jdtls',
       'hrsh7th/cmp-nvim-lsp',
     },
     config = function()
@@ -199,8 +196,29 @@ return {
         },
         templ = {},
         ts_ls = {},
-        jdtls = {},
-        gradle_ls = {},
+        jdtls = {
+          on_attach = function(client, bufnr)
+            -- Setup keymaps etc. if needed
+            require('java').setup {}
+
+            -- NOTE: jdtls uses its own start_or_attach; prevent double setup
+          end,
+          setup = function()
+            local jdtls = require 'jdtls'
+            local lspconfig = require 'lspconfig'
+            local opts = {
+              cmd = lspconfig.jdtls.document_config.default_config.cmd,
+              root_dir = require('jdtls.setup').find_root { '.git', 'mvnw', 'gradlew' },
+            }
+
+            vim.api.nvim_create_autocmd('FileType', {
+              pattern = 'java',
+              callback = function()
+                jdtls.start_or_attach(opts)
+              end,
+            })
+          end,
+        },
       }
 
       local ensure_installed = vim.tbl_keys(servers or {})
@@ -238,6 +256,10 @@ return {
 
             if server_name == 'tailwindcss' then
               setup_tailwindcss(server_name, server_opts)
+            end
+
+            if server_name == 'jdtls' and server_opts.setup then
+              server_opts.setup() -- Use nvim-jdtls logic
             end
 
             -- Use new API if available (Neovim >= 0.11)
