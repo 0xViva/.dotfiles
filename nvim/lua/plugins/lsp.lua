@@ -170,6 +170,7 @@ return {
         templ = {},
         ts_ls = {},
         jsonls = {},
+        gradle_ls = {},
         jdtls = {
           on_attach = function(client, bufnr)
             require('java').setup {}
