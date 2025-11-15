@@ -9,8 +9,8 @@ return {
   cmd = 'Neotree',
   keys = {
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
-    { '|', ':Neotree focus<CR>', desc = 'NeoTree reveal', silent = true },
-    { '<Tab>', ':Neotree focus<CR>', desc = 'NeoTree focus (Escape key)', silent = true },
+    --- { '|', ':Neotree focus<CR>', desc = 'NeoTree reveal', silent = true },
+    --- { '<Tab>', ':Neotree focus<CR>', desc = 'NeoTree focus (Escape key)', silent = true },
   },
   opts = {
     filesystem = {
