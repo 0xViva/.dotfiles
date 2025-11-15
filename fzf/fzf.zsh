@@ -60,7 +60,7 @@ fzf-nvim-widget() {
     2> /dev/null | fzf +m) || return
 
   cd "$dir" || return
-  nvim "$dir" || return
+  nvim "$dir/." || return
   zle reset-prompt
   zle accept-line
 }
