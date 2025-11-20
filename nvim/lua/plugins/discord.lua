@@ -10,7 +10,7 @@ return {
       client_id = '793271441293967371',
       log_level = nil,
       debounce_timeout = 10,
-      enable_line_number = false,
+      enable_line_number = true,
       blacklist = {},
       buttons = true,
       file_assets = {},

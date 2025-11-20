@@ -172,7 +172,7 @@ return {
         jsonls = {},
         gradle_ls = {},
         jdtls = {
-          on_attach = function(client, bufnr)
+          on_attach = function()
             require('java').setup {}
           end,
           setup = function()
