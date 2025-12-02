@@ -57,5 +57,7 @@ eval "$(mise activate zsh)"
 #alias
 alias claude="/home/august/.claude/local/claude"
 alias todo="~/go/bin/godoit"
+alias fd="fdfind"
+z
 # commands to run:
 #godoit -l
