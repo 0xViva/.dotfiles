@@ -27,6 +27,7 @@ return { -- Autoformat
       json = { 'prettierd', 'prettier', stop_after_first = true },
       c = { 'clang-format' },
       cpp = { 'clang-format' },
+      elixir = { 'mix' },
     },
   },
 }

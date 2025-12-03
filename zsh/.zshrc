@@ -60,3 +60,4 @@ alias todo="~/go/bin/godoit"
 alias fd="fdfind"
 # commands to run:
 #godoit -l
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
