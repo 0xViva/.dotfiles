@@ -22,10 +22,11 @@ if [[ -x "$DOTFILES/OS/${OS_TYPE}" ]]; then
     STOW_FOLDERS=$STOW_FOLDERS
 fi
 
+eval "$(mise activate zsh)"
+export PATH="$PATH:$(go env GOPATH)/bin"
 export PATH="$PATH:$HOME/.local/bin"
 export PATH=$PATH:/usr/bin
 export PATH="$HOME/bin:$PATH"
-export PATH="$PATH:$(go env GOPATH)/bin"
 export PATH="$PWD/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.foundry/bin:$PATH"
@@ -52,12 +53,10 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-eval "$(mise activate zsh)"
 
 #alias
 alias claude="/home/august/.claude/local/claude"
 alias todo="~/go/bin/godoit"
 alias fd="fdfind"
-z
 # commands to run:
 #godoit -l
