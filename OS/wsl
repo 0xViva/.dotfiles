@@ -12,6 +12,7 @@ PACKAGES=(
  nodejs
  npm
  unzip
+ mise
  )
 export PACKAGES
-export STOW_FOLDERS="nvim,oh-my-posh,zsh,git,fzf"
+export STOW_FOLDERS="nvim,oh-my-posh,zsh,git,fzf,mise"

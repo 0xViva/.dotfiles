@@ -3,6 +3,7 @@ PACKAGES=(
  stow
  zsh
  oh-my-posh
+ mise
 )
 export PACKAGES
-export STOW_FOLDERS="nvim,ghostty,oh-my-posh,zsh,git,gpg,fzf"
+export STOW_FOLDERS="nvim,ghostty,oh-my-posh,zsh,git,gpg,fzf,mise"
