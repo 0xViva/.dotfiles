@@ -7,6 +7,7 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 elif grep -qi microsoft /proc/version 2>/dev/null; then
   OS_TYPE="wsl"
+  alias fd="fdfind"
 elif [[ -f /etc/arch-release ]]; then
   OS_TYPE="arch"
 else
@@ -57,7 +58,6 @@ export NVM_DIR="$HOME/.nvm"
 #alias
 alias claude="/home/august/.claude/local/claude"
 alias todo="~/go/bin/godoit"
-alias fd="fdfind"
 # commands to run:
 #godoit -l
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
