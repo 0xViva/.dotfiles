@@ -21,9 +21,6 @@ PACKAGES=(
  swayosd
  swaybg
  blueberry
- grimblast-git
- power-profiles-daemon
- libinput 
  mise
  imv
  walker
