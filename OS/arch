@@ -9,9 +9,7 @@ PACKAGES=(
  hypr
  fzf
  fd
- dunst
  btop
- wlogout
  tofi
  waybar
  swayosd
@@ -21,8 +19,11 @@ PACKAGES=(
  power-profiles-daemon
  impala
  libinput 
+ mise
+ imv
+ walker
 )
 export PACKAGES
-export STOW_FOLDERS="assets,ghostty,nvim,oh-my-posh,zsh,git,hypr,waybar,tofi,dunst,swayosd,btop,wlogout,fzf"
+export STOW_FOLDERS="assets,ghostty,nvim,oh-my-posh,zsh,git,hypr,waybar,tofi,dunst,swayosd,btop,fzf,mise,imv"
 
 
