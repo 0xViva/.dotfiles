@@ -21,16 +21,14 @@ PACKAGES=(
  mako
  swayosd
  swaybg
- blueberry
+ bluetui
  mise
  imv
- walker
  playerctl
  satty
  wl-clipboard
  slurp
  grim
- uwsm
  wayfreeze
  fcitx5
  fcitx5-gtk
@@ -38,10 +36,14 @@ PACKAGES=(
  pinentry
  impala
  elephant
+ elephant-desktopapplications
+ elephant-files
  wiremix
  zen-browser-bin
+ jq
+ walker
 )
 export PACKAGES
-export STOW_FOLDERS="bin,fcitx5,assets,ghostty,mako,nvim,oh-my-posh,zsh,git,hypr,waybar,swayosd,btop,fzf,mise,imv,uwsm"
+export STOW_FOLDERS="bin,walker,fcitx5,assets,ghostty,mako,nvim,oh-my-posh,zsh,git,hypr,waybar,swayosd,btop,fzf,mise,imv,elephant"
 
 

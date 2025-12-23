@@ -1,3 +1,4 @@
+force_keyboard_focus = false    # forces keyboard forcus to stay in Walker
 close_when_open = true          # close walker when invoking while already opened
 click_to_close = true           # closes walker if clicking outside of the main content area
 single_click_activation = true  # activate items with a single click opposed to a double click
@@ -48,6 +49,7 @@ default = [
   "calc",
   # "runner",
   "websearch",
+  "files"
 ] # providers to be queried by default
 empty = ["desktopapplications"] # providers to be queried when query is empty
 ignore_preview = [] # providers that should not show previews
