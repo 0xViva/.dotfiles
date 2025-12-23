@@ -37,6 +37,7 @@ PACKAGES=(
  fcitx5
  fcitx5-gtk
  fcitx5-qt
+ pinentry
 )
 export PACKAGES
 export STOW_FOLDERS="bin,fcitx5,assets,ghostty,mako,nvim,oh-my-posh,zsh,git,hypr,waybar,tofi,dunst,swayosd,btop,fzf,mise,imv,uwsm"
