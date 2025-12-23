@@ -24,17 +24,8 @@ if [[ "$OS_TYPE" == "arch" ]]; then
     rm -rf /tmp/yay
   fi
 
-  yay -S --noconfirm --needed --quiet "${PACKAGES[@]}" < /dev/null
-  pacman -S impala
-  # Turn on bluetooth by default
+  sudo yay -S --noconfirm --needed --quiet "${PACKAGES[@]}" < /dev/null
   sudo systemctl enable --now bluetooth.service
-
-  if ls /sys/class/power_supply/BAT* &>/dev/null; then
-    powerprofilesctl set balanced || true
-    systemctl --user enable --now omarchy-battery-monitor.timer || true
-  else
-  powerprofilesctl set performance || true
-  fi   
 
 elif [[ "$OS_TYPE" == "wsl" ]]; then
   sudo apt update -y
@@ -92,7 +83,7 @@ if [[ -z $DOTFILES ]]; then
 fi
 
 echo "Running stow for OS type: $OS_TYPE..."
-STOW_FOLDERS=$STOW_FOLDERS DOTFILES=$DOTFILES ./stow
+STOW_FOLDERS=$STOW_FOLDERS DOTFILES=$DOTFILES ./stow.zsh
 
 echo "Setup gpg-agent..."
 source "$DOTFILES/gpg/setup.zsh"

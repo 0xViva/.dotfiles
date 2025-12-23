@@ -6,6 +6,7 @@ PACKAGES=(
  oh-my-posh
  zsh
  git
+ openssh
  hypridle
  hyprland
  hyprland-guiutils
@@ -35,8 +36,12 @@ PACKAGES=(
  fcitx5-gtk
  fcitx5-qt
  pinentry
+ impala
+ elephant
+ wiremix
+ zen-browser-bin
 )
 export PACKAGES
-export STOW_FOLDERS="bin,fcitx5,assets,ghostty,mako,nvim,oh-my-posh,zsh,git,hypr,waybar,tofi,dunst,swayosd,btop,fzf,mise,imv,uwsm"
+export STOW_FOLDERS="bin,fcitx5,assets,ghostty,mako,nvim,oh-my-posh,zsh,git,hypr,waybar,swayosd,btop,fzf,mise,imv,uwsm"
 
 

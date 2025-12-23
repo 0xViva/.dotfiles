@@ -2,7 +2,6 @@
 go = "latest"
 java = "21"
 node = "latest"
-ruby = "latest"
 dotnet = "10"
 
 [settings]
