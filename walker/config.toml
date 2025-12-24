@@ -46,14 +46,11 @@ show_actions = ["alt j"]
 [providers]
 default = [
   "desktopapplications",
-  "calc",
   # "runner",
-  "websearch",
-  "files"
 ] # providers to be queried by default
 empty = ["desktopapplications"] # providers to be queried when query is empty
 ignore_preview = [] # providers that should not show previews
-max_results = 50 # global max results
+max_results = 250 # global max results
 
 [providers.argument_delimiter] # define the argument delimiter per provider
 runner = " "

@@ -37,7 +37,6 @@ PACKAGES=(
  impala
  elephant
  elephant-desktopapplications
- elephant-files
  wiremix
  zen-browser-bin
  jq
