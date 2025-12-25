@@ -154,6 +154,12 @@
     "format": "",
     "tooltip": false
   },
+  "custom/screenrecording-indicator": {
+    "on-click": "$HOME/.config/bin/cmd-screenrecord",
+    "exec": "$HOME/.config/waybar/indicators/screen-recording.sh",
+    "signal": 8,
+    "return-type": "json"
+  },
   "tray": {
     "icon-size": 12,
     "spacing": 17

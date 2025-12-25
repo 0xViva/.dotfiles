@@ -26,7 +26,6 @@ if [[ "$OS_TYPE" == "arch" ]]; then
 
   yay -S --noconfirm --needed --quiet "${PACKAGES[@]}" < /dev/null
   sudo systemctl enable --now bluetooth.service
-  sudo systemctl --user enable --now elephant
 
 elif [[ "$OS_TYPE" == "wsl" ]]; then
   sudo apt update -y
