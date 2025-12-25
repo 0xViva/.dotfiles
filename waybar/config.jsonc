@@ -54,7 +54,7 @@
     "format": "{:L%A %H:%M}",
     "format-alt": "{:L%d %B W%V %Y}",
     "tooltip": false,
-    "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select"
+    "on-click-right": ""
   },
   "network": {
     "format-icons": [
@@ -110,7 +110,7 @@
     "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
     "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
     "interval": 5,
-    "on-click": "omarchy-menu power",
+    "on-click": "",
     "states": {
       "warning": 20,
       "critical": 10
