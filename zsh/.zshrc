@@ -61,3 +61,9 @@ alias todo="~/go/bin/godoit"
 # commands to run:
 #godoit -l
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+
+# opencode
+export PATH=/home/ajg/.opencode/bin:$PATH
+
+# bun completions
+[ -s "/home/ajg/.bun/_bun" ] && source "/home/ajg/.bun/_bun"
