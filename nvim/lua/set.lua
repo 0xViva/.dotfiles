@@ -115,13 +115,10 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 vim.api.nvim_create_autocmd({ 'BufWritePre' }, { pattern = { '*.templ' }, callback = vim.lsp.buf.format })
 
 -- Remove Windows-style carriage returns (^M) automatically
---
 
-vim.opt.fileformats = { 'unix', 'dos' }
-
--- vim.api.nvim_create_autocmd('BufReadPost', {
---   pattern = '*',
---   callback = function()
---     vim.cmd [[silent! %s/\r//g]]
---   end,
--- })
+vim.api.nvim_create_autocmd({ 'BufReadPost', 'TextChanged', 'TextChangedI' }, {
+  pattern = '*',
+  callback = function()
+    vim.cmd [[silent! %s/\r//g]]
+  end,
+})
