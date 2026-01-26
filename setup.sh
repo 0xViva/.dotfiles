@@ -4,8 +4,8 @@ set -e
 
 # Check for OS argument
 if [ $# -lt 1 ]; then
-  echo "Usage: $0 <OS_TYPE: wsl, macos, arch>"
-  exit 1
+    echo "Usage: $0 <OS_TYPE: wsl, macos, arch>"
+    exit 1
 fi
 
 OS_TYPE=$1
@@ -14,55 +14,71 @@ echo "You passed argument: $OS_TYPE"
 source "./OS/$OS_TYPE"
 
 if [[ "$OS_TYPE" == "arch" ]]; then
-  if ! command -v yay >/dev/null 2>&1; then
-    echo "Installing yay..."
-    sudo pacman -Sy --noconfirm base-devel git
-    git clone https://aur.archlinux.org/yay.git /tmp/yay
-    pushd /tmp/yay
-    makepkg -si --noconfirm
-    popd
-    rm -rf /tmp/yay
-  fi
+    if ! command -v yay >/dev/null 2>&1; then
+        echo "Installing yay..."
+        sudo pacman -Sy --noconfirm base-devel git
+        git clone https://aur.archlinux.org/yay.git /tmp/yay
+        pushd /tmp/yay
+        makepkg -si --noconfirm
+        popd
+        rm -rf /tmp/yay
+    fi
 
-  yay -S --noconfirm --needed --quiet "${PACKAGES[@]}" < /dev/null
-  sudo systemctl enable --now bluetooth.service
-
-elif [[ "$OS_TYPE" == "wsl" ]]; then
-  sudo apt update -y
-  sudo apt install -qq -y "${PACKAGES[@]}"
-  sudo apt autoremove -qq
-  curl -sS https://ohmyposh.dev/install.sh | bash -s >/dev/null
+    yay -S --noconfirm --needed --quiet "${PACKAGES[@]}" < /dev/null
+    sudo systemctl enable --now bluetooth.service
 
 elif [[ "$OS_TYPE" == "macos" ]]; then
-  if ! command -v brew >/dev/null 2>&1; then
+    if ! command -v zb >/dev/null 2>&1; then
+        echo "Installing zerobrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lucasgelfond/zerobrew/main/install.sh)"
+    fi
+
+    if ! command -v brew >/dev/null 2>&1; then
         echo "Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
 
-        # Apple Silicon vs Intel
-        if [[ $(uname -m) == 'arm64' ]]; then
-          eval "$(/opt/homebrew/bin/brew shellenv)"
+    PACKAGES=($(grep -vE '^\s*(#|$)' "./macos.packages"))
+    MISSING_FROM_ZB=()
+
+    echo "🚀 Processing packages..."
+    for pkg in "${PACKAGES[@]}"; do
+        if zb install "$pkg" >/dev/null 2>&1; then
+            echo "✅ $pkg (zerobrew)"
         else
-          eval "$(/usr/local/bin/brew shellenv)"
+            MISSING_FROM_ZB+=("$pkg")
         fi
-      else
-        eval "$(brew shellenv)"
-      fi
+    done
 
-      echo "Installing packages from Brewfile..."
-      brew bundle --file ./brew/Brewfile || true
+    echo "📦 Installing core/missing packages via Homebrew..."
+    brew install stow gnupg "${MISSING_FROM_ZB[@]}"
 
+    export PATH="/opt/homebrew/bin:/opt/zerobrew/prefix/bin:$PATH"
+    echo "🔄 Refreshing PATH for current session..."
+    if [[ -f /opt/homebrew/bin/brew ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
+    export PATH="/opt/homebrew/bin:/opt/zerobrew/prefix/bin:$PATH"
+
+    if ! command -v stow >/dev/null 2>&1; then
+        echo "❌ Error: stow still not found in PATH. Checking /opt/homebrew/bin..."
+        ls /opt/homebrew/bin/stow
+    fi
 fi
+
+mise install
 
 # Zsh installation and setup
 echo "Check if zsh is already installed..."
 if ! command -v zsh >/dev/null 2>&1; then
-  echo "zsh missing"
+    echo "zsh missing"
 fi
 
 ZSH_PATH=$(command -v zsh)
 if ! grep -q "^$ZSH_PATH$" /etc/shells; then
-  echo "Adding $ZSH_PATH to /etc/shells..."
-  echo "$ZSH_PATH" | sudo tee -a /etc/shells
+    echo "Adding $ZSH_PATH to /etc/shells..."
+    echo "$ZSH_PATH" | sudo tee -a /etc/shells
 fi
 
 echo "Changing default shell to $ZSH_PATH..."
@@ -79,7 +95,7 @@ echo "New .zshenv created at $zshenv_path"
 
 # Set DOTFILES location
 if [[ -z $DOTFILES ]]; then
-  DOTFILES="$HOME/.dotfiles"
+    DOTFILES="$HOME/.dotfiles"
 fi
 
 echo "Running stow for OS type: $OS_TYPE..."
@@ -90,9 +106,8 @@ source "$DOTFILES/gpg/setup.zsh"
 echo "✅ Done! Your shell is now using zsh with dotfiles."
 
 if [[ "$OS_TYPE" == "arch" ]]; then
-  echo "We're on arch, reload hyprland config after setup."
-  hyprctl reload
+    echo "We're on arch, reload hyprland config after setup."
+    hyprctl reload
 fi
-exec zsh 
 
-
+exec zsh
