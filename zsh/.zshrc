@@ -26,9 +26,11 @@ if [[ -x "$DOTFILES/OS/${OS_TYPE}" ]]; then
     STOW_FOLDERS=$STOW_FOLDERS
 fi
 
-eval "$(mise activate zsh)"
 export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 export PATH=/home/ajg/.opencode/bin:$PATH
+
+eval "$(mise activate zsh)"
+
 
 export GIT_CONFIG_GLOBAL="$HOME/.config/git/.gitconfig"
 export GPG_TTY=$(tty)
