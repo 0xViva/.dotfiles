@@ -14,8 +14,8 @@
         "baseURL": "http://127.0.0.1:33831/v1"
       },
       "models": {
-        "Qwen3_Coder_30B_Instruct": {
-          "name": "Qwen3-Coder-30B-A3B-Instruct",
+        "GLM-4.7-Flash": {
+          "name": "GLM-4.7-Flash",
           "attachment": true,
           "tool_call": true
         }
