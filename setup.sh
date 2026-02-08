@@ -67,7 +67,7 @@ elif [[ "$OS_TYPE" == "macos" ]]; then
     fi
 fi
 
-mise install
+#mise install
 
 # Zsh installation and setup
 echo "Check if zsh is already installed..."

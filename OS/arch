@@ -42,12 +42,11 @@ PACKAGES=(
  zen-browser-bin
  jq
  walker
- gpu-screen-recorder
  xdg-desktop-portal-gtk
  xdg-desktop-portal-hyprland
  libnotify
 )
 export PACKAGES
-export STOW_FOLDERS="bin,walker,fcitx5,assets,ghostty,mako,nvim,oh-my-posh,zsh,git,hypr,waybar,swayosd,btop,fzf,mise,imv,elephant"
+export STOW_FOLDERS="bin,walker,fcitx5,assets,ghostty,mako,nvim,oh-my-posh,zsh,git,hypr,waybar,swayosd,btop,fzf,mise,imv,elephant,opencode"
 
 
