@@ -6,18 +6,24 @@ install:
 
 `./setup.sh [OS_TYPE]`
 
-To make tailwindcss and html lsp work for WSL:
+# install ai stack:
 
-`cd .local/share/nvim/mason`
-`ln -s packages/tailwindcss-language-server/node_modules/@tailwindcss @tailwindcss`
-`ln -s packages/html-lsp/node_modules/vscode-langservers-extracted vscode-langservers-extracted`
+from here: https://github.com/av/harbor
 
-install ai stack:
+`harbor llamacpp model https://huggingface.co/user/repo/file.gguf`
 
-https://github.com/av/harbor
+remove some defaults:
+`harbor defaults rm webui`
+`harbor defaults rm ollama`
 
-harbor llamacpp model https://huggingface.co/user/repo/file.gguf
+then run llamacpp:
+`harbor up llamacpp`
 
-harbor up llamacpp
+point your local opencode config towards the running llamacpp:
+check whats running `harbor ps`, apply that base URL in the `opencode.json`
 
-point your local opencode config towards the running llamacpp
+llamacpp arguments setup that works for my current desktop pc (gpu rtx4070 vram 12gb, ram 32gb, cpu i7-14700f) in `.harbor/.env`:
+
+`HARBOR_LLAMACPP_EXTRA_ARGS="--ctx-size 64000 --n-gpu-layers 24 --cache-type-k q4_0 --cache-type-v q4_0 --flash-attn on --parallel 1"`
+
+opencode says it needs at least 64k ctx-size to work properly.
