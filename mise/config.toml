@@ -7,5 +7,6 @@ rust = "latest"
 bun = "latest"
 clang = "latest"
 mold = "latest"
+task = "latest"
 
 
