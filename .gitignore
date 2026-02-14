@@ -7,3 +7,4 @@ zsh/.zsh_sessions
 
 
 fcitx5/conf/cached_layouts
+*.log

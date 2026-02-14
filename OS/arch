@@ -45,8 +45,9 @@ PACKAGES=(
  xdg-desktop-portal-gtk
  xdg-desktop-portal-hyprland
  libnotify
+ tmux
 )
 export PACKAGES
-export STOW_FOLDERS="bin,walker,fcitx5,assets,ghostty,mako,nvim,oh-my-posh,zsh,git,hypr,waybar,swayosd,btop,fzf,mise,imv,elephant,opencode"
+export STOW_FOLDERS="tmux,bin,walker,fcitx5,assets,ghostty,mako,nvim,oh-my-posh,zsh,git,hypr,waybar,swayosd,btop,fzf,mise,imv,elephant,opencode"
 
 
