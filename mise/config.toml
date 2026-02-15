@@ -8,5 +8,6 @@ bun = "latest"
 clang = "latest"
 mold = "latest"
 task = "latest"
+python = "3.11"
 
 

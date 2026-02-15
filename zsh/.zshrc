@@ -4,10 +4,11 @@ setopt ignore_eof
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
   OS_TYPE="macos"
-if [[ -f /opt/homebrew/bin/brew ]]; then
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-    fi
-    export PATH="/opt/zerobrew/prefix/bin:$PATH"
+  export PATH="/Applications/Blender.app/Contents/MacOS:$PATH"
+  if [[ -f /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
+  export PATH="/opt/zerobrew/prefix/bin:$PATH"
 elif grep -qi microsoft /proc/version 2>/dev/null; then
   OS_TYPE="wsl"
   alias fd="fdfind"

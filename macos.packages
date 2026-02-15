@@ -16,3 +16,4 @@ ca-certificates
 libssh2
 mise
 oh-my-posh
+markdownlint-cli

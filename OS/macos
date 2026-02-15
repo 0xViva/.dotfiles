@@ -1,3 +1,2 @@
 #!/usr/bin/env zsh
-export BREWFILE_PATH="./brew/Brewfile"
 export STOW_FOLDERS="tmux,git,ghostty,nvim,oh-my-posh,sketchybar,aerospace,zsh,fzf,mise"
