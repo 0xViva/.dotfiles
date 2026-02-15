@@ -1,13 +1,14 @@
 [tools]
 go = "latest"
-java = "21"
+java = "latest"
 node = "latest"
-dotnet = "10"
+dotnet = "latest"
 rust = "latest"
 bun = "latest"
 clang = "latest"
 mold = "latest"
 task = "latest"
-python = "3.11"
+python = "latest"
+air = "latest"
 
 
