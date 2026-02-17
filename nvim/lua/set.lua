@@ -81,6 +81,27 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+-- Buffer-local toggle
+vim.keymap.set('n', '<leader>tf', function()
+  vim.b.disable_autoformat = not vim.b.disable_autoformat
+
+  if vim.b.disable_autoformat then
+    vim.notify('Autoformat disabled (buffer)', vim.log.levels.INFO)
+  else
+    vim.notify('Autoformat enabled (buffer)', vim.log.levels.INFO)
+  end
+end, { desc = 'Toggle autoformat (buffer)' })
+
+-- Global toggle
+vim.keymap.set('n', '<leader>tF', function()
+  vim.g.disable_autoformat = not vim.g.disable_autoformat
+
+  if vim.g.disable_autoformat then
+    vim.notify('Autoformat disabled (global)', vim.log.levels.INFO)
+  else
+    vim.notify('Autoformat enabled (global)', vim.log.levels.INFO)
+  end
+end, { desc = 'Toggle autoformat (global)' })
 
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
 vim.keymap.set('n', 'q', function()
