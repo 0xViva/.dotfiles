@@ -21,6 +21,7 @@ if [[ -f "$GPG_CONF" ]] && grep -q "^pinentry-program" "$GPG_CONF"; then
 else
     echo "pinentry-program $PINENTRY_PATH" >> "$GPG_CONF"
 fi
+git config --global gpg.program "$(realpath ~/.dotfiles/bin/gpg-fugitive)"
 
 # Restart gpg-agent
 gpgconf --kill gpg-agent

@@ -10,3 +10,6 @@
     insteadOf = https://github.com/
 [init]
 	defaultBranch = master
+    
+[gpg]
+	program = /home/ajg/.dotfiles/bin/gpg-fugitive

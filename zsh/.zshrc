@@ -2,7 +2,7 @@
 echo ".zshrc loaded"
 setopt ignore_eof
 
-#export EDITOR="nvim"
+export EDITOR="nvim"
 
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
@@ -50,12 +50,10 @@ if [[ -s "$HOME/.bun/_bun" ]]; then
   source "$HOME/.bun/_bun"
 fi
 
+# Auto-start tmux
+if command -v tmux >/dev/null 2>&1; then
+  if [ -z "$TMUX" ]; then
+    tmux attach -t main || tmux new -s main
+  fi
+fi
 
-#alias
-alias claude="/home/august/.claude/local/claude"
-alias todo="~/go/bin/godoit"
-
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
