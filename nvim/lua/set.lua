@@ -49,11 +49,12 @@ vim.opt.splitbelow = true
 
 -- Scrolling
 vim.opt.scrolloff = 10
--- clipboard
 
+-- clipboard
 vim.schedule(function()
-  vim.opt.clipboard = 'unnamedplus'
+  vim.opt.clipboard = "unnamed,unnamedplus"
 end)
+
 
 if vim.fn.has 'wsl' == 1 then
   vim.g.clipboard = {
