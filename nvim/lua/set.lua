@@ -50,26 +50,63 @@ vim.opt.splitbelow = true
 -- Scrolling
 vim.opt.scrolloff = 10
 
--- clipboard
-vim.schedule(function()
-  vim.opt.clipboard = "unnamed,unnamedplus"
-end)
-
-
-if vim.fn.has 'wsl' == 1 then
-  vim.g.clipboard = {
-    name = 'WslClipboard',
-    copy = {
-      ['+'] = 'clip.exe',
-      ['*'] = 'clip.exe',
-    },
-    paste = {
-      ['+'] = 'powershell.exe -NoProfile -Command Get-Clipboard',
-      ['*'] = 'powershell.exe -NoProfile -Command Get-Clipboard',
-    },
-    cache_enabled = 0,
-  }
+local function executable(name)
+  return vim.fn.executable(name) == 1
 end
+
+local function is_wsl()
+  return vim.fn.has 'wsl' == 1
+end
+
+local function is_ssh()
+  return vim.env.SSH_TTY ~= nil
+end
+
+local function is_tmux()
+  return vim.env.TMUX ~= nil
+end
+
+local function setup_clipboard()
+  -- Always try system clipboard first
+  vim.opt.clipboard = 'unnamedplus'
+
+  -- 3. WSL
+  if is_wsl() then
+    vim.g.clipboard = {
+      name = 'wsl-clipboard',
+      copy = {
+        ['+'] = 'clip.exe',
+        ['*'] = 'clip.exe',
+      },
+      paste = {
+        ['+'] = 'powershell.exe -NoProfile -Command Get-Clipboard',
+        ['*'] = 'powershell.exe -NoProfile -Command Get-Clipboard',
+      },
+      cache_enabled = 0,
+    }
+    return
+  end
+
+  -- 6. SSH / tmux fallback using OSC52 (Neovim 0.10+)
+  if is_ssh() or is_tmux() then
+    local osc52 = require 'vim.ui.clipboard.osc52'
+
+    vim.g.clipboard = {
+      name = 'OSC52',
+      copy = {
+        ['+'] = osc52.copy '+',
+        ['*'] = osc52.copy '*',
+      },
+      paste = {
+        ['+'] = osc52.paste '+',
+        ['*'] = osc52.paste '*',
+      },
+    }
+    return
+  end
+end
+
+setup_clipboard()
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
