@@ -2,6 +2,9 @@
 echo ".zshrc loaded"
 setopt ignore_eof
 
+export EDITOR="nvim"
+
+
 if [[ "$(uname -s)" == "Darwin" ]]; then
   OS_TYPE="macos"
   export PATH="/Applications/Blender.app/Contents/MacOS:$PATH"
