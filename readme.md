@@ -1,5 +1,4 @@
-
-# Dotfiles symlinked on my machine
+# 0xViva's .dotfiles
 
 
 install:
