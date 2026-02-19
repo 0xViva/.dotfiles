@@ -2,7 +2,7 @@
 echo ".zshrc loaded"
 setopt ignore_eof
 
-export EDITOR="nvim"
+#export EDITOR="nvim"
 
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
