@@ -1,7 +1,6 @@
 #!/usr/bin/env zsh
 PACKAGES=(
  git
- neovim
  stow
  zsh
  fd
