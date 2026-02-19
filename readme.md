@@ -1,6 +1,5 @@
 # 0xViva's .dotfiles
 
-
 install:
 
 `./setup.sh [OS_TYPE]`
