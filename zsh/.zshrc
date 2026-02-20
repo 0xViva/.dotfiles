@@ -24,7 +24,6 @@ compinit
 
 source "$HOME/.config/fzf/fzf.zsh"
 
-# Auto-start tmux
-if [[ -z "$TMUX" && $- == *i* ]]; then
+if [[ -z "$TMUX" && -z "$SSH_CONNECTION" && $- == *i* ]]; then
   tmux attach -t main 2>/dev/null || tmux new -s main
 fi
