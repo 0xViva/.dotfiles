@@ -2,58 +2,29 @@
 echo ".zshrc loaded"
 setopt ignore_eof
 
-export EDITOR="nvim"
+export GIT_CONFIG_GLOBAL="$HOME/.config/git/.gitconfig"
+export GIT_EDITOR="nvim"
+export GPG_TTY=$(tty)
 
-
-if [[ "$(uname -s)" == "Darwin" ]]; then
-  OS_TYPE="macos"
-  export PATH="/Applications/Blender.app/Contents/MacOS:$PATH"
-  if [[ -f /opt/homebrew/bin/brew ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  fi
-  export PATH="/opt/zerobrew/prefix/bin:$PATH"
-elif grep -qi microsoft /proc/version 2>/dev/null; then
-  OS_TYPE="wsl"
+if [[ -f /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+if grep -qi microsoft /proc/version 2>/dev/null; then
   alias fd="fdfind"
-elif [[ -f /etc/arch-release ]]; then
-  OS_TYPE="arch"
-else
-  OS_TYPE="unknown"
+fi
+
+eval "$(mise activate zsh)"
+
+if command -v oh-my-posh >/dev/null 2>&1; then
+  eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/config.json)"
 fi
 
 autoload -Uz compinit
 compinit
 
-export DOTFILES="$HOME/.dotfiles"
-if [[ -x "$DOTFILES/OS/${OS_TYPE}" ]]; then
-    source "$DOTFILES/OS/${OS_TYPE}"
-    STOW_FOLDERS=$STOW_FOLDERS
-fi
-
-export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
-export PATH=/home/ajg/.opencode/bin:$PATH
-
-eval "$(mise activate zsh)"
-
-
-export GIT_CONFIG_GLOBAL="$HOME/.config/git/.gitconfig"
-export GPG_TTY=$(tty)
-
-  if command -v oh-my-posh >/dev/null 2>&1; then
-    eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/config.json)"
-  fi
-
 source "$HOME/.config/fzf/fzf.zsh"
 
-# Bun shell completions
-if [[ -s "$HOME/.bun/_bun" ]]; then
-  source "$HOME/.bun/_bun"
-fi
-
 # Auto-start tmux
-if command -v tmux >/dev/null 2>&1; then
-  if [ -z "$TMUX" ]; then
-    tmux attach -t main || tmux new -s main
-  fi
+if [[ -z "$TMUX" && $- == *i* ]]; then
+  exec tmux
 fi
-

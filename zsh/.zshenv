@@ -1,13 +1,27 @@
 #!/bin/zsh
-export PATH="$PATH:/Users/august/.foundry/bin"
-export PATH=/home/august/.opencode/bin:$PATH
 
-if [ ! -f /etc/arch-release ] && [ -f "$HOME/.cargo/env" ]; then
-  . "$HOME/.cargo/env"
+export EDITOR="nvim"
+export DOTFILES="$HOME/.dotfiles"
+
+typeset -U path
+
+# Base paths (always)
+path=(
+  $HOME/.local/bin
+  $HOME/bin
+  $HOME/.foundry/bin
+  $HOME/.opencode/bin
+  $HOME/.local/share/solana/install/active_release/bin
+  $path
+)
+
+# macOS-only additions
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  path=(
+    /Applications/Blender.app/Contents/MacOS
+    /opt/zerobrew/prefix/bin
+    $path
+  )
 fi
 
-# zerobrew
-export PATH="/Users/august/.local/bin:$PATH"
-
-# zerobrew
-export PATH="/opt/zerobrew/prefix/bin:$PATH"
+export PATH
