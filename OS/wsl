@@ -16,4 +16,4 @@ PACKAGES=(
  tmux
  )
 export PACKAGES
-export STOW_FOLDERS="nvim,oh-my-posh,zsh,git,fzf,mise"
+export STOW_FOLDERS="tmux,nvim,oh-my-posh,zsh,git,fzf,mise"
