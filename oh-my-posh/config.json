@@ -8,11 +8,8 @@
 				{
 					"foreground": "#ffbebc",
 					"leading_diamond": "<#ff70a6> \ue200 </>",
-					"properties": {
-						"display_host": true
-					},
 					"style": "diamond",
-					"template": "{{ .UserName }} <#ffffff>on</>",
+					"template": "{{ .UserName }}{{ if .SSHSession }}@{{ .HostName }}{{ end }} <#ffffff>on</>",
 					"type": "session"
 				},
 				{
@@ -95,7 +92,9 @@
 				},
 				{
 					"foreground": "#A9FFB4",
-					"foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
+					"foreground_templates": [
+						"{{ if gt .Code 0 }}#ef5350{{ end }}"
+					],
 					"properties": {
 						"always_enabled": true
 					},
