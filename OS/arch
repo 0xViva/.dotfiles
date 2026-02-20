@@ -49,6 +49,6 @@ PACKAGES=(
  markdownlint-cli
 )
 export PACKAGES
-export STOW_FOLDERS="tmux,bin,walker,fcitx5,assets,ghostty,mako,nvim,oh-my-posh,zsh,git,hypr,waybar,swayosd,btop,fzf,mise,imv,elephant,opencode"
+export STOW_FOLDERS="zsh,tmux,bin,walker,fcitx5,assets,ghostty,mako,nvim,oh-my-posh,git,hypr,waybar,swayosd,btop,fzf,mise,imv,elephant,opencode"
 
 

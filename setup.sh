@@ -87,16 +87,9 @@ fi
 echo "Changing default shell to $ZSH_PATH..."
 chsh -s "$ZSH_PATH"
 
-# Cleanup old zsh config
 echo "Cleaning up existing Zsh config files..."
 rm -f $HOME/.zshrc $HOME/.zshenv $HOME/.zprofile $HOME/.zlogin
 
-# Set ZDOTDIR via .zshenv
-zshenv_path="$HOME/.zshenv"
-echo 'export ZDOTDIR="$HOME/.dotfiles/zsh"' > "$zshenv_path"
-echo "New .zshenv created at $zshenv_path"
-
-# Set DOTFILES location
 if [[ -z $DOTFILES ]]; then
     DOTFILES="$HOME/.dotfiles"
 fi

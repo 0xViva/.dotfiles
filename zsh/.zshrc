@@ -1,5 +1,3 @@
-#!/bin/zsh
-echo ".zshrc loaded"
 setopt ignore_eof
 
 export GIT_CONFIG_GLOBAL="$HOME/.config/git/.gitconfig"
@@ -9,6 +7,7 @@ export GPG_TTY=$(tty)
 if [[ -f /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
+
 if grep -qi microsoft /proc/version 2>/dev/null; then
   alias fd="fdfind"
 fi
@@ -19,11 +18,15 @@ if command -v oh-my-posh >/dev/null 2>&1; then
   eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/config.json)"
 fi
 
-autoload -Uz compinit
-compinit
-
 source "$HOME/.config/fzf/fzf.zsh"
 
-if [[ -z "$TMUX" && -z "$SSH_CONNECTION" && $- == *i* ]]; then
-  tmux attach -t main 2>/dev/null || tmux new -s main
-fi
+TMUX_SESSIONIZER="$DOTFILES/bin/tmux-sessionizer"
+
+bindkey -s '^p' "$TMUX_SESSIONIZER\n"
+bindkey -s '\eh' "$TMUX_SESSIONIZER -s 0\n"
+bindkey -s '\et' "$TMUX_SESSIONIZER -s 1\n"
+bindkey -s '\en' "$TMUX_SESSIONIZER -s 2\n"
+bindkey -s '\es' "$TMUX_SESSIONIZER -s 3\n"
+
+autoload -Uz compinit
+compinit

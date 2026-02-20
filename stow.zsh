@@ -1,18 +1,18 @@
 #!/usr/bin/env zsh
 
-pushd "$DOTFILES"
+pushd "$DOTFILES" || exit 1
 
 for folder in ${(s:,:)STOW_FOLDERS}; do
-    if [[ "$folder" == "tmux" ]]; then
-        echo "stow $folder -> $HOME"
-        stow -D "$folder"
-        stow "$folder"
+    if [[ "$folder" == "zsh" ]]; then
+        target="$HOME"
     else
-        echo "stow $folder -> ~/.config/$folder"
-        mkdir -p "$HOME/.config/$folder"
-        stow -D -t "$HOME/.config/$folder" "$folder"
-        stow -t "$HOME/.config/$folder" "$folder"
+        target="$HOME/.config/$folder"
+        mkdir -p "$target"
     fi
+
+    echo "stow $folder -> $target"
+    stow -D -t "$target" "$folder"
+    stow -t "$target" "$folder"
 done
 
 popd
