@@ -13,6 +13,7 @@ PACKAGES=(
  unzip
  mise
  markdownlint-cli
+ tmux
  )
 export PACKAGES
 export STOW_FOLDERS="nvim,oh-my-posh,zsh,git,fzf,mise"
