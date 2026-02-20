@@ -13,8 +13,7 @@ return {
     dependencies = {
       { 'williamboman/mason.nvim', opts = {} },
       'williamboman/mason-lspconfig.nvim',
-      'WhoIsSethDaniel/mason-tool-installer.nvim',
-      { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim',       opts = {} },
       'mfussenegger/nvim-jdtls',
       'hrsh7th/cmp-nvim-lsp',
     },
@@ -111,8 +110,6 @@ return {
         gradle_ls = {},
       }
 
-      -- Ensure Mason installs the servers
-      require('mason-tool-installer').setup { ensure_installed = vim.tbl_keys(servers) }
 
       -- Mason-lspconfig setup
       require('mason-lspconfig').setup { ensure_installed = vim.tbl_keys(servers), automatic_installation = true }
