@@ -27,6 +27,9 @@ if [[ "$OS_TYPE" == "arch" ]]; then
     yay -S --noconfirm --needed --quiet "${PACKAGES[@]}" < /dev/null
     sudo systemctl enable --now bluetooth.service
 
+elif [[ "$OS_TYPE" == "wsl" ]]; then
+    sudo apt update
+    sudo apt install -y "${PACKAGES[@]}"
 elif [[ "$OS_TYPE" == "macos" ]]; then
     if ! command -v zb >/dev/null 2>&1; then
         echo "Installing zerobrew..."

@@ -3,16 +3,14 @@ PACKAGES=(
  git
  stow
  zsh
- fd
- fzf
  fd-find
+ fzf
  ripgrep
  golang
  nodejs
  npm
  unzip
  mise
- markdownlint-cli
  tmux
  )
 export PACKAGES
