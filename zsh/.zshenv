@@ -1,11 +1,8 @@
 #!/bin/zsh
-
 export EDITOR="nvim"
 export DOTFILES="$HOME/.dotfiles"
 
 typeset -U path
-
-# Base paths (always)
 path=(
   $HOME/.local/bin
   $HOME/bin
@@ -14,8 +11,6 @@ path=(
   $HOME/.local/share/solana/install/active_release/bin
   $path
 )
-
-# macOS-only additions
 if [[ "$(uname -s)" == "Darwin" ]]; then
   path=(
     /Applications/Blender.app/Contents/MacOS
@@ -23,5 +18,16 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     $path
   )
 fi
-
 export PATH
+
+case "$(uname -s)" in
+  Darwin)  OS_TYPE="macos" ;;
+  Linux)   OS_TYPE="linux" ;;
+  *)       OS_TYPE="unknown" ;;
+esac
+
+OS_FILE="$DOTFILES/OS/$OS_TYPE"
+
+if [[ -f "$OS_FILE" ]]; then
+  source "$OS_FILE"
+fi
