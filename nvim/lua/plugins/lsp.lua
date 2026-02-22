@@ -18,122 +18,87 @@ return {
       'hrsh7th/cmp-nvim-lsp',
     },
     config = function()
-      -- Diagnostics config
-      vim.diagnostic.config {
+      -- 1. Setup UI & Diagnostics
+      vim.diagnostic.config({
         severity_sort = true,
         float = { border = 'rounded', source = 'if_many' },
         underline = { severity = vim.diagnostic.severity.ERROR },
-        virtual_text = {
-          source = 'if_many',
-          spacing = 2,
-          format = function(d)
-            return d.message
-          end,
-        },
-      }
+        virtual_text = { source = 'if_many', spacing = 2 },
+      })
 
-      -- LSP keymaps
+      -- 2. Define Keymaps for when an LSP attaches
       vim.api.nvim_create_autocmd('LspAttach', {
-        group = vim.api.nvim_create_augroup('lsp_attach', { clear = true }),
+        group = vim.api.nvim_create_augroup('user_lsp_attach', { clear = true }),
         callback = function(event)
-          local map = function(keys, func, desc, mode)
-            mode = mode or 'n'
-            vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+          local map = function(keys, func, desc)
+            vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
-          map('gd', function()
-            require('telescope.builtin').lsp_definitions()
-          end, '[G]oto [D]efinition')
-          map('gr', function()
-            require('telescope.builtin').lsp_references()
-          end, '[G]oto [R]eferences')
-          map('gI', function()
-            require('telescope.builtin').lsp_implementations()
-          end, '[G]oto [I]mplementation')
-          map('<leader>D', function()
-            require('telescope.builtin').lsp_type_definitions()
-          end, 'Type [D]efinition')
-          map('<leader>ds', function()
-            require('telescope.builtin').lsp_document_symbols()
-          end, '[D]ocument [S]ymbols')
-          map('<leader>ws', function()
-            require('telescope.builtin').lsp_dynamic_workspace_symbols()
-          end, '[W]orkspace [S]ymbols')
+          local builtin = require('telescope.builtin')
+          map('gd', builtin.lsp_definitions, '[G]oto [D]efinition')
+          map('gr', builtin.lsp_references, '[G]oto [R]eferences')
+          map('gI', builtin.lsp_implementations, '[G]oto [I]mplementation')
+          map('<leader>D', builtin.lsp_type_definitions, 'Type [D]efinition')
+          map('<leader>ds', builtin.lsp_document_symbols, '[D]ocument [S]ymbols')
           map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
+          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
           map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.supports_method 'textDocument/documentHighlight' then
-            local hl_augroup = vim.api.nvim_create_augroup('lsp_highlight', { clear = false })
-            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-              buffer = event.buf,
-              group = hl_augroup,
-              callback = vim.lsp.buf.document_highlight,
-            })
-            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-              buffer = event.buf,
-              group = hl_augroup,
-              callback = vim.lsp.buf.clear_references,
-            })
-          end
+          map('K', vim.lsp.buf.hover, 'Hover Documentation')
         end,
       })
 
-      -- LSP capabilities
+      -- 3. Prepare Capabilities (Broadcasting what features we support to the LSP)
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
-      -- LSP servers
+      -- 4. Server Settings Table
       local servers = {
         clangd = {},
-        cmake = {},
-        cssls = {},
-        css_variables = {},
         gopls = {},
         html = { filetypes = { 'html', 'templ' } },
-        htmx = { filetypes = { 'html', 'templ' } },
         lua_ls = { settings = { Lua = { completion = { callSnippet = 'Replace' } } } },
         rust_analyzer = {},
-        tailwindcss = {
-          filetypes_exclude = { 'markdown' },
-          filetypes_include = { 'templ' },
-          settings = {
-            tailwindCSS = {
-              includeLanguages = { templ = 'html', elixir = 'html-eex', eelixir = 'html-eex', heex = 'html-eex' },
-            },
-          },
-        },
-        templ = {},
         ts_ls = {},
-        jsonls = {},
-        gradle_ls = {},
+        tailwindcss = {
+          filetypes_include = { 'templ' },
+          settings = { tailwindCSS = { includeLanguages = { templ = 'html' } } },
+        },
+        jdtls = {},
+
       }
 
+      -- 5. Mason Setup
+      require('mason').setup()
+      require('mason-lspconfig').setup({
+        ensure_installed = vim.tbl_keys(servers),
+        handlers = {
+          -- Default handler for most servers
+          function(server_name)
+            -- Skip jdtls here! We handle it via an Autocmd/nvim-jdtls
+            if server_name == "jdtls" then return end
 
-      -- Mason-lspconfig setup
-      require('mason-lspconfig').setup { ensure_installed = vim.tbl_keys(servers), automatic_installation = true }
+            local server = servers[server_name] or {}
+            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+            require('lspconfig')[server_name].setup(server)
+          end,
+        },
+      })
 
-      -- Attach servers using new API
-      for name, opts in pairs(servers) do
-        opts.capabilities = vim.tbl_deep_extend('force', {}, capabilities, opts.capabilities or {})
-        if vim.lsp.config and vim.lsp.enable then
-          vim.lsp.config(name, opts)
-          vim.lsp.enable(name)
-        else
-          require('lspconfig')[name].setup(opts)
-        end
-      end
-
-      -- Java LSP (jdtls) special
-      local jdtls = require 'jdtls'
+      -- 6. Dedicated JDTLS Setup (Required for Java)
       vim.api.nvim_create_autocmd('FileType', {
         pattern = 'java',
         callback = function()
-          jdtls.start_or_attach {
-            cmd = { 'java-lsp.sh' }, -- or your existing cmd
-            root_dir = require('jdtls.setup').find_root { '.git', 'mvnw', 'gradlew' },
+          local jdtls = require('jdtls')
+
+          -- Config for the server
+          local config = {
+            cmd = { 'jdtls' }, -- Mason installs the 'jdtls' binary to your path
+            root_dir = jdtls.setup.find_root({ '.git', 'mvnw', 'gradlew' }),
+            capabilities = capabilities,
           }
+
+          -- Start or attach
+          jdtls.start_or_attach(config)
         end,
       })
     end,
