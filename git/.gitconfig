@@ -2,6 +2,8 @@
 	name = 0xViva
 	email = 0xViva@proton.me
 	signingkey = C64D962517311150
+[include]
+	path = ~/.gitconfig.local
 [commit]
 	gpgsign = true
 [core]
@@ -11,5 +13,3 @@
 [init]
 	defaultBranch = master
     
-[gpg]
-	program = /Users/august/.dotfiles/bin/gpg-fugitive
