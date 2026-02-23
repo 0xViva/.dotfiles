@@ -1,6 +1,7 @@
 #!/bin/zsh
 
 GPG_CONF="$HOME/.gnupg/gpg-agent.conf"
+LOCAL_GITCONFIG="$HOME/.gitconfig.local"
 
 mkdir -p ~/.gnupg
 
@@ -21,7 +22,7 @@ if [[ -f "$GPG_CONF" ]] && grep -q "^pinentry-program" "$GPG_CONF"; then
 else
     echo "pinentry-program $PINENTRY_PATH" >> "$GPG_CONF"
 fi
-git config --global gpg.program "$(realpath ~/.dotfiles/bin/gpg-fugitive)"
+git config --file "$LOCAL_GITCONFIG" gpg.program "$(realpath ~/.dotfiles/bin/gpg-fugitive)"
 
 # Restart gpg-agent
 gpgconf --kill gpg-agent
