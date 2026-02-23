@@ -1,2 +1,2 @@
 #!/usr/bin/env zsh
-export STOW_FOLDERS="zsh,tmux,git,ghostty,nvim,oh-my-posh,sketchybar,aerospace,zsh,fzf,mise"
+export STOW_FOLDERS="zsh,tmux,git,ghostty,nvim,oh-my-posh,aerospace,zsh,fzf,mise"

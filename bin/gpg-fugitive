@@ -2,4 +2,9 @@
 if [ -n "$FUGITIVE" ]; then
   set -- --pinentry-mode loopback "$@"
 fi
-exec /usr/bin/gpg "$@"
+
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    exec /opt/homebrew/bin/gpg "$@"
+else
+    exec /usr/bin/gpg "$@"
+fi
