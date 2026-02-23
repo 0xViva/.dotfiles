@@ -23,10 +23,6 @@ source "$HOME/.config/fzf/fzf.zsh"
 TMUX_SESSIONIZER="$DOTFILES/bin/tmux-sessionizer"
 
 bindkey -s '^p' "$TMUX_SESSIONIZER\n"
-bindkey -s '\eh' "$TMUX_SESSIONIZER -s 0\n"
-bindkey -s '\et' "$TMUX_SESSIONIZER -s 1\n"
-bindkey -s '\en' "$TMUX_SESSIONIZER -s 2\n"
-bindkey -s '\es' "$TMUX_SESSIONIZER -s 3\n"
 
 autoload -Uz compinit
 compinit
