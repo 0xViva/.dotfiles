@@ -6,15 +6,19 @@ return {
   config = function()
     require("nvim-treesitter").setup()
 
-    require("nvim-treesitter").install({
+    local parsers = {
       "latex", "bash", "c", "diff", "tsx", "html", "lua", "luadoc",
       "markdown", "markdown_inline", "query", "vim", "vimdoc",
       "go", "templ", "css", "elixir",
-    })
+    }
 
-    vim.api.nvim_create_autocmd('FileType', {
-      pattern = { '<filetype>' },
-      callback = function() vim.treesitter.start() end,
+    require("nvim-treesitter").install(parsers)
+
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = parsers,
+      callback = function()
+        vim.treesitter.start()
+      end,
     })
   end,
 }
