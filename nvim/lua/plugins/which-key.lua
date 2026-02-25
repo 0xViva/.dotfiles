@@ -5,7 +5,6 @@ return { -- Useful plugin to show you pending keybinds.
     delay = 0,
     icons = {
       mappings = vim.g.have_nerd_font,
-      -- default which-key.nvim defined Nerd Font icons, otherwise define a string table
       keys = {},
     },
     spec = {

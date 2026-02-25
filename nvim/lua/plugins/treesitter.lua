@@ -1,24 +1,36 @@
 return {
-  "nvim-treesitter/nvim-treesitter",
-  build = ":TSUpdate",
+  'nvim-treesitter/nvim-treesitter',
+  build = ':TSUpdate',
   lazy = false,
 
   config = function()
-    require("nvim-treesitter").setup()
+    require('nvim-treesitter.configs').setup {
+      ensure_installed = {
+        'latex',
+        'bash',
+        'c',
+        'diff',
+        'tsx',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'go',
+        'templ',
+        'css',
+        'elixir',
+      },
+      ignore_install = {},
+      sync_install = false,
+      auto_install = true,
+      modules = {},
 
-    local parsers = {
-      "latex", "bash", "c", "diff", "tsx", "html", "lua", "luadoc",
-      "markdown", "markdown_inline", "query", "vim", "vimdoc",
-      "go", "templ", "css", "elixir",
+      highlight = { enable = true },
+      indent = { enable = true },
     }
-
-    require("nvim-treesitter").install(parsers)
-
-    vim.api.nvim_create_autocmd("FileType", {
-      pattern = parsers,
-      callback = function()
-        vim.treesitter.start()
-      end,
-    })
   end,
 }
