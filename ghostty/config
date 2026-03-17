@@ -36,21 +36,9 @@ cursor-style = "block"
 cursor-style-blink = false
 shell-integration-features = no-cursor
 
-# Keyboard bindings
-keybind = shift+insert=paste_from_clipboard
-keybind = control+insert=copy_to_clipboard
+keybind = control+c=copy_to_clipboard
+keybind = control+v=paste_from_clipboard
 
-keybind = alt+left=unbind
-keybind = alt+right=unbind
-
-keybind = alt+c=close_surface
-keybind = alt+r=new_split:right
-keybind = alt+d=new_split:down
-
-keybind = alt+j=goto_split:up
-keybind = alt+k=goto_split:down
-keybind = alt+h=goto_split:left
-keybind = alt+l=goto_split:right
 keybind = shift+enter=text:\x1b\r
 
 # SSH session terminfo
