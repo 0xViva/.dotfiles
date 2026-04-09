@@ -11,6 +11,9 @@ return {
       'markdown_inline', 'query', 'vim', 'vimdoc', 'go', 'templ', 'css', 'elixir',
     }
 
+
+    require('nvim-treesitter').install(languages)
+
     local filetypes = {}
     for _, lang in ipairs(languages) do
       for _, ft in ipairs(vim.treesitter.language.get_filetypes(lang)) do
@@ -22,8 +25,6 @@ return {
       pattern = filetypes,
       callback = function()
         vim.treesitter.start()
-        vim.wo[0][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-        vim.wo[0][0].foldmethod = 'expr'
       end,
     })
   end,

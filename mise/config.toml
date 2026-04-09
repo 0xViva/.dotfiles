@@ -12,5 +12,6 @@ python = "3.12.12"
 air = "latest"
 lua = "5.1"
 neovim = "latest"
+tree-sitter = "latest"
 
 
