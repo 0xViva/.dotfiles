@@ -1,8 +1,11 @@
 #!/usr/bin/env zsh
 
-pushd "$DOTFILES" || exit 1
+set -e
+
+pushd "$DOTFILES" >/dev/null || exit 1
 
 for folder in ${(s:,:)STOW_FOLDERS}; do
+
     if [[ "$folder" == "zsh" ]]; then
         target="$HOME"
     else
@@ -10,9 +13,14 @@ for folder in ${(s:,:)STOW_FOLDERS}; do
         mkdir -p "$target"
     fi
 
-    echo "stow $folder -> $target"
-    stow -D -t "$target" "$folder"
+    echo "processing: $folder -> $target"
+
+    # safe unstow (ignore failures)
+    stow -D -t "$target" "$folder" >/dev/null 2>&1 || true
+
+    # ensure clean reapply
     stow -t "$target" "$folder"
+
 done
 
-popd
+popd >/dev/null
