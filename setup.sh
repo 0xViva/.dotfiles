@@ -98,10 +98,8 @@ echo "Running stow for OS type: $OS_TYPE..."
 STOW_FOLDERS=$STOW_FOLDERS DOTFILES=$DOTFILES ./stow.zsh
 
 echo "Setting up systemd user services..."
-
-systemctl --user daemon-reload || true
-systemctl --user enable elephant.service || true
-systemctl --user start elephant.service || true
+systemctl --user daemon-reload
+systemctl --user enable --now elephant.service
 
 echo "Setup gpg-agent..."
 source "$DOTFILES/gpg/setup.zsh"
