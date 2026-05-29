@@ -4,6 +4,10 @@ install:
 
 `./setup.sh [OS_TYPE]`
 
+keyboard / keychron k2 v3 setup:
+`keychron-fix.md`
+`https://github.com/earthphum/LinuxDocuments/blob/main/Arch/fixed/keychron-fix.md`
+
 # install ai stack:
 
 from here: https://github.com/av/harbor
