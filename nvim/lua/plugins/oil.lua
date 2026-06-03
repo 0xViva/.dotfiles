@@ -88,7 +88,13 @@ return {
         end,
         -- This function defines what will never be shown, even when `show_hidden` is set
         is_always_hidden = function(name, bufnr)
-          return false
+          local show_hidden = require("oil.config").view_options.show_hidden
+
+          if show_hidden then
+            return false
+          end
+
+          return name:match("_templ%.go$")
         end,
         -- Sort file names with numbers in a more intuitive order for humans.
         -- Can be "fast", true, or false. "fast" will turn it off for large directories.
