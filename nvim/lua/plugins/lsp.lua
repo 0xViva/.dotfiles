@@ -28,7 +28,7 @@ return {
       },
     },
   },
-  { 'j-hui/fidget.nvim', opts = {} },
+  { 'j-hui/fidget.nvim',      opts = {} },
   { 'mfussenegger/nvim-jdtls' },
   { 'hrsh7th/cmp-nvim-lsp' },
   {
@@ -60,7 +60,8 @@ return {
         end,
       })
 
-      local capabilities = vim.tbl_deep_extend('force', vim.lsp.protocol.make_client_capabilities(), require('cmp_nvim_lsp').default_capabilities())
+      local capabilities = vim.tbl_deep_extend('force', vim.lsp.protocol.make_client_capabilities(),
+        require('cmp_nvim_lsp').default_capabilities())
 
       local servers = {
         clangd = {},
@@ -77,6 +78,15 @@ return {
           },
         },
         ts_ls = {},
+        ols = {
+          init_options = {
+            checker_args = "-strict-style",
+            collections = {
+              { name = "shared", path = vim.fn.expand('$HOME/odin-lib') }
+            },
+          },
+
+        },
         tailwindcss = {
           filetypes_include = { 'templ' },
           settings = { tailwindCSS = { includeLanguages = { templ = 'html' } } },

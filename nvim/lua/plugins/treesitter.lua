@@ -8,7 +8,7 @@ return {
 
     local languages = {
       'bash', 'c', 'diff', 'tsx', 'html', 'lua', 'luadoc', 'markdown',
-      'markdown_inline', 'query', 'vim', 'vimdoc', 'go', 'templ', 'css', 'elixir',
+      'markdown_inline', 'query', 'vim', 'vimdoc', 'go', 'templ', 'css', 'elixir', 'odin'
     }
 
 

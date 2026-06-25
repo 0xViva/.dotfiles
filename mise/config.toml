@@ -13,5 +13,6 @@ air = "latest"
 lua = "5.1"
 neovim = "0.12.2"
 tree-sitter = "latest"
+odin = "dev-2026-06"
 
 

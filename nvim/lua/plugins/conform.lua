@@ -36,6 +36,7 @@ return {
       c = { 'clang-format' },
       cpp = { 'clang-format' },
       elixir = { 'mix' },
+      odin = { 'odinfmt' },
     },
   },
 }
