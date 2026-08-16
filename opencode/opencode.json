@@ -1,5 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "lsp": true,
   "provider": {
     "harbor-llamacpp": {
       "npm": "@ai-sdk/openai-compatible",

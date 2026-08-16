@@ -10,7 +10,7 @@ return {
     local basename = vim.fs.basename(cwd)
     _99.setup({
       provider = _99.Providers.OpenCodeProvider, -- default: OpenCodeProvider
-      model = "opencode/deepseek-v4-flash-free",
+      model = "opencode/deepseek-v4-flash-high",
       logger = {
         level = _99.DEBUG,
         path = "/tmp/" .. basename .. ".99.debug",

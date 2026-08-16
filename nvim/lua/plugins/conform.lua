@@ -31,7 +31,7 @@ return {
     formatters_by_ft = {
       lua = { 'stylua' },
       javascript = { 'prettierd', 'prettier', stop_after_first = true },
-      json = { 'prettierd', 'prettier', stop_after_first = true },
+      json = { 'jq' },
       java = { 'google-java-format' },
       c = { 'clang-format' },
       cpp = { 'clang-format' },
