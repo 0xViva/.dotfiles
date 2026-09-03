@@ -97,15 +97,15 @@ fi
 echo "Running stow for OS type: $OS_TYPE..."
 STOW_FOLDERS=$STOW_FOLDERS DOTFILES=$DOTFILES ./stow.zsh
 
-echo "Setting up systemd user services..."
-systemctl --user daemon-reload
-systemctl --user enable --now elephant.service
 
 echo "Setup gpg-agent..."
 source "$DOTFILES/gpg/setup.zsh"
 echo "✅ Done! Your shell is now using zsh with dotfiles."
 
 if [[ "$OS_TYPE" == "arch" ]]; then
+    echo "Setting up systemd user services..."
+    systemctl --user daemon-reload
+    systemctl --user enable --now elephant.service
     echo "We're on arch, reload hyprland config after setup."
     hyprctl reload
 fi
