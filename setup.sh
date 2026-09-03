@@ -105,7 +105,7 @@ echo "✅ Done! Your shell is now using zsh with dotfiles."
 if [[ "$OS_TYPE" == "arch" ]]; then
     echo "Setting up systemd user services..."
     systemctl --user daemon-reload
-    systemctl --user enable --now elephant.service
+    elephant service enable
     echo "We're on arch, reload hyprland config after setup."
     hyprctl reload
 fi
