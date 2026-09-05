@@ -1,20 +1,4 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "lsp": true,
-  "provider": {
-    "harbor-llamacpp": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "llamacpp (Harbor)",
-      "options": {
-        "baseURL": "http://127.0.0.1:33831/v1"
-      },
-      "models": {
-        "GLM-4.7-Flash": {
-          "name": "GLM-4.7-Flash",
-          "attachment": true,
-          "tool_call": true
-        }
-      }
-    }
-  }
+  "lsp": true
 }
