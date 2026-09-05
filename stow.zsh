@@ -6,8 +6,12 @@ pushd "$DOTFILES" >/dev/null || exit 1
 
 for folder in ${(s:,:)STOW_FOLDERS}; do
 
-    if [[ "$folder" == "zsh" || "$folder" == ".ssh" ]]; then
+    if [[ "$folder" == "zsh" ]]; then
         target="$HOME"
+    elif [[ "$folder" == ".ssh" ]]; then
+        target="$HOME/.ssh"
+        mkdir -p "$target"
+        chmod 700 "$target"
     else
         target="$HOME/.config/$folder"
         mkdir -p "$target"
