@@ -54,6 +54,11 @@
 
 tooltip {
     padding: 2px;
+    border-radius: 12px;
+}
+
+window#waybar {
+    border-radius: 12px;
 }
 
 #custom-update {

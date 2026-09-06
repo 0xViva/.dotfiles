@@ -1,0 +1,3 @@
+# uwsm configuration.
+# Empty here on purpose: resolves the repo-owned symlink at
+# ~/.config/uwsm/config.toml without changing uwsm defaults.

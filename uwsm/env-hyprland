@@ -1,0 +1,5 @@
+# Hyprland-specific environment (HYPR* / AQ_*).
+# Only needed for variables that must reach the compositor itself.
+# XDG_CURRENT_DESKTOP / XDG_SESSION_DESKTOP are set by uwsm automatically.
+
+# export HYPRLAND_TRACE=1

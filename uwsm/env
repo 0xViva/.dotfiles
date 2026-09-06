@@ -1,0 +1,24 @@
+# Session-wide environment applied by uwsm.
+# Only these files reach apps launched as `uwsm app` units.
+# See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
+
+# Cursor
+export XCURSOR_SIZE=24
+export HYPRCURSOR_SIZE=24
+
+# Force Wayland across toolkits and browsers
+export GDK_BACKEND=wayland,x11,*
+export QT_QPA_PLATFORM=wayland;xcb
+export QT_STYLE_OVERRIDE=kvantum
+export SDL_VIDEODRIVER=wayland
+export MOZ_ENABLE_WAYLAND=1
+export ELECTRON_OZONE_PLATFORM_HINT=wayland
+export OZONE_PLATFORM=wayland
+
+# XCompose file
+export XCOMPOSEFILE=$HOME/.XCompose
+
+# NVIDIA
+export NVD_BACKEND=direct
+export LIBVA_DRIVER_NAME=nvidia
+export __GLX_VENDOR_LIBRARY_NAME=nvidia

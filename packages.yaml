@@ -76,6 +76,7 @@ arch:
     - git
     - hypr
     - waybar
+    - uwsm
     - swayosd
     - wlogout
     - autostart
