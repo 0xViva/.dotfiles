@@ -5,7 +5,7 @@ zsh/.zsh_sessions
 .DS_Store
 tmp/
 
-
+opencode/node_modules
 
 fcitx5/conf/cached_layouts
 *.log

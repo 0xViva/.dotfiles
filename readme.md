@@ -1,34 +1,33 @@
-# 0xViva's .dotfiles
+# dotfiles
 
-install:
+Minimal, opinionated dotfiles managed with [GNU stow](https://www.gnu.org/software/stow/).
+One manifest, one command, three OSes.
 
-`./setup.sh [OS_TYPE]`
+## Install
 
-keyboard / keychron k2 v3 setup:
-`keychron-fix.md`
-`https://github.com/earthphum/LinuxDocuments/blob/main/Arch/fixed/keychron-fix.md`
+```bash
+./setup.sh <arch|macos|wsl>
+```
 
-# install ai stack:
+Installs packages from `packages.yaml`, sets up zsh, and stows configs.
+Safe to re-run — every step is idempotent.
 
-from here: https://github.com/av/harbor
+## Structure
 
-`harbor llamacpp model https://huggingface.co/user/repo/file.gguf`
+```
+setup.sh          # entry point: read packages.yaml → install → stow
+packages.yaml     # single source of truth: packages + aurs + stow per OS
+stow.zsh          # symlink targets: zsh→$HOME, .ssh→~/.ssh, rest→~/.config/<name>
+bin/              # helper scripts (~/.config/bin, on PATH via hypr/waybar)
+docs/             # keychron, AI stack, webtools notes
+<config dirs>/    # one stowed folder per app (hypr, waybar, nvim, tmux, …)
+```
 
-remove some defaults:
-`harbor defaults rm webui`
-`harbor defaults rm ollama`
+## Config inventory
 
-then run llamacpp:
-`harbor up llamacpp`
+Every tracked dir is either stowed above, or deliberate:
+`gpg/` = setup script sourced by `setup.sh`, `udev/` = root-installed rule,
+`winterm/` = Windows-side reference only.
 
-point your local opencode config towards the running llamacpp:
-check whats running `harbor ps`, apply that base URL in the `opencode.json`
-
-llamacpp arguments setup that works for my current desktop pc (gpu rtx4070 vram 12gb, ram 32gb, cpu i7-14700f) in `.harbor/.env`:
-
-
-`HARBOR_LLAMACPP_EXTRA_ARGS="--flash-attn 'on' --slots --metrics -ngl 99 --no-context-shift --ctx-size 64000 --n-predict 64000 --temp 0.5 --top-k 20 --top-p 0.95 --min-p 0 --repeat-penalty 1.05 --presence-penalty 2.0 --threads 16 --threads-http 16 --cache-reuse 256 --main-gpu 0 --tensor-split 0.5,0.5 --override-tensor '([3-8]+).ffn_.*_exps.=CPU' --cache-type-k q8_0 --cache-type-v q8_0"`
-
-should try this:
-https://huggingface.co/noctrex/GLM-4.7-Flash-MXFP4_MOE-GGUF
-opencode says it needs at least 64k ctx-size to work properly.
+Fresh machine: get `setup.sh` + `packages.yaml` (or clone the repo) and run it —
+no manual steps beyond your package manager.

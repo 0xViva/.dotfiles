@@ -24,10 +24,7 @@ TMUX_SESSIONIZER="$DOTFILES/bin/tmux-sessionizer"
 
 bindkey -s '^p' "$TMUX_SESSIONIZER\n"
 
-autoload -Uz compinit
-compinit
-
-export PATH="$PATH:/home/ajg/.local/bin"
-
-fpath=(/home/ajg/.local/share/zsh/site-functions $fpath)
+fpath=($HOME/.local/share/zsh/site-functions $fpath)
 autoload -Uz compinit && compinit
+
+export PATH="$PATH:$HOME/.local/bin"

@@ -57,6 +57,16 @@ for folder in ${(s:,:)STOW_FOLDERS}; do
         continue
     fi
 
+    if [[ "$folder" == "wlogout" ]]; then
+        # style.css is a template (@XDG@ → real config path). Materialize it
+        # as a real file so no username ever leaks into the repo.
+        rm -f "$target/style.css"
+        stow -t "$target" "$folder"
+        rm -f "$target/style.css"
+        sed "s|@XDG@|$HOME/.config|g" "$DOTFILES/$folder/style.css" > "$target/style.css"
+        continue
+    fi
+
     # safe unstow (ignore failures)
     stow -D -t "$target" "$folder" >/dev/null 2>&1 || true
 

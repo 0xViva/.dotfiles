@@ -14,20 +14,7 @@ path=(
 if [[ "$(uname -s)" == "Darwin" ]]; then
   path=(
     /Applications/Blender.app/Contents/MacOS
-    /opt/zerobrew/prefix/bin
     $path
   )
 fi
 export PATH
-
-case "$(uname -s)" in
-  Darwin)  OS_TYPE="macos" ;;
-  Linux)   OS_TYPE="linux" ;;
-  *)       OS_TYPE="unknown" ;;
-esac
-
-OS_FILE="$DOTFILES/OS/$OS_TYPE"
-
-if [[ -f "$OS_FILE" ]]; then
-  source "$OS_FILE"
-fi

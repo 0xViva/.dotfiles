@@ -1,0 +1,147 @@
+# One source of truth for packages and stow targets.
+# setup.sh reads this; edit here and re-run ./setup.sh <os>.
+#
+#   packages  — system packages per OS (arch: pacman+yay, macos: brew, wsl: apt)
+#   aurs      — arch-only AUR packages (installed via yay)
+#   stow      — dirs to stow; zsh->$HOME, .ssh->~/.ssh, rest->~/.config/<name>
+#
+# Config inventory (why some tracked dirs are not in a stow list):
+#   gpg/      — not stowed; it's the setup script setup.sh sources directly
+#   udev/     — needs root; setup.sh installs it to /etc/udev/rules.d (arch)
+#   winterm/  — Windows Terminal lives Windows-side; reference only, not stowed
+#   borders/  — removed: obsolete, replaced by elephant
+
+arch:
+  packages:
+    - stow
+    - ghostty
+    - zsh
+    - git
+    - openssh
+    - hypridle
+    - hyprland
+    - hyprland-guiutils
+    - hyprlock
+    - hyprpicker
+    - hyprsunset
+    - fzf
+    - fd
+    - btop
+    - waybar
+    - mako
+    - swayosd
+    - swaybg
+    - bluetui
+    - mise
+    - imv
+    - mpv
+    - playerctl
+    - satty
+    - wl-clipboard
+    - slurp
+    - grim
+    - fcitx5
+    - fcitx5-gtk
+    - fcitx5-qt
+    - pinentry
+    - impala
+    - wiremix
+    - jq
+    - xdg-desktop-portal-gtk
+    - xdg-desktop-portal-hyprland
+    - libnotify
+    - tmux
+    - markdownlint-cli
+  aurs:
+    - nvim
+    - oh-my-posh
+    - hyprland-preview-share-picker
+    - wayfreeze
+    - elephant
+    - elephant-desktopapplications
+    - zen-browser-bin
+    - walker
+  stow:
+    - .ssh
+    - zsh
+    - tmux
+    - bin
+    - walker
+    - fcitx5
+    - assets
+    - ghostty
+    - mako
+    - nvim
+    - oh-my-posh
+    - git
+    - hypr
+    - waybar
+    - swayosd
+    - wlogout
+    - autostart
+    - btop
+    - fzf
+    - mise
+    - imv
+    - elephant
+    - opencode
+
+macos:
+  packages:
+    - zsh
+    - stow
+    - gnupg
+    - fd
+    - fzf
+    - ripgrep
+    - make
+    - unzip
+    - xz
+    - zlib
+    - zstd
+    - lz4
+    - tree-sitter
+    - git
+    - gh
+    - openssl
+    - ca-certificates
+    - libssh2
+    - mise
+    - oh-my-posh
+    - markdownlint-cli
+  stow:
+    - zsh
+    - .ssh
+    - tmux
+    - git
+    - ghostty
+    - nvim
+    - oh-my-posh
+    - opencode
+    - aerospace
+    - fzf
+    - mise
+
+wsl:
+  packages:
+    - git
+    - stow
+    - zsh
+    - fd-find
+    - fzf
+    - ripgrep
+    - golang
+    - nodejs
+    - npm
+    - unzip
+    - mise
+    - tmux
+  stow:
+    - zsh
+    - tmux
+    - nvim
+    - oh-my-posh
+    - git
+    - fzf
+    - mise
+
