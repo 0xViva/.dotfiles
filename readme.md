@@ -1,12 +1,12 @@
 # dotfiles
 
 Minimal, opinionated dotfiles managed with [GNU stow](https://www.gnu.org/software/stow/).
-One manifest, one command, three OSes.
+One manifest, one command, two OSes.
 
 ## Install
 
 ```bash
-./setup.sh <arch|macos|wsl>
+./setup.sh <arch|macos>
 ```
 
 Installs packages from `packages.yaml`, sets up zsh, and stows configs.
@@ -26,8 +26,7 @@ docs/             # keybindings, ghostty/tmux, nvim, fugitive, keychron, AI stac
 ## Config inventory
 
 Every tracked dir is either stowed above, or deliberate:
-`gpg/` = setup script sourced by `setup.sh`, `udev/` = root-installed rule,
-`winterm/` = Windows-side reference only.
+`gpg/` = setup script sourced by `setup.sh`, `udev/` = root-installed rule.
 
 Fresh machine: get `setup.sh` + `packages.yaml` (or clone the repo) and run it —
 no manual steps beyond your package manager.

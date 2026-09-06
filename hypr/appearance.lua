@@ -1,9 +1,7 @@
--- Look and feel
--- https://wiki.hypr.land/Configuring/Basics/Variables/
 
 hl.config({
     general = {
-        -- No gaps between windows or monitors
+
         gaps_in  = 0,
         gaps_out = 0,
 
@@ -28,7 +26,6 @@ hl.config({
     },
 })
 
--- Cursor behaviour
 hl.config({
     cursor = {
         inactive_timeout = 15,
@@ -36,10 +33,9 @@ hl.config({
     },
 })
 
--- Etc.
 hl.config({
     misc = {
-        force_default_wallpaper  = 0, -- we set our own wallpaper with swaybg
+        force_default_wallpaper  = 0,
         disable_hyprland_logo    = true,
         disable_splash_rendering = true,
     },
@@ -51,8 +47,6 @@ hl.config({
     },
 })
 
--- Animations
--- https://wiki.hypr.land/Configuring/Advanced-and-Cool/Animations/
 hl.curve("easeOutQuint",   { type = "bezier", points = { {0.23, 1},    {0.32, 1}    } })
 hl.curve("easeInOutCubic", { type = "bezier", points = { {0.65, 0.05}, {0.36, 1}    } })
 hl.curve("linear",         { type = "bezier", points = { {0, 0},       {1, 1}       } })

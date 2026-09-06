@@ -38,20 +38,6 @@ vim.opt.scrolloff = 10
 vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)
-if vim.fn.has 'wsl' == 1 then
-  vim.g.clipboard = {
-    name = 'WslClipboard',
-    copy = {
-      ['+'] = 'clip.exe',
-      ['*'] = 'clip.exe',
-    },
-    paste = {
-      ['+'] = 'powershell.exe -NoProfile -Command Get-Clipboard',
-      ['*'] = 'powershell.exe -NoProfile -Command Get-Clipboard',
-    },
-    cache_enabled = 0,
-  }
-end
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
@@ -110,7 +96,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
--- Remove Windows-style carriage returns (^M) automatically
+
 vim.api.nvim_create_autocmd({ 'BufReadPost', 'TextChanged', 'TextChangedI' }, {
   pattern = '*',
   callback = function()

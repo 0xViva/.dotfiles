@@ -1,15 +1,3 @@
-# One source of truth for packages and stow targets.
-# setup.sh reads this; edit here and re-run ./setup.sh <os>.
-#
-#   packages  — system packages per OS (arch: pacman+yay, macos: brew, wsl: apt)
-#   aurs      — arch-only AUR packages (installed via yay)
-#   stow      — dirs to stow; zsh->$HOME, .ssh->~/.ssh, rest->~/.config/<name>
-#
-# Config inventory (why some tracked dirs are not in a stow list):
-#   gpg/      — not stowed; it's the setup script setup.sh sources directly
-#   udev/     — needs root; setup.sh installs it to /etc/udev/rules.d (arch)
-#   winterm/  — Windows Terminal lives Windows-side; reference only, not stowed
-#   borders/  — removed: obsolete, replaced by elephant
 
 arch:
   packages:
@@ -120,29 +108,6 @@ macos:
     - oh-my-posh
     - opencode
     - aerospace
-    - fzf
-    - mise
-
-wsl:
-  packages:
-    - git
-    - stow
-    - zsh
-    - fd-find
-    - fzf
-    - ripgrep
-    - golang
-    - nodejs
-    - npm
-    - unzip
-    - mise
-    - tmux
-  stow:
-    - zsh
-    - tmux
-    - nvim
-    - oh-my-posh
-    - git
     - fzf
     - mise
 

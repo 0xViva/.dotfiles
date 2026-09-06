@@ -88,7 +88,6 @@ done
 
 log "tmux-sessionizer($VERSION): idx=$session_idx cmd=$session_cmd user_selected=$user_selected split_type=$split_type log=$TS_LOG log_file=$TS_LOG_FILE"
 
-# Validate split options are only used with session commands
 if [[ -n "$split_type" && -z "$session_idx" ]]; then
     echo "Error: --vsplit and --hsplit can only be used with -s/--session option"
     exit 1
@@ -160,11 +159,9 @@ set_pane_id() {
     local pane_id="$3"
     init_pane_cache
 
-    # Remove existing entry if it exists
     grep -v "^${session_idx}:${split_type}:" "$PANE_CACHE_FILE" > "${PANE_CACHE_FILE}.tmp" 2>/dev/null || true
     mv "${PANE_CACHE_FILE}.tmp" "$PANE_CACHE_FILE"
 
-    # Add new entry
     echo "${session_idx}:${split_type}:${pane_id}" >> "$PANE_CACHE_FILE"
 }
 
@@ -183,20 +180,14 @@ cleanup_dead_panes() {
 
 sanity_check
 
-# if TS_SEARCH_PATHS is not set use default
 [[ -n "$TS_SEARCH_PATHS" ]] || TS_SEARCH_PATHS=(~/ ~/personal ~/personal/dev/env/.config)
-
-# Add any extra search paths to the TS_SEARCH_PATHS array
-# e.g : EXTRA_SEARCH_PATHS=("$HOME/extra1:4" "$HOME/extra2")
-# note : Path can be suffixed with :number to limit or extend the depth of the search for the Path
 
 if [[ ${#TS_EXTRA_SEARCH_PATHS[@]} -gt 0 ]]; then
     TS_SEARCH_PATHS+=("${TS_EXTRA_SEARCH_PATHS[@]}")
 fi
 
-# utility function to find directories
 find_dirs() {
-    # list TMUX sessions
+
     if [[ -n "${TMUX}" ]]; then
         current_session=$(tmux display-message -p '#S')
         tmux list-sessions -F "[TMUX] #{session_name}" 2>/dev/null | grep -vFx "[TMUX] $current_session"
@@ -204,11 +195,8 @@ find_dirs() {
         tmux list-sessions -F "[TMUX] #{session_name}" 2>/dev/null
     fi
 
-    # note: TS_SEARCH_PATHS is an array of paths to search for directories
-    # if the path ends with :number, it will search for directories with a max depth of number ;)
-    # if there is no number, it will search for directories with a max depth defined by TS_MAX_DEPTH or 1 if not set
     for entry in "${TS_SEARCH_PATHS[@]}"; do
-        # Check if entry as :number as suffix then adapt the maxdepth parameter
+
         if [[ "$entry" =~ ^([^:]+):([0-9]+)$ ]]; then
             path="${BASH_REMATCH[1]}"
             depth="${BASH_REMATCH[2]}"
@@ -257,7 +245,6 @@ handle_split_session_cmd() {
     local current_session="$1"
     cleanup_dead_panes
 
-    # Check if pane already exists
     local existing_pane_id=$(get_pane_id "$session_idx" "$split_type")
 
     if [[ -n "$existing_pane_id" ]] && tmux list-panes -a -F "#{pane_id}" 2>/dev/null | grep -q "^${existing_pane_id}$"; then
@@ -269,12 +256,12 @@ handle_split_session_cmd() {
             tmux switch-client -t "$current_session"
         fi
     else
-        # Create new split
+
         local split_flag=""
         if [[ "$split_type" == "vsplit" ]]; then
-            split_flag="-h"  # horizontal layout (vertical split)
+            split_flag="-h"
         else
-            split_flag="-v"  # vertical layout (horizontal split)
+            split_flag="-v"
         fi
 
         log "creating new split: tmux split-window $split_flag -c $(pwd) $session_cmd"

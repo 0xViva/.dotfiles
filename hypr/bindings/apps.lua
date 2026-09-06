@@ -1,4 +1,3 @@
--- Application bindings
 
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd("walker --width 644 --maxheight 300 --minheight 300"), { description = "Launch apps" })
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal), { description = "Terminal" })

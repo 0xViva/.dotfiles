@@ -53,7 +53,7 @@ return {
       handlers = {},
       ensure_installed = {
         'delve',
-        'codelldb', -- for Rust
+        'codelldb',
       },
     }
 
@@ -78,14 +78,12 @@ return {
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
-    -- Go
     require('dap-go').setup {
       delve = {
         detached = vim.fn.has 'win32' == 0,
       },
     }
 
-    -- Rust
     local mason_path = vim.fn.stdpath('data') .. '/mason/packages/codelldb/extension/'
     local codelldb_path = mason_path .. 'adapter/codelldb'
     local liblldb_path = mason_path .. 'lldb/lib/liblldb'

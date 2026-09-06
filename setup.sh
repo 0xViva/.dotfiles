@@ -5,7 +5,7 @@ set -e
 DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 <arch|macos|wsl>"
+    echo "Usage: $0 <arch|macos>"
     exit 1
 fi
 OS_TYPE=$1
@@ -58,11 +58,6 @@ install_packages() {
                 eval "$(/opt/homebrew/bin/brew shellenv)"
             fi
             brew install --quiet $(get packages)
-            ;;
-
-        wsl)
-            sudo apt update
-            sudo apt install -y $(get packages)
             ;;
     esac
 }

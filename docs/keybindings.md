@@ -4,7 +4,7 @@ This document maps every keybinding in the dotfiles, split by operating system, 
 explains how the layers stack when two programs want the same key.
 
 Sources: `hypr/bindings/*.lua`, `tmux/tmux.conf`, `ghostty/config`,
-`aerospace/aerospace.toml`, `zsh/.zshrc`, `fzf/fzf.zsh`, `nvim/lua/`, `winterm/settings.json`.
+`aerospace/aerospace.toml`, `zsh/.zshrc`, `fzf/fzf.zsh`, `nvim/lua/`.
 
 ---
 
@@ -14,19 +14,17 @@ Sources: `hypr/bindings/*.lua`, `tmux/tmux.conf`, `ghostty/config`,
 |----|------------------------|--------------|-------------|-------|--------|
 | **Arch (Linux)** | Hyprland | ghostty | tmux | zsh | Neovim |
 | **macOS** | AeroSpace | ghostty | tmux | zsh | Neovim |
-| **Windows (WSL)** | Windows Terminal (no WM — native Windows) | Windows Terminal + WSL | (tmux available but unused) | zsh | Neovim |
 
-`macos` && `wsl` configs are installed by `./setup.sh <arch|macos|wsl>`; `winterm/` is
-reference-only for the Windows side of a WSL setup.
+`macos` configs are installed by `./setup.sh <arch|macos>`.
 
 ### The layer model — who wins a keypress
 
 Keys are grabbed in priority order. A lower layer never sees a key the higher layer owns:
 
 ```
-1. OS / WM (Hyprland on Arch, AeroSpace on macOS, Windows on Windows)
+1. OS / WM (Hyprland on Arch, AeroSpace on macOS)
 2. App window
-3. Terminal emulator (ghostty / Windows Terminal)
+3. Terminal emulator (ghostty)
 4. tmux (prefix C-a)
 5. Shell (zsh ZLE)
 6. Editor (Neovim)
@@ -119,11 +117,15 @@ Waybar (top bar) is clickable: workspaces activate on click, `CPU`→btop, `netw
 ## Arch / Linux — inside the terminal (ghostty → tmux → zsh → nvim)
 
 ### ghostty (terminal emulator)
-Only one custom binding; everything else is stock:
+Four custom bindings; the rest is stock:
 
 | Keys | Action |
 |------|--------|
 | `SHIFT + ENTER` | Send `ESC + CR` (custom; used to accept in fzf/tmux instead of inserting newline) |
+| `SUPER + C` | Copy selection to clipboard (custom; `performable:` — passes through when nothing selected) |
+| `SUPER + V` | Paste from clipboard (custom; `performable:` — passes through when clipboard empty) |
+| `SUPER + A` | Select all (custom) |
+| `SHIFT + ← ↑ → ↓` | Extend the current selection (stock — ghostty cannot *create* one with keys; mouse starts it) |
 | `CTRL + SHIFT + C` / `CTRL + SHIFT + V` | Copy / paste (stock) |
 | `CTRL + SHIFT + T` / `CTRL + SHIFT + D` | New tab / split (stock) |
 | `CTRL + =` / `CTRL + -` / `CTRL + 0` | Zoom in / out / reset (stock) |
@@ -152,7 +154,6 @@ Terminal pacing: `escape-time 0` (fast prefix); `base-index 1`; windows start at
 | `CTRL + D` | fzf directory picker (insert path) — **rebound from EOF** |
 | `CTRL + E` | fzf + edit result in nvim |
 | `CTRL + P` | tmux sessionizer (new tmux window) |
-| `CTRL + T` | **deliberately unbound** (`bindkey -r '^T'`, `unbind` in fzf) — see conflicts |
 
 ### Neovim
 Leader is **`SPACE`**. Notable bindings:
@@ -180,7 +181,7 @@ FN + top row   = F-keys (macOS media keys by default — see conflicts)
 
 | Keys | Action |
 |------|--------|
-| `OPT + ENTER` | (commented out in config — uncomment to open Terminal) |
+| `OPT + ENTER` | Open terminal (ghostty) |
 | `OPT + T` | Open **wezterm** ⚠ (see conflicts — dotfiles otherwise standardize on ghostty) |
 | `OPT + F` | Fullscreen |
 | `OPT + /` | Toggle tiles / accordion layout |
@@ -204,27 +205,6 @@ with the notes below about `Option` being stolen.
 
 ---
 
-## Windows / WSL — Windows Terminal
-
-There is no WM layer; Windows Terminal owns keys first. Reference config in `winterm/`.
-
-| Keys | Action |
-|------|--------|
-| `CTRL + T` | Duplicate tab |
-| `CTRL + C` | Copy (terminal-wide) |
-| `CTRL + V` | Paste (terminal-wide) |
-| `CTRL + SHIFT + F` | Find |
-| `ALT + D` | Split pane |
-| `ALT + Z` | Close pane |
-| `ALT + 1..6` | Switch to tab |
-| `CTRL + ALT + 1..6` | (disabled — `null` entries) |
-| `CTRL + SHIFT + W` | Close (tab) |
-
-The WSL "Ubuntu" profile runs zsh → uses the same zsh/nvim keybindings as above, minus
-everything `ALT`/`Ctrl` combos the terminal swallows (see conflicts).
-
----
-
 ## Conflict analysis
 
 ### 1. tmux prefix `C-a` vs. shell "start of line" — **real, by design, workaround exists**
@@ -238,56 +218,43 @@ In any terminal (ghostty, Terminal.app) `Option+Left/Right` means *jump word* an
 macOS you **lose word-wise cursor movement** in the shell. Alternatives: `Esc`-prefixed
 binds (`ESC b` / `ESC f` / `ESC p/n`) or re-binding `CTRL+arrows` in `.zshrc`.
 
-### 3. Windows Terminal `ALT` grabs — **real, only on Windows**
-`ALT+D` (delete-word / split pane), `ALT+Z` (close pane), and `ALT+1..6` (switch tab) are
-consumed by Windows Terminal **before** zsh sees them. In the WSL shell those zsh/readline
-defaults (`M-d` kill-word, etc.) are dead. Same story as #2, different OS.
-
-### 4. `CTRL+V` — paste vs. quoted-insert — **behavior differs per terminal**
-Windows Terminal: `CTRL+V` = paste (stolen). ghostty: `CTRL+V` reaches zsh = *quoted-insert*
-(literal next char). Same keystroke, opposite meaning depending on which terminal you're in.
-
-### 5. `CTRL+T` — deliberately unbound in zsh — **resolved, but with an inconsistency**
-zsh unbinds `^T` (`bindkey -r '^T'`) because Windows Terminal uses it for tabs. Result:
-in Windows Terminal pressing `CTRL+T` does nothing thank goodness, but in ghostty it also
-does nothing (zsh level), even though ghostty would happily deliver it.
-
-### 6. Neovim `CTRL+F` — **real shadowing, nvim-internal**
+### 3. Neovim `CTRL+F` — **real shadowing, nvim-internal**
 `set.lua` re-binds `CTRL+F` (default: page forward in normal mode) to launch
 `tmux-sessionizer`. Page-forward is still available via `CTRL+D`/`CTRL+U`.
 
-### 7. Hyprland `ALT + TAB` steals from apps — **by design**
+### 4. Hyprland `ALT + TAB` steals from apps — **by design**
 On Linux, `ALT+TAB`/`ALT+SHIFT+TAB` are Hyprland's (cycle + raise). No app in the stack
 relies on `ALT+TAB`, so nothing is lost — it is *philosophically* borrowed from apps that
 would like it (rare on Linux terminals).
 
-### 8. `caps:escape` + Neovim's `<CapsLock>` mapping — **dead config**
+### 5. `caps:escape` + Neovim's `<CapsLock>` mapping — **dead config**
 Hyprland remaps CapsLock→Esc at the XKB level, so a `CapsLock` key never reaches nvim.
 The `CapsLock → Esc` mappings in `nvim/lua/set.lua:103–105` are therefore dead code
 (keep them only as a fallback for SSH/macOS).
 
-### 9. AeroSpace `OPT+T` opens wezterm — **likely stale**
+### 6. AeroSpace `OPT+T` opens wezterm — **likely stale**
 The dotfiles standardize on **ghostty**; on macOS the launch binding points at wezterm.
 If you don't use wezterm on macOS, change to `open -a Ghostty` (or `exec-and-forget ghostty`).
 
-### 10. AeroSpace `F1..F9` vs. macOS media keys — **hardware friction**
+### 7. AeroSpace `F1..F9` vs. macOS media keys — **hardware friction**
 macOS ships the top row as media keys; `F1..F9` only reach AeroSpace if your keyboard
 sends real F-keys (e.g. `Fn` mapping, or **System Settings → Keyboard → "Use F1, F2, …
 as standard function keys"** on a MacBook). External keyboards (Keychron via `Fn1` toggle)
 usually send real F-keys by default.
 
-### 11. tmux `escape-time 0` — **tradeoff, generally fine**
+### 8. tmux `escape-time 0` — **tradeoff, generally fine**
 Instant prefix response, but a fast `ESC <key>` in vim can occasionally be misread. This
 is the standard modern setting.
 
-### 12. Hyprland media keys win over app-level media — **by design**
+### 9. Hyprland media keys win over app-level media — **by design**
 `XF86Audio*`/`XF86MonBrightness*` are grabbed with `repeating` + `locked`, so apps that
 register their own media handling won't fire; the OSD + increments you see come from Hyprland.
 
 ### Non-issues worth internalizing (why your stack feels clean)
 - **tmux prefix is `C-a`, not `C-b`** → nvim's `CTRL+W`/`CTRL+H J K L` window commands
   never hit the tmux prefix. This is the classic reason people abandon `C-b`.
-- **ghostty uses `CTRL+SHIFT+…`** → no overlap with Hyprland's `SUPER`, nvim's `CTRL`,
+- **ghostty grabs `SUPER+C/V/A` for clipboard ops and `CTRL+SHIFT+…` for tabs/splits** →
+  no overlap with Hyprland's `SUPER` (those combos are unbound there), nvim's `CTRL`,
   or tmux's `C-a` prefix.
 - **Hyprland uses physical keycodes for workspaces** → immune to the Norwegian layout.
 - **zsh `^F/^D/^E` only exist at the shell level** → nvim/tmux don't use them; no clash.
@@ -300,4 +267,3 @@ register their own media handling won't fire; the OSD + increments you see come 
 |----|-------------|
 | Arch | **`SUPER` does everything Hyprland** (windows, workspaces, system). Everything else lives `C-*` under nvim/tmux/zsh. |
 | macOS | **`⌥` (Option) is your WM**, `⌘` is macOS, `F1-F9` workspaces. Shell word-motion moves to `ESC b/f`. |
-| Windows | **Windows Terminal owns `CTRL+V`, `ALT+D`, `ALT+Z`, `ALT+1-6`, `CTRL+T`**; in the WSL shell prefer `SPACE`/`C-a`/unmodified keys. |

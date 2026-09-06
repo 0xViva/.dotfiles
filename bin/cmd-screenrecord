@@ -28,13 +28,10 @@ cleanup_webcam() {
 start_webcam_overlay() {
   cleanup_webcam
 
-  # Get monitor scale
   local scale=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .scale')
 
-  # Target width (base 360px, scaled to monitor)
   local target_width=$(awk "BEGIN {printf \"%.0f\", 360 * $scale}")
 
-  # Try preferred 16:9 resolutions in order, use first available
   local preferred_resolutions=("640x360" "1280x720" "1920x1080")
   local video_size_arg=""
   local available_formats=$(v4l2-ctl --list-formats-ext -d /dev/video0 2>/dev/null)
@@ -64,7 +61,7 @@ start_screenrecording() {
   [[ "$DESKTOP_AUDIO" == "true" ]] && audio_devices+="default_output"
 
   if [[ "$MICROPHONE_AUDIO" == "true" ]]; then
-    # Merge audio tracks into one - separate tracks only play one at a time in most players
+
     [[ -n "$audio_devices" ]] && audio_devices+="|"
     audio_devices+="default_input"
   fi
@@ -76,9 +73,8 @@ start_screenrecording() {
 }
 
 stop_screenrecording() {
-  pkill -SIGINT -f "^gpu-screen-recorder"  # SIGINT required to save video properly
+  pkill -SIGINT -f "^gpu-screen-recorder"
 
-  # Wait a maximum of 5 seconds to finish before hard killing
   local count=0
   while pgrep -f "^gpu-screen-recorder" >/dev/null && [ $count -lt 50 ]; do
     sleep 0.1

@@ -11,7 +11,6 @@ return {
       'markdown_inline', 'query', 'vim', 'vimdoc', 'go', 'templ', 'css', 'elixir', 'odin'
     }
 
-
     require('nvim-treesitter').install(languages)
 
     local filetypes = {}

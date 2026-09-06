@@ -1,7 +1,3 @@
--- Monitor layout
--- https://wiki.hypr.land/Configuring/Basics/Monitors/
---   DP-1 : left, portrait (rotated 90deg)
---   DP-2 : right, landscape (primary)
 
 hl.monitor({
     output    = "DP-1",

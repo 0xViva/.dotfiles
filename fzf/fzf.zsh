@@ -31,7 +31,7 @@ fzf-file-widget() {
 }
 
 zle -N fzf-file-widget
-bindkey '^F' fzf-file-widget  # Ctrl+F to trigger
+bindkey '^F' fzf-file-widget
 
 fzf-edit-widget() {
   local dir
@@ -56,4 +56,3 @@ zle -N fzf-edit-widget
 bindkey '^F' fzf-file-widget
 bindkey '^D' fzf-cd-widget
 bindkey '^E' fzf-edit-widget
-bindkey -r '^T'

@@ -1,7 +1,6 @@
 font-family=JetBrainsMono Nerd Font Mono
 font-size=14
 
-#theme=rose-pine
 palette = 0=#26233a
 palette = 1=#eb6f92
 palette = 2=#31748f
@@ -31,13 +30,14 @@ confirm-close-surface=false
 resize-overlay = never
 gtk-toolbar-style = flat
 
-# Cursor styling
 cursor-style = "block"
 cursor-style-blink = false
 shell-integration-features = no-cursor
 
 keybind = shift+enter=text:\x1b\r
 
-# SSH session terminfo
+keybind = performable:super+c=copy_to_clipboard
+keybind = performable:super+v=paste_from_clipboard
+keybind = super+a=select_all
+
 shell-integration-features = ssh-env
-#
