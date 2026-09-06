@@ -19,7 +19,7 @@ setup.sh          # entry point: read packages.yaml → install → stow
 packages.yaml     # single source of truth: packages + aurs + stow per OS
 stow.zsh          # symlink targets: zsh→$HOME, .ssh→~/.ssh, rest→~/.config/<name>
 bin/              # helper scripts (~/.config/bin, on PATH via hypr/waybar)
-docs/             # keychron, AI stack, webtools notes
+docs/             # keybindings, ghostty/tmux, nvim, fugitive, keychron, AI stack, webtools notes
 <config dirs>/    # one stowed folder per app (hypr, waybar, nvim, tmux, …)
 ```
 
