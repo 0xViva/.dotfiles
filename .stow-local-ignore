@@ -2,5 +2,3 @@
 .zcompdump-*
 .zsh_history
 .DS_Store
-atuin
-atuin/.*

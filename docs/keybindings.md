@@ -99,8 +99,8 @@ them layout-independent — this is why they keep working on the Norwegian (`no`
 |------|--------|
 | `SUPER + L` | Lock (Noctalia lock screen) |
 | `SUPER + CTRL + N` | Toggle nightlight (Noctalia night light) |
-| `PRINT` | Screenshot + edit |
-| `SHIFT + PRINT` | Screenshot to clipboard |
+| `PRINT` | Screenshot region (Noctalia: annotate + save + clipboard) |
+| `SHIFT + PRINT` | Screenshot focused monitor (Noctalia) |
 | `SUPER + PRINT` | Color picker (hyprpicker) |
 | `ALT + PRINT` | Start screen recording (with audio) |
 | `SUPER + ALT + PRINT` | Stop recording |

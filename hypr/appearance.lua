@@ -7,11 +7,6 @@ hl.config({
 
         border_size = 2,
         layout      = "dwindle",
-
-        col = {
-            active_border   = "rgb(a6adc8)",
-            inactive_border = "rgb(4c566a)",
-        },
     },
 
     decoration = {

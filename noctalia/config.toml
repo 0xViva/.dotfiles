@@ -1,81 +1,686 @@
-# Noctalia v5 — declarative shell configuration.
+# Noctalia v5 — shell configuration.
 #
-# This is the hand-written layer (~/.config/noctalia/*.toml). Anything set in
-# Noctalia's Settings GUI is written to ~/.local/state/noctalia/settings.toml and
-# wins over this file; delete a key there to let this file take effect again.
+# This file lists Noctalia's built-in DEFAULTS so you can tune them. It is your
+# declarative layer; edit values here to pin them across machines.
+#
+# IMPORTANT — how GUI settings interact:
+#   1. built-in defaults
+#   2. this file  (~/.config/noctalia/*.toml)
+#   3. ~/.local/state/noctalia/settings.toml  <- written by the Settings GUI, WINS
+# Noctalia never rewrites this file. If you change a key in the GUI it is saved
+# to settings.toml and shadows your value here. So tune a key in one place only;
+# if an edit here seems ignored, delete that key from settings.toml.
+#
+# Caveat: listing a default pins it. If a future Noctalia release changes a
+# default, remove the key here to pick up the new one.
+#
 # Validate with: noctalia config validate
-#
-# Noctalia replaces: waybar (bar), mako (notifications), swayosd (OSD),
-# wlogout (session panel), walker+elephant (launcher/clipboard), hyprlock
-# (lock screen), hypridle (idle), swaybg (wallpaper), hyprsunset (night light).
 
-# --- Appearance ------------------------------------------------------------
-# The rest of the desktop is Nord-flavoured and dark; keep the shell dark too.
-[theme]
-mode = "dark"
+[accessibility]
+high_contrast = false
+ui_scale = 1.0
 
-# --- Bar -------------------------------------------------------------------
-# Mirrors the old waybar layout: launcher + workspaces left, clock centre,
-# status/control widgets right. Tune the rest from Settings -> Bar.
-[bar.default]
-position  = "top"
-thickness = 26
-start     = ["launcher", "workspaces"]
-center    = ["clock"]
-end       = ["media", "tray", "notifications", "privacy", "network", "bluetooth", "volume", "battery", "control-center", "session"]
+[audio]
+enable_overdrive = false
+enable_sounds = false
+notification_sound = ""
+sound_volume = 0.5
+volume_change_sound = ""
 
-# Keep the bar quiet: only show these when they have something to say.
-[widget.media]
-hide_when_no_media = true
+[backdrop]
+blur_intensity = 0.5
+enabled = false
+tint_intensity = 0.3
 
-[widget.notifications]
-hide_when_no_unread = true
+[bar]
+order = [ "default" ]
 
-[widget.privacy]
-hide_inactive = true
+    [bar.default]
+    auto_hide = false
+    background_opacity = 1.0
+    border = "outline"
+    border_width = 0.0
+    capsule = false
+    capsule_fill = "surface_variant"
+    capsule_group = []
+    capsule_opacity = 1.0
+    capsule_padding = 6.0
+    capsule_thickness = 0.76
+    center = [ "clock" ]
+    concave_edge_corners = true
+    contact_shadow = false
+    enabled = true
+    end = [
+        "media",
+        "tray",
+        "notifications",
+        "clipboard",
+        "network",
+        "bluetooth",
+        "volume",
+        "brightness",
+        "battery",
+        "control-center",
+        "session"
+    ]
+    font_scale = 1.0
+    font_weight = 500
+    hover_highlight = true
+    layer = "top"
+    margin_edge = 0
+    margin_ends = 100
+    margin_opposite_edge = 0
+    padding = 14
+    panel_overlap = 1
+    position = "top"
+    radius = 12
+    radius_bottom_left = 12
+    radius_bottom_right = 12
+    radius_top_left = 12
+    radius_top_right = 12
+    reserve_space = true
+    scale = 1.0
+    shadow = true
+    show_on_workspace_switch = true
+    smart_auto_hide = false
+    start = [ "launcher", "wallpaper", "workspaces" ]
+    thickness = 34
+    widget_spacing = 6
 
-# --- Notifications ---------------------------------------------------------
-# mako is gone; Noctalia owns the org.freedesktop.Notifications name.
-[notification]
-enable_daemon = true
+        [bar.default.dead_zone]
 
-# --- OSD -------------------------------------------------------------------
-# Replaces swayosd. Values use the Nord-ish defaults; move it to the corner
-# like swayosd used to sit.
-[osd]
-position = "top_right"
-[osd.kinds]
-volume     = true
-brightness = true
-media      = true
-dnd        = true
-nightlight = true
+[battery]
+warning_threshold = 10
 
-# --- Night light -----------------------------------------------------------
-# Replaces hyprsunset + bin/cmd-toggle-nightlight. The schedule is left off;
-# SUPER+CTRL+N forces night temperature on/off (matches the old manual toggle).
-[nightlight]
-enabled           = false
-force             = false
-temperature_day   = 6000
-temperature_night = 4000
+[brightness]
+enable_ddcutil = false
+ignore_mmids = []
+minimum_brightness = 0.0
+sync_all_monitors = false
 
-# --- Idle ------------------------------------------------------------------
-# Replaces hypridle. The old 180s brightness dim is not reproduced (Noctalia
-# dims via a fade overlay before each action instead); lock/screen-off/suspend
-# timeouts are carried over from hypr/hypridle.conf.
+[calendar]
+enabled = false
+event_date_format = "%A %e %B"
+event_time_format = "%H:%M"
+refresh_minutes = 15
+
+[control_center]
+hidden_tabs = []
+show_session_button = true
+show_shortcut_labels = true
+sidebar = "compact"
+sidebar_section = "compact"
+width = 700
+
+    [control_center.calendar]
+    show_events_card = true
+    show_week_numbers = false
+
+    [[control_center.shortcuts]]
+    type = "wifi"
+
+    [[control_center.shortcuts]]
+    type = "bluetooth"
+
+    [[control_center.shortcuts]]
+    type = "caffeine"
+
+    [[control_center.shortcuts]]
+    type = "nightlight"
+
+    [[control_center.shortcuts]]
+    type = "notification"
+
+    [[control_center.shortcuts]]
+    type = "power_profile"
+
+[desktop_widgets]
+enabled = true
+
+    [desktop_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+[dock]
+active_monitor_only = false
+active_opacity = 1.0
+active_scale = 1.0
+auto_hide = false
+background_opacity = 0.7
+border = "outline"
+border_width = 1.0
+concave_edge_corners = false
+cross_axis_padding = 8
+enabled = true
+icon_size = 52
+inactive_opacity = 0.9
+inactive_scale = 0.9
+item_spacing = 8
+launcher_custom_image = ""
+launcher_custom_image_colorize = false
+launcher_icon = "grid-dots"
+launcher_position = "start"
+layer = "top"
+magnification = true
+magnification_scale = 1.45
+main_axis_padding = 14
+margin_edge = 8
+margin_ends = 240
+monitors = []
+pinned = ["com.mitchellh.ghostty", "zen", "org.gnome.Nautilus"]
+position = "bottom"
+radius = 20
+radius_bottom_left = 20
+radius_bottom_right = 20
+radius_top_left = 20
+radius_top_right = 20
+reserve_space = true
+shadow = true
+show_dots = false
+show_instance_count = false
+show_running = true
+smart_auto_hide = false
+
+[hooks]
+battery_charging = []
+battery_discharging = []
+battery_percentage_changed = []
+battery_plugged = []
+bluetooth_disabled = []
+bluetooth_enabled = []
+colors_changed = []
+logging_out = []
+power_profile_changed = []
+rebooting = []
+session_locked = []
+session_unlocked = []
+shutting_down = []
+started = []
+theme_mode_changed = []
+wallpaper_changed = []
+wifi_disabled = []
+wifi_enabled = []
+
+[hot_corners]
+delay_ms = 0
+enabled = false
+
+    [hot_corners.bottom_left]
+    action = "none"
+    command = ""
+
+    [hot_corners.bottom_right]
+    action = "none"
+    command = ""
+
+    [hot_corners.top_left]
+    action = "none"
+    command = ""
+
+    [hot_corners.top_right]
+    action = "none"
+    command = ""
+
 [idle]
-behavior_order          = ["lock", "screen-off", "suspend"]
+behavior_order = [ "lock", "screen-off", "lock-and-suspend" ]
 pre_action_fade_seconds = 2.0
 
-[idle.behavior.lock]
-timeout = 300
-action  = "lock"
+    [idle.behavior.lock]
+    action = "lock"
+    command = ""
+    enabled = false
+    locked_timeout = 0.0
+    resume_command = ""
+    timeout = 600.0
 
-[idle.behavior.screen-off]
-timeout = 900
-action  = "screen_off"
+    [idle.behavior.lock-and-suspend]
+    action = "lock_and_suspend"
+    command = ""
+    enabled = false
+    locked_timeout = 0.0
+    resume_command = ""
+    timeout = 900.0
 
-[idle.behavior.suspend]
-timeout = 25000
-action  = "lock_and_suspend"
+    [idle.behavior.screen-off]
+    action = "screen_off"
+    command = ""
+    enabled = false
+    locked_timeout = 0.0
+    resume_command = ""
+    timeout = 660.0
+
+[keybinds]
+cancel = [ "Escape" ]
+copy = [ "Ctrl+c" ]
+delete = [ "Delete" ]
+down = [ "Down" ]
+left = [ "Left" ]
+right = [ "Right" ]
+save = [ "Ctrl+s" ]
+tab_next = [ "Tab" ]
+tab_previous = [ "Shift+ISO_Left_Tab" ]
+up = [ "Up" ]
+validate = [ "Return", "KP_Enter", "space" ]
+
+[location]
+address = ""
+auto_locate = false
+custom_schedule = false
+sunrise = ""
+sunset = ""
+
+[lockscreen]
+allow_empty_password = false
+blur_intensity = 0.5
+blurred_desktop = false
+enabled = true
+fingerprint = true
+lock_before_suspend = true
+monitors = []
+tint_intensity = 0.3
+wallpaper = ""
+
+[lockscreen_widgets]
+enabled = false
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+[nightlight]
+enabled = false
+force = false
+temperature_day = 6500
+temperature_night = 4000
+
+[notification]
+background_opacity = 0.97
+border = true
+collapse_on_dismiss = true
+enable_daemon = true
+history_retention_hours = 0
+keep_dismissed_in_history = true
+layer = "top"
+max_visible = 0
+monitors = []
+offset_x = 20
+offset_y = 8
+position = "top_right"
+scale = 1.0
+show_actions = true
+show_app_name = true
+
+[osd]
+background_opacity = 0.97
+border = true
+enabled = true
+monitors = []
+offset_x = 20
+offset_y = 8
+orientation = "horizontal"
+position = "top_center"
+position_vertical = "top_center"
+scale = 1.0
+
+    [osd.kinds]
+    bluetooth = true
+    brightness = true
+    caffeine = true
+    dnd = true
+    keyboard_backlight = true
+    keyboard_layout = true
+    lock_keys = true
+    media = true
+    nightlight = true
+    power_profile = true
+    privacy = true
+    volume = true
+    volume_input = true
+    volume_output = true
+    wifi = true
+
+[plugin_settings]
+
+[plugins]
+auto_update = "all"
+enabled = []
+
+    [[plugins.source]]
+    enabled = true
+    kind = "git"
+    location = "https://github.com/noctalia-dev/official-plugins"
+    name = "official"
+
+    [[plugins.source]]
+    enabled = true
+    kind = "git"
+    location = "https://github.com/noctalia-dev/community-plugins"
+    name = "community"
+
+[shell]
+app_icon_colorize = false
+avatar_path = ""
+button_borders = true
+card_borders = true
+clipboard_auto_paste = "auto"
+clipboard_confirm_clear_history = true
+clipboard_enabled = true
+clipboard_history_max_entries = 100
+clipboard_image_action_command = ""
+clipboard_keep_from_closed_apps = true
+corner_radius_scale = 1.0
+date_format = "%A, %x"
+disable_mipmaps = false
+external_ip_enabled = false
+font_family = "sans-serif"
+input_borders = true
+launch_apps_as_systemd_services = false
+launch_apps_custom_command = ""
+niri_overview_type_to_launch_enabled = false
+offline_mode = false
+password_style = "default"
+polkit_agent = false
+popup_borders = true
+popup_shadows = true
+screen_time_enabled = false
+settings_show_advanced = true
+settings_window_translucent = false
+setup_wizard_enabled = true
+shared_gl_context = true
+show_location = true
+telemetry_enabled = false
+time_format = "{:%H:%M}"
+
+    [shell.animation]
+    enabled = true
+    speed = 1.0
+
+    [shell.greeter_sync]
+    auto_sync = false
+
+    [shell.keyboard_layout]
+
+    [shell.launcher]
+    app_grid = false
+    auto_paste = "auto"
+    categories = true
+    compact = false
+    fetch_exchange_rates = true
+    pinned = []
+    provider_prefix = "/"
+    show_app_actions = false
+    show_app_origin_indicator = true
+    show_icons = true
+    sort_by_usage = true
+
+        [shell.launcher.dmenu]
+
+    [shell.mpris]
+    blacklist = []
+
+    [shell.panel]
+    borders = true
+    clipboard_placement = "floating"
+    clipboard_position = "center"
+    control_center_placement = "attached"
+    control_center_position = "auto"
+    floating_layer = "overlay"
+    floating_offset = 8
+    launcher_placement = "floating"
+    launcher_position = "center"
+    list_item_background = false
+    open_near_click_clipboard = false
+    open_near_click_control_center = false
+    open_near_click_launcher = false
+    open_near_click_session = false
+    open_near_click_wallpaper = false
+    polkit_placement = "floating"
+    polkit_position = "center"
+    session_placement = "attached"
+    session_position = "auto"
+    shadow = true
+    transparency_mode = "solid"
+    wallpaper_placement = "attached"
+    wallpaper_position = "auto"
+
+    [shell.privacy]
+    cam_filter_regex = ""
+    mic_filter_regex = ""
+    screen_filter_regex = ""
+
+    [shell.screen_corners]
+    enabled = false
+    size = 32
+
+    [shell.screenshot]
+    annotate = false
+    close_on_copy = true
+    confirm_region = false
+    copy_to_clipboard = true
+    directory = ""
+    filename_pattern = ""
+    freeze_screen = true
+    pipe_command = ""
+    pipe_to_command = false
+    remember_last_region = false
+    save_to_file = true
+    show_cursor = false
+
+    [shell.session]
+    grid = false
+    grid_columns = 3
+    show_shortcuts = true
+
+        [shell.session.power]
+
+        [[shell.session.actions]]
+        action = "lock"
+        command = ""
+        countdown_seconds = 0.0
+        enabled = true
+        glyph = ""
+        label = ""
+        shortcut = "1"
+        variant = "default"
+
+        [[shell.session.actions]]
+        action = "logout"
+        command = ""
+        countdown_seconds = 0.0
+        enabled = true
+        glyph = ""
+        label = ""
+        shortcut = "2"
+        variant = "default"
+
+        [[shell.session.actions]]
+        action = "lock_and_suspend"
+        command = ""
+        countdown_seconds = 0.0
+        enabled = true
+        glyph = ""
+        label = ""
+        shortcut = "3"
+        variant = "default"
+
+        [[shell.session.actions]]
+        action = "reboot"
+        command = ""
+        countdown_seconds = 0.0
+        enabled = true
+        glyph = ""
+        label = ""
+        shortcut = "4"
+        variant = "default"
+
+        [[shell.session.actions]]
+        action = "shutdown"
+        command = ""
+        countdown_seconds = 0.0
+        enabled = true
+        glyph = ""
+        label = ""
+        shortcut = "5"
+        variant = "destructive"
+
+    [shell.shadow]
+    alpha = 0.7
+    direction = "down"
+
+    [shell.window_switcher]
+    mru = false
+
+[storage]
+key_file = ""
+key_source = "secret-service"
+
+[system.monitor]
+cpu_freq_activity_threshold = 2.5
+cpu_freq_critical_threshold = 4.5
+cpu_poll_seconds = 2.0
+cpu_temp_activity_threshold = 60.0
+cpu_temp_critical_threshold = 85.0
+cpu_temp_sensor_path = ""
+cpu_usage_activity_threshold = 50.0
+cpu_usage_critical_threshold = 90.0
+disk_free_activity_threshold = 80.0
+disk_free_critical_threshold = 95.0
+disk_free_pct_activity_threshold = 80.0
+disk_free_pct_critical_threshold = 95.0
+disk_poll_seconds = 10.0
+disk_used_activity_threshold = 80.0
+disk_used_critical_threshold = 95.0
+disk_used_pct_activity_threshold = 80.0
+disk_used_pct_critical_threshold = 95.0
+enabled = true
+gpu_poll_seconds = 5.0
+gpu_temp_activity_threshold = 60.0
+gpu_temp_critical_threshold = 85.0
+gpu_usage_activity_threshold = 50.0
+gpu_usage_critical_threshold = 95.0
+gpu_vram_activity_threshold = 50.0
+gpu_vram_critical_threshold = 90.0
+memory_poll_seconds = 2.0
+net_rx_activity_threshold = 1.0
+net_rx_critical_threshold = 50.0
+net_tx_activity_threshold = 1.0
+net_tx_critical_threshold = 50.0
+network_poll_seconds = 3.0
+ram_pct_activity_threshold = 60.0
+ram_pct_critical_threshold = 90.0
+swap_pct_activity_threshold = 20.0
+swap_pct_critical_threshold = 80.0
+
+# Palette for the whole desktop. Noctalia renders this into every enabled app
+# template below, so changing it re-themes everything (shell, GTK/Qt, terminal,
+# editors, …). `source` selects which field is authoritative:
+#   "builtin <name>" | "wallpaper" | "community <name>" | "custom <file>"
+# Other palette keys are left at their defaults.
+[theme]
+builtin = "Rosé Pine"
+source  = "builtin"
+
+    # App theming. Noctalia's own engine renders these templates from the palette
+    # above and writes the result into each app's config. Some generated files
+    # keep a "matugen" name (nvim's lua/matugen.lua, opencode's matugen.json)
+    # because the templates originated in the matugen ecosystem. The matugen CLI
+    # is NOT installed or used — Noctalia does the rendering.
+    [theme.templates]
+    builtin_ids = [ "gtk3", "gtk4", "qt", "ghostty", "hyprland", "btop" ]
+    community_ids = [ "neovim", "tmux", "fzf", "fcitx5", "opencode" ]
+    enable_builtin_templates = true
+    enable_community_templates = true
+
+[wallpaper]
+directory = ""
+directory_dark = ""
+directory_light = ""
+edge_smoothness = 0.3
+enabled = true
+fill_color = ""
+fill_mode = "crop"
+per_monitor_directories = false
+transition = [ "fade", "wipe", "disc", "stripes", "zoom", "honeycomb" ]
+transition_duration = 1500.0
+transition_on_startup = false
+
+    # Default wallpaper (declarative). Picking one in the GUI/IPC writes the
+    # same key to settings.toml, which then overrides this value.
+    [wallpaper.default]
+    path = "/home/ajg/.config/assets/backgrounds/nord.png"
+
+    [wallpaper.automation]
+    enabled = false
+    interval_seconds = 1800
+    order = "random"
+    recursive = true
+
+[weather]
+effects = true
+enabled = true
+refresh_minutes = 30
+unit = "metric"
+
+[widget.active_window]
+icon_size = 14.0
+max_length = 260.0
+min_length = 80.0
+title_scroll = "none"
+type = "active_window"
+
+[widget.cpu]
+stat = "cpu_usage"
+type = "sysmon"
+
+[widget.date]
+format = "{:%a %d %b}"
+type = "clock"
+
+[widget.input_volume]
+device = "input"
+type = "volume"
+
+[widget.keyboard_layout]
+hide_when_single_layout = false
+type = "keyboard_layout"
+
+[widget.lock_keys]
+display = "short"
+hide_when_off = false
+show_caps_lock = true
+show_num_lock = true
+show_scroll_lock = false
+type = "lock_keys"
+
+[widget.media]
+art_size = 16.0
+max_length = 220.0
+min_length = 80.0
+title_scroll = "none"
+type = "media"
+
+[widget.network_rx]
+stat = "net_rx"
+type = "sysmon"
+
+[widget.network_tx]
+stat = "net_tx"
+type = "sysmon"
+
+[widget.output_volume]
+device = "output"
+type = "volume"
+
+[widget.ram]
+stat = "ram_used"
+type = "sysmon"
+
+[widget.spacer]
+interactive = false
+type = "spacer"
+
+[widget.temp]
+stat = "cpu_temp"
+type = "sysmon"

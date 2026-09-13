@@ -13,21 +13,14 @@ arch:
     - fzf
     - fd
     - btop
-    - bluetui
     - mise
     - imv
     - mpv
-    - playerctl
-    - satty
     - wl-clipboard
-    - slurp
-    - grim
     - fcitx5
     - fcitx5-gtk
     - fcitx5-qt
     - pinentry
-    - impala
-    - wiremix
     - jq
     - xdg-desktop-portal-gtk
     - xdg-desktop-portal-hyprland
@@ -37,8 +30,6 @@ arch:
   aurs:
     - nvim
     - oh-my-posh
-    - hyprland-preview-share-picker
-    - wayfreeze
     - zen-browser-bin
   stow:
     - .ssh

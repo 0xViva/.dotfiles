@@ -9,3 +9,10 @@ opencode/node_modules
 
 fcitx5/conf/cached_layouts
 *.log
+
+# Noctalia-generated theme files (regenerated on palette change, removed when
+# the template is disabled). The include/theme lines in the real configs are
+# tracked; these rendered outputs are not.
+btop/themes/noctalia.theme
+nvim/lua/matugen.lua
+fcitx5/conf/classicui.conf
