@@ -6,19 +6,13 @@ arch:
     - zsh
     - git
     - openssh
-    - hypridle
     - hyprland
     - hyprland-guiutils
-    - hyprlock
     - hyprpicker
-    - hyprsunset
+    - noctalia
     - fzf
     - fd
     - btop
-    - waybar
-    - mako
-    - swayosd
-    - swaybg
     - bluetui
     - mise
     - imv
@@ -45,34 +39,25 @@ arch:
     - oh-my-posh
     - hyprland-preview-share-picker
     - wayfreeze
-    - elephant
-    - elephant-desktopapplications
     - zen-browser-bin
-    - walker
   stow:
     - .ssh
     - zsh
     - tmux
     - bin
-    - walker
     - fcitx5
     - assets
     - ghostty
-    - mako
     - nvim
     - oh-my-posh
     - git
     - hypr
-    - waybar
     - uwsm
-    - swayosd
-    - wlogout
-    - autostart
+    - noctalia
     - btop
     - fzf
     - mise
     - imv
-    - elephant
     - opencode
 
 macos:

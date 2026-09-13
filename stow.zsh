@@ -49,15 +49,6 @@ for folder in ${(s:,:)STOW_FOLDERS}; do
         continue
     fi
 
-    if [[ "$folder" == "wlogout" ]]; then
-
-        rm -f "$target/style.css"
-        stow -t "$target" "$folder"
-        rm -f "$target/style.css"
-        sed "s|@XDG@|$HOME/.config|g" "$DOTFILES/$folder/style.css" > "$target/style.css"
-        continue
-    fi
-
     stow -D -t "$target" "$folder" >/dev/null 2>&1 || true
 
     stow -t "$target" "$folder"

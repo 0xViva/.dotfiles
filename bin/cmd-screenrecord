@@ -69,7 +69,6 @@ start_screenrecording() {
   [[ -n "$audio_devices" ]] && audio_args+="-a $audio_devices"
 
   gpu-screen-recorder -w portal -f 60 -fallback-cpu-encoding yes -o "$filename" $audio_args -ac aac &
-  toggle_screenrecording_indicator
 }
 
 stop_screenrecording() {
@@ -89,11 +88,6 @@ stop_screenrecording() {
     cleanup_webcam
     notify-send "Screen recording saved to $OUTPUT_DIR" -t 2000
   fi
-  toggle_screenrecording_indicator
-}
-
-toggle_screenrecording_indicator() {
-  pkill -RTMIN+8 waybar
 }
 
 screenrecording_active() {

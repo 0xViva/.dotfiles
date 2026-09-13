@@ -3,8 +3,9 @@
 This document maps every keybinding in the dotfiles, split by operating system, and
 explains how the layers stack when two programs want the same key.
 
-Sources: `hypr/bindings/*.lua`, `tmux/tmux.conf`, `ghostty/config`,
-`aerospace/aerospace.toml`, `zsh/.zshrc`, `fzf/fzf.zsh`, `nvim/lua/`.
+Sources: `hypr/bindings/*.lua`, `noctalia/config.toml`, `tmux/tmux.conf`,
+`ghostty/config`, `aerospace/aerospace.toml`, `zsh/.zshrc`, `fzf/fzf.zsh`,
+`nvim/lua/`.
 
 ---
 
@@ -46,7 +47,7 @@ ALT    = "Alt" key — reserved for Hyprland
 ### Hyprland — launch / apps
 | Keys | Action |
 |------|--------|
-| `SUPER + SPACE` | Launch apps (walker) |
+| `SUPER + SPACE` | Launch apps (Noctalia launcher) |
 | `SUPER + RETURN` | Terminal (ghostty) |
 | `SUPER + SHIFT + F` | File manager (nautilus `--new-window`) |
 | `SUPER + B` | Browser (zen-browser) |
@@ -96,21 +97,21 @@ them layout-independent — this is why they keep working on the Norwegian (`no`
 ### Hyprland — system & media
 | Keys | Action |
 |------|--------|
-| `SUPER + L` | Lock (hyprlock) |
-| `SUPER + CTRL + N` | Toggle nightlight (hyprsunset via `cmd-toggle-nightlight`) |
+| `SUPER + L` | Lock (Noctalia lock screen) |
+| `SUPER + CTRL + N` | Toggle nightlight (Noctalia night light) |
 | `PRINT` | Screenshot + edit |
 | `SHIFT + PRINT` | Screenshot to clipboard |
 | `SUPER + PRINT` | Color picker (hyprpicker) |
 | `ALT + PRINT` | Start screen recording (with audio) |
 | `SUPER + ALT + PRINT` | Stop recording |
-| `SUPER + ,` / `SUPER + SHIFT + ,` / `SUPER + CTRL + ,` / `SUPER + ALT + ,` | Dismiss last / dismiss all / toggle DND / invoke last notification |
-| `SUPER + SHIFT + ALT + ,` | Restore last notification |
+| `SUPER + SHIFT + ,` / `SUPER + CTRL + ,` / `SUPER + ALT + ,` | Clear active / toggle DND / invoke last notification |
 | `XF86AudioRaise/Lower/Mute`, `XF86AudioMicMute`, `XF86MonBrightnessUp/Down` | Volume / bright-with OSD (locked + auto-repeat; `ALT` variant = ±1%) |
-| `XF86AudioNext/Play/Pause/Prev` | playerctl transport via swayosd |
+| `XF86AudioNext/Play/Pause/Prev` | MPRIS transport via Noctalia |
 | `ALT + RETURN` binding note | none — media only |
 
-Waybar (top bar) is clickable: workspaces activate on click, `CPU`→btop, `network`→impala,
-`pulseaudio`→wiremix, `bluetooth`→bluetui.
+The Noctalia bar (top) is clickable: the application launcher and Control
+Center are widgets on it, and system controls (network, Bluetooth, audio,
+brightness, notifications) live in the Control Center panel.
 
 ---
 

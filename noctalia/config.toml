@@ -1,0 +1,81 @@
+# Noctalia v5 — declarative shell configuration.
+#
+# This is the hand-written layer (~/.config/noctalia/*.toml). Anything set in
+# Noctalia's Settings GUI is written to ~/.local/state/noctalia/settings.toml and
+# wins over this file; delete a key there to let this file take effect again.
+# Validate with: noctalia config validate
+#
+# Noctalia replaces: waybar (bar), mako (notifications), swayosd (OSD),
+# wlogout (session panel), walker+elephant (launcher/clipboard), hyprlock
+# (lock screen), hypridle (idle), swaybg (wallpaper), hyprsunset (night light).
+
+# --- Appearance ------------------------------------------------------------
+# The rest of the desktop is Nord-flavoured and dark; keep the shell dark too.
+[theme]
+mode = "dark"
+
+# --- Bar -------------------------------------------------------------------
+# Mirrors the old waybar layout: launcher + workspaces left, clock centre,
+# status/control widgets right. Tune the rest from Settings -> Bar.
+[bar.default]
+position  = "top"
+thickness = 26
+start     = ["launcher", "workspaces"]
+center    = ["clock"]
+end       = ["media", "tray", "notifications", "privacy", "network", "bluetooth", "volume", "battery", "control-center", "session"]
+
+# Keep the bar quiet: only show these when they have something to say.
+[widget.media]
+hide_when_no_media = true
+
+[widget.notifications]
+hide_when_no_unread = true
+
+[widget.privacy]
+hide_inactive = true
+
+# --- Notifications ---------------------------------------------------------
+# mako is gone; Noctalia owns the org.freedesktop.Notifications name.
+[notification]
+enable_daemon = true
+
+# --- OSD -------------------------------------------------------------------
+# Replaces swayosd. Values use the Nord-ish defaults; move it to the corner
+# like swayosd used to sit.
+[osd]
+position = "top_right"
+[osd.kinds]
+volume     = true
+brightness = true
+media      = true
+dnd        = true
+nightlight = true
+
+# --- Night light -----------------------------------------------------------
+# Replaces hyprsunset + bin/cmd-toggle-nightlight. The schedule is left off;
+# SUPER+CTRL+N forces night temperature on/off (matches the old manual toggle).
+[nightlight]
+enabled           = false
+force             = false
+temperature_day   = 6000
+temperature_night = 4000
+
+# --- Idle ------------------------------------------------------------------
+# Replaces hypridle. The old 180s brightness dim is not reproduced (Noctalia
+# dims via a fade overlay before each action instead); lock/screen-off/suspend
+# timeouts are carried over from hypr/hypridle.conf.
+[idle]
+behavior_order          = ["lock", "screen-off", "suspend"]
+pre_action_fade_seconds = 2.0
+
+[idle.behavior.lock]
+timeout = 300
+action  = "lock"
+
+[idle.behavior.screen-off]
+timeout = 900
+action  = "screen_off"
+
+[idle.behavior.suspend]
+timeout = 25000
+action  = "lock_and_suspend"
