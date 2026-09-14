@@ -34,7 +34,6 @@ Enabled in `noctalia/config.toml` under `[theme.templates]`:
 | `btop` | `~/.config/btop/themes/noctalia.theme` | `btop/btop.conf` (`color_theme`) |
 | `hyprland` | `~/.config/hypr/noctalia.lua` | `hypr/hyprland.lua` (`require("noctalia")`) |
 | `tmux` | `~/.config/tmux/themes/noctalia.conf` | `tmux/tmux.conf` (`source-file`) |
-| `fcitx5` | `~/.local/share/fcitx5/themes/noctalia/theme.conf` | `fcitx5/conf/classicui.conf` |
 | `neovim` | `~/.config/nvim/lua/matugen.lua` | `nvim/lua/plugins/color.lua` (`require`) |
 | `opencode` | `~/.config/opencode/themes/matugen.json` | `opencode/opencode.json` (`theme`) |
 | `fzf` | `~/.config/fzf/themes/noctalia.{sh,fish}` | not sourced — see `docs/fish.md` |

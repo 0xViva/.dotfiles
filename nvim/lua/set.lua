@@ -110,10 +110,3 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
-
-vim.api.nvim_create_autocmd({ 'BufReadPost', 'TextChanged', 'TextChangedI' }, {
-  pattern = '*',
-  callback = function()
-    vim.cmd [[silent! %s/\r//g]]
-  end,
-})

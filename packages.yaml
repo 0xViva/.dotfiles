@@ -20,9 +20,6 @@ arch:
     - imv
     - mpv
     - wl-clipboard
-    - fcitx5
-    - fcitx5-gtk
-    - fcitx5-qt
     - pinentry
     - jq
     - xdg-desktop-portal-gtk
@@ -38,7 +35,6 @@ arch:
     - fish
     - tmux
     - bin
-    - fcitx5
     - assets
     - ghostty
     - nvim
