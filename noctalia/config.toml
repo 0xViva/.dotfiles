@@ -46,11 +46,12 @@ order = [ "default" ]
     capsule_opacity = 1.0
     capsule_padding = 6.0
     capsule_thickness = 0.76
-    center = [ "media", "gap", "clock" ]
+    center = [ "clock" ]
     concave_edge_corners = true
     contact_shadow = false
     enabled = true
     end = [
+        "media",
         "volume",
         "network",
         "launcher",
@@ -143,8 +144,25 @@ enabled = true
     major_interval = 4
     visible = true
 
+    # Now-playing widget on the wallpaper: artwork, title/artist, and transport
+    # controls. The play/pause button shows a pause glyph while a track is
+    # playing and a play glyph while it is paused, so playback state is visible
+    # at a glance. cx/cy are the widget center in logical px on `output`; move it
+    # with `noctalia msg desktop-widgets-edit`.
+    [desktop_widgets.widget.media]
+    cx = 1280.0
+    cy = 720.0
+    output = "DP-1"
+    placement_height = 1440.0
+    placement_width = 2560.0
+    type = "media_player"
+
+        [desktop_widgets.widget.media.settings]
+        hide_when_no_media = true
+        layout = "horizontal"
+
 [dock]
-active_monitor_only = false
+active_monitor_only = true
 active_opacity = 1.0
 active_scale = 1.0
 auto_hide = false
@@ -636,12 +654,6 @@ min_length = 80.0
 title_scroll = "none"
 type = "active_window"
 
-# Pin the clock's center to the bar midline so the media widget and gap to its
-# left cannot drag it off-center.
-[widget.clock]
-anchor = true
-type = "clock"
-
 [widget.cpu]
 stat = "cpu_usage"
 type = "sysmon"
@@ -649,12 +661,6 @@ type = "sysmon"
 [widget.date]
 format = "{:%a %d %b}"
 type = "clock"
-
-# Gap between the media widget and the clock in the center lane. Larger pushes
-# the music widget further left, away from the clock.
-[widget.gap]
-length = 200.0
-type = "spacer"
 
 [widget.input_volume]
 device = "input"
