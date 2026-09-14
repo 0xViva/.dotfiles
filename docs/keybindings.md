@@ -4,7 +4,7 @@ This document maps every keybinding in the dotfiles, split by operating system, 
 explains how the layers stack when two programs want the same key.
 
 Sources: `hypr/bindings/*.lua`, `noctalia/config.toml`, `tmux/tmux.conf`,
-`ghostty/config`, `aerospace/aerospace.toml`, `fish/config.fish`, `fzf/fzf.fish`,
+`ghostty/config`, `aerospace/aerospace.toml`, `fish/config.fish`, `fish/fzf.fish`,
 `nvim/lua/`.
 
 ---
@@ -143,13 +143,13 @@ On `C-a` in a pane, VM-mode navigation uses `hjkl` (dwm-style):
 | `C-a` `^` | Go to last window |
 | `C-a` `f` | New window + `tmux-sessionizer` (fuzzy project picker) |
 | `C-a` `M-h/M-t/M-n/M-s` | New window + sessionizer scoped to search path slot 0–3 |
-| `C-a` `[` | Enter copy-mode; then `v` select, `y` copy (+xclip to clipboard) |
+| `C-a` `[` | Enter copy-mode; then `v` select, `y` copy (OSC 52 to system clipboard) |
 | `C-a` `m` | Mouse mode (already on via `set -g mouse on`) |
 
 Terminal pacing: `escape-time 0` (fast prefix); `base-index 1`; windows start at 1.
 
 ### fish — shell keybindings
-`CTRL+E` is the custom widget (`fzf/fzf.fish`); the rest are the fzf.fish plugin.
+`CTRL+E` is the custom widget (`fish/fzf.fish`); the rest are the fzf.fish plugin.
 | Keys | Action |
 |------|--------|
 | `CTRL + E` | fzf: pick a file from `/` and open it in nvim |

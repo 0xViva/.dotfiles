@@ -53,7 +53,7 @@ if status is-interactive
         path basename $PWD
     end
 
-    source $XDG_CONFIG_HOME/fzf/fzf.fish
+    source $XDG_CONFIG_HOME/fish/fzf.fish
 
     set -g TMUX_SESSIONIZER $DOTFILES/bin/tmux-sessionizer
     bind ctrl-p 'commandline -i "$TMUX_SESSIONIZER"; commandline -f execute'

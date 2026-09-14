@@ -2,7 +2,7 @@
 
 How the three layers hand the keyboard to each other, and how to use the
 configured keybindings (`ghostty/config`, `tmux/tmux.conf`,
-`tmux/tmux-sessionizer.conf`, `fish/config.fish`, `fzf/fzf.fish`, `nvim/lua/set.lua`).
+`tmux/tmux-sessionizer.conf`, `fish/config.fish`, `fish/fzf.fish`, `nvim/lua/set.lua`).
 
 ## The layering model
 
@@ -60,9 +60,9 @@ the prefix. Mouse is on outside nvim, so clicking a pane focuses it too.
 ### Copy mode (vi bindings, `mode-keys vi`)
 
 Press `C-a [`, then navigate with `hjkl`, `v` to begin selection, `y` to copy
-to the clipboard via `xclip` (`:17`). Practically you'll rarely need this —
-holding `shift` in Ghostty bypasses tmux mouse mode for native terminal
-selection.
+to the system clipboard via OSC 52 (`set-clipboard on`, `:11`; the `y` bind is
+`:20`). Practically you'll rarely need this — holding `shift` in Ghostty
+bypasses tmux mouse mode for native terminal selection.
 
 ### Sessionizer entry points
 
@@ -77,7 +77,7 @@ The same project switcher is reached three ways:
 
 ## fish (prompt-only bindings)
 
-Active only at the shell prompt (`fzf/fzf.fish` + the fzf.fish plugin):
+Active only at the shell prompt (`fish/fzf.fish` + the fzf.fish plugin):
 
 - `C-p` — tmux-sessionizer
 - `C-e` — fzf file picker from `/`, then *opens the file in nvim*
@@ -123,6 +123,13 @@ Nothing here requires the mouse; Ghostty stays a dumb, transparent wrapper.
 - **`C-f` means three different things**, never at the same time: fish moves the
   cursor right, nvim-normal spawns the sessionizer, nvim-insert scrolls the cmp
   docs window (`cmp.lua:52`).
+- **Clipboard is shared through tmux.** nvim copies with `tmux load-buffer -w`
+  (`set.lua`) so yanks land on the terminal clipboard and are shared with tmux
+  copy mode, over ssh included; pasting reads tmux's newest paste buffer, so
+  anything copied by any program inside tmux is pasteable. Text copied
+  **outside** tmux cannot be pulled in this way — tmux never returns an OSC 52
+  read to a pane, and its `refresh-client -l` query is unreliable on Ghostty
+  1.3.1 — so paste that with Ghostty's own `SUPER+V`.
 - **Mouse is on in tmux, off in nvim.** tmux mouse selection works in shell
   panes; in nvim panes it passes through dead because `set.lua:11` disables
   the mouse there. Use `]c`, `v`, etc. instead.

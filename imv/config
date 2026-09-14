@@ -1,9 +1,0 @@
-[binds]
-
-<Ctrl+p> = exec lp "$imv_current_file"
-
-<Ctrl+x> = exec rm "$imv_current_file"; quit
-
-<Ctrl+Shift+X> = exec rm "$imv_current_file"; close
-
-<Ctrl+r> = exec mogrify -rotate 90 "$imv_current_file"

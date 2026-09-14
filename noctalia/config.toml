@@ -144,23 +144,6 @@ enabled = true
     major_interval = 4
     visible = true
 
-    # Now-playing widget on the wallpaper: artwork, title/artist, and transport
-    # controls. The play/pause button shows a pause glyph while a track is
-    # playing and a play glyph while it is paused, so playback state is visible
-    # at a glance. cx/cy are the widget center in logical px on `output`; move it
-    # with `noctalia msg desktop-widgets-edit`.
-    [desktop_widgets.widget.media]
-    cx = 1280.0
-    cy = 720.0
-    output = "DP-1"
-    placement_height = 1440.0
-    placement_width = 2560.0
-    type = "media_player"
-
-        [desktop_widgets.widget.media.settings]
-        hide_when_no_media = true
-        layout = "horizontal"
-
 [dock]
 active_monitor_only = true
 active_opacity = 1.0
@@ -679,16 +662,10 @@ show_scroll_lock = false
 type = "lock_keys"
 
 [widget.media]
-artist_first = true
-art_size = 20.0
-hide_when_no_media = true
-# Hard cap so the media widget cannot grow into the centered clock. This is a
-# fixed cap, not collision detection: it truncates the title whenever it
-# exceeds this width, even when there is free space. Upstream's default is
-# 220.0; the previous 400.0 is what could reach the clock on a busy end row.
+art_size = 16.0
 max_length = 220.0
 min_length = 80.0
-title_scroll = "on_hover"
+title_scroll = "none"
 type = "media"
 
 [widget.network_rx]

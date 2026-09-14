@@ -19,7 +19,7 @@ setup.sh          # entry point: read packages.yaml → install → stow
 packages.yaml     # single source of truth: packages + aurs + stow per OS
 stow.fish         # symlink targets: .ssh→~/.ssh, rest→~/.config/<name>
 bin/              # helper scripts (~/.config/bin, on PATH via hypr/noctalia)
-docs/             # keybindings, theming, ghostty/tmux, nvim, fugitive, keychron, AI stack, webtools notes
+docs/             # keybindings, theming, ghostty/tmux, nvim, keychron, AI stack, webtools notes
 <config dirs>/    # one stowed folder per app (hypr, noctalia, nvim, tmux, …)
 ```
 

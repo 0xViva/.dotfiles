@@ -8,10 +8,10 @@ and runs `chsh -s`. The setup tooling is fish too (`stow.fish`, `gpg/setup.fish`
 | File | Purpose |
 |---|---|
 | `fish/config.fish` | env + PATH, mise, starship, fzf, tty1 session start |
-| `fzf/fzf.fish` | custom `CTRL+E` nvim picker |
+| `fish/fzf.fish` | custom `CTRL+E` nvim picker |
 | `fish/fish_plugins` | fisher plugin manifest, reconciled by `setup.sh` |
 
-All are stowed: `fish/` → `~/.config/fish`, `fzf/` → `~/.config/fzf`.
+All are stowed: `fish/` → `~/.config/fish`.
 `fish_variables` (fish's universal-variable store) is generated at runtime and
 git-ignored.
 
@@ -27,7 +27,7 @@ log/status, history, variables and processes. The only custom widget is `CTRL+E`
 
 | Keys | Source | Action |
 |---|---|---|
-| `CTRL+E` | `fzf/fzf.fish` | open the selection from `/` in nvim |
+| `CTRL+E` | `fish/fzf.fish` | open the selection from `/` in nvim |
 | `CTRL+ALT+F` | plugin | search directory (cwd, preview, multi) |
 | `CTRL+R` | plugin | history |
 | `CTRL+ALT+L` / `CTRL+ALT+S` | plugin | git log / git status |

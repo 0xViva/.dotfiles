@@ -65,7 +65,7 @@ no `ctrl+shift` binds). That is where all five lines live.
 | Sessions persist across reboot | ❌ | ✅ (attach/detach) |
 | Attach from SSH / another machine | ❌ | ✅ (`tmux attach`) |
 | Named projects, programmatic windows | ❌ | ✅ (via `tmux-sessionizer`) |
-| OSC-52 copy over SSH | ✔ 1.3 | ✅ (xclip bind in this config) |
+| OSC-52 copy over SSH | ✔ 1.3 | ✅ (`set-clipboard on`) |
 
 **The deciding factor here is `tmux-sessionizer`.** Your daily flow routes through it:
 `prefix f`, fish `C-p`, nvim `C-f`, and `prefix M-h/t/n/s` all open project windows in

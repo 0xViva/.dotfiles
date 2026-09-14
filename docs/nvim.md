@@ -67,14 +67,10 @@ gopls, html, lua_ls, ts_ls, tailwindcss, jdtls, rust_analyzer.
 
 ## Git
 
-Two tools, used together:
-
 - **gitsigns** for hunks (`<leader>h` prefix, all in `gitsigns.lua`):
   `]c`/`[c` next/prev hunk; `<leader>hs` stage hunk, `<leader>hr` reset hunk,
   `<leader>hu` unstage; `<leader>hp` preview hunk; `<leader>hb` blame line;
   `<leader>hD` diff against HEAD.
-- **fugitive** for the heavy workflows — see `docs/fugitive.md`. The
-  gitsigns maps handle 80% of daily flow; `:G` for the rest.
 
 ## Debugging (nvim-dap)
 
