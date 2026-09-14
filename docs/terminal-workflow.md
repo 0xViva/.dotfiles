@@ -71,7 +71,7 @@ The same project switcher is reached three ways:
 | Where              | Binding        | Effect                                    |
 |--------------------|----------------|-------------------------------------------|
 | inside tmux        | `C-a f`        | new window running `tmux-sessionizer`     |
-| zsh prompt         | `C-p`          | runs the switcher in-place (`zshrc:25`)   |
+| zsh prompt         | `C-p`          | runs the switcher in-place (`zshrc:30`)   |
 | nvim normal mode   | `C-f`          | new tmux window with the switcher (`set.lua:66`) |
 | tmux (bound, off)  | `C-a M-h/t/n/s`| sessionizer windows 0–3                   |
 
@@ -79,7 +79,7 @@ The same project switcher is reached three ways:
 
 Applied by `fzf/zsh.zsh`, active only at the prompt:
 
-- `C-p` — tmux-sessionizer (from `zshrc:25`)
+- `C-p` — tmux-sessionizer (from `zshrc:30`)
 - `C-f` — fzf file picker, inserts the chosen path into your command
 - `C-d` — fzf directory picker (`fd`), inserts the dir
 - `C-e` — fzf file picker, then *opens the file in nvim*

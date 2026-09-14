@@ -14,9 +14,14 @@ fi
 
 eval "$(mise activate zsh)"
 
-if command -v oh-my-posh >/dev/null 2>&1; then
-  eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/config.json)"
+export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
 fi
+ZLE_RPROMPT_INDENT=0
+
+set_win_title() { print -Pn "\e]0;${PWD:t}\a" }
+precmd_functions+=(set_win_title)
 
 source "$HOME/.config/fzf/fzf.zsh"
 

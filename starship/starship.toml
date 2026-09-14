@@ -1,0 +1,84 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = true
+palette = 'cool'
+
+format = """
+[ \ue200 ](lead)$username[@](muted)$hostname$git_branch$git_status$fill$cmd_duration${custom.root}$memory_usage
+[ \ue285 ](lead_path)$directory$character"""
+
+[fill]
+symbol = ' '
+
+[username]
+show_always = true
+style_user = 'user'
+style_root = 'user'
+format = "[$user]($style)"
+
+[hostname]
+ssh_only = false
+style = 'host'
+format = "[$hostname]($style)"
+
+[git_branch]
+symbol = "\ue725 "
+style = 'branch'
+format = "[ $symbol$branch]($style)"
+
+[git_status]
+style = 'branch'
+format = '[$all_status$ahead_behind]($style)'
+conflicted = " ="
+ahead = " \u2191${count}"
+behind = " \u2193${count}"
+diverged = " \u21c5${ahead_count}\u2193${behind_count}"
+up_to_date = " \u2261"
+untracked = " ?${count}"
+stashed = " \ueb4b${count}"
+modified = " \uf044${count}"
+staged = " \uf046${count}"
+renamed = " \u00bb${count}"
+deleted = " \u2718${count}"
+
+[directory]
+style = 'path'
+format = "[{ \ue5ff $path }]($style)"
+home_symbol = 'home'
+truncation_length = 0
+truncate_to_repo = false
+
+[character]
+format = "$symbol"
+success_symbol = "[ \ue286 ](ok)"
+error_symbol = "[ \ue286 ](error)"
+
+[cmd_duration]
+min_time = 0
+format = "[ $duration ](duration)[\ue601](icon)"
+
+[custom.root]
+command = "printf '\uf0e7'"
+when = 'test "$(id -u)" -eq 0'
+format = "[ $output ]"
+
+[memory_usage]
+disabled = false
+threshold = 0
+style = 'memory'
+format = "[ [MEM:](label)$ram_pct (\\($ram\\))]($style)"
+
+[palettes.cool]
+lead = '#22d3ee'
+lead_path = '#2dd4bf'
+user = '#a5b4fc'
+host = '#7dd3fc'
+branch = '#60a5fa'
+path = '#93c5fd'
+duration = '#5eead4'
+memory = '#67e8f9'
+ok = '#5eead4'
+error = '#fb7185'
+muted = '#94a3b8'
+label = '#cbd5e1'
+icon = '#e2e8f0'
