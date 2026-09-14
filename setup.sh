@@ -64,28 +64,31 @@ install_packages() {
 
 install_packages
 
-if ! command -v zsh >/dev/null 2>&1; then
-    echo "zsh not found — make sure the manifest lists zsh for $OS_TYPE"
+if ! command -v fish >/dev/null 2>&1; then
+    echo "fish not found — make sure the manifest lists fish for $OS_TYPE"
     exit 1
 fi
 
-ZSH_PATH=$(command -v zsh)
-if ! grep -q "^$ZSH_PATH$" /etc/shells; then
-    echo "Adding $ZSH_PATH to /etc/shells..."
-    echo "$ZSH_PATH" | sudo tee -a /etc/shells
+FISH_PATH=$(command -v fish)
+if ! grep -q "^$FISH_PATH$" /etc/shells; then
+    echo "Adding $FISH_PATH to /etc/shells..."
+    echo "$FISH_PATH" | sudo tee -a /etc/shells
 fi
-echo "Changing default shell to $ZSH_PATH..."
-chsh -s "$ZSH_PATH"
+echo "Changing default shell to $FISH_PATH..."
+chsh -s "$FISH_PATH"
 
-echo "Cleaning up existing Zsh config files..."
-rm -f $HOME/.zshrc $HOME/.zshenv $HOME/.zprofile $HOME/.zlogin
+echo "Cleaning up existing Fish config files..."
+rm -f $HOME/.config/fish/config.fish $HOME/.config/fish/fish_plugins
 
 echo "Running stow for OS type: $OS_TYPE..."
-STOW_FOLDERS=$(get stow | paste -sd, -) DOTFILES=$DOTFILES ./stow.zsh
+STOW_FOLDERS=$(get stow | paste -sd, -) DOTFILES=$DOTFILES fish "$DOTFILES/stow.fish"
+
+echo "Installing fish plugins (fisher)..."
+fish -c 'fisher update'
 
 echo "Setup gpg-agent..."
-source "$DOTFILES/gpg/setup.zsh"
-echo "Done! Your shell is now using zsh with dotfiles."
+fish "$DOTFILES/gpg/setup.fish"
+echo "Done! Your shell is now using fish with dotfiles."
 
 if [[ "$OS_TYPE" == "arch" ]]; then
     echo "Setting up systemd user services..."
@@ -94,4 +97,4 @@ if [[ "$OS_TYPE" == "arch" ]]; then
     hyprctl reload
 fi
 
-exec zsh
+exec fish

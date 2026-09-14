@@ -1,7 +1,4 @@
-zsh/.zsh_history
-zsh/.zcompdump
-zsh/.zcompcache
-zsh/.zsh_sessions
+fish/fish_variables
 .DS_Store
 tmp/
 

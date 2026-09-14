@@ -4,7 +4,7 @@ This document maps every keybinding in the dotfiles, split by operating system, 
 explains how the layers stack when two programs want the same key.
 
 Sources: `hypr/bindings/*.lua`, `noctalia/config.toml`, `tmux/tmux.conf`,
-`ghostty/config`, `aerospace/aerospace.toml`, `zsh/.zshrc`, `fzf/fzf.zsh`,
+`ghostty/config`, `aerospace/aerospace.toml`, `fish/config.fish`, `fzf/fzf.fish`,
 `nvim/lua/`.
 
 ---
@@ -13,8 +13,8 @@ Sources: `hypr/bindings/*.lua`, `noctalia/config.toml`, `tmux/tmux.conf`,
 
 | OS | Tiling WM / compositor | Terminal app | Multiplexer | Shell | Editor |
 |----|------------------------|--------------|-------------|-------|--------|
-| **Arch (Linux)** | Hyprland | ghostty | tmux | zsh | Neovim |
-| **macOS** | AeroSpace | ghostty | tmux | zsh | Neovim |
+| **Arch (Linux)** | Hyprland | ghostty | tmux | fish | Neovim |
+| **macOS** | AeroSpace | ghostty | tmux | fish | Neovim |
 
 `macos` configs are installed by `./setup.sh <arch|macos>`.
 
@@ -27,7 +27,7 @@ Keys are grabbed in priority order. A lower layer never sees a key the higher la
 2. App window
 3. Terminal emulator (ghostty)
 4. tmux (prefix C-a)
-5. Shell (zsh ZLE)
+5. Shell (fish)
 6. Editor (Neovim)
 ```
 
@@ -115,7 +115,7 @@ brightness, notifications) live in the Control Center panel.
 
 ---
 
-## Arch / Linux — inside the terminal (ghostty → tmux → zsh → nvim)
+## Arch / Linux — inside the terminal (ghostty → tmux → fish → nvim)
 
 ### ghostty (terminal emulator)
 Four custom bindings; the rest is stock:
@@ -148,13 +148,16 @@ On `C-a` in a pane, VM-mode navigation uses `hjkl` (dwm-style):
 
 Terminal pacing: `escape-time 0` (fast prefix); `base-index 1`; windows start at 1.
 
-### zsh (ZLE) — shell keybindings
+### fish — shell keybindings
+`CTRL+E` is the custom widget (`fzf/fzf.fish`); the rest are the fzf.fish plugin.
 | Keys | Action |
 |------|--------|
-| `CTRL + F` | fzf file picker (insert path) |
-| `CTRL + D` | fzf directory picker (insert path) — **rebound from EOF** |
-| `CTRL + E` | fzf + edit result in nvim |
+| `CTRL + E` | fzf: pick a file from `/` and open it in nvim |
 | `CTRL + P` | tmux sessionizer (new tmux window) |
+| `CTRL + ALT + F` | fzf: search directory (prefix `/` to search the whole machine) |
+| `CTRL + R` | fzf: history |
+| `CTRL + ALT + L` / `CTRL + ALT + S` | fzf: git log / git status |
+| `CTRL + V` / `CTRL + ALT + P` | fzf: variables / processes |
 
 ### Neovim
 Leader is **`SPACE`**. Notable bindings:
@@ -201,7 +204,7 @@ FN + top row   = F-keys (macOS media keys by default — see conflicts)
 Startup: sketchybar + jankyborders autostart; **zen-browser → workspace 1**, **ghostty →
 workspace 2** automatically (`on-window-detected`).
 
-Inside the terminal on macOS, the stack is the same as Arch (ghostty → tmux → zsh → nvim),
+Inside the terminal on macOS, the stack is the same as Arch (ghostty → tmux → fish → nvim),
 with the notes below about `Option` being stolen.
 
 ---
@@ -209,15 +212,15 @@ with the notes below about `Option` being stolen.
 ## Conflict analysis
 
 ### 1. tmux prefix `C-a` vs. shell "start of line" — **real, by design, workaround exists**
-`C-a` is the tmux prefix **and** readline/zsh's default "jump to start of line".
+`C-a` is the tmux prefix **and** the shell's default "jump to start of line".
 Because `escape-time = 0`, a *lone* `C-a` passes through quickly, but any `C-a <key>` is
 tmux. To type a literal `C-a` inside a tmux pane: **press `C-a C-a`**.
 
 ### 2. AeroSpace `Option + arrows` vs. terminal word-motion — **real, unavoidable on macOS**
 In any terminal (ghostty, Terminal.app) `Option+Left/Right` means *jump word* and
-`Option+Up/Down` means *history search* in readline/zsh. AeroSpace owns all four, so on
+`Option+Up/Down` means *history search* in readline. AeroSpace owns all four, so on
 macOS you **lose word-wise cursor movement** in the shell. Alternatives: `Esc`-prefixed
-binds (`ESC b` / `ESC f` / `ESC p/n`) or re-binding `CTRL+arrows` in `.zshrc`.
+binds (`ESC b` / `ESC f` / `ESC p/n`) or re-binding `CTRL+arrows` in `config.fish`.
 
 ### 3. Neovim `CTRL+F` — **real shadowing, nvim-internal**
 `set.lua` re-binds `CTRL+F` (default: page forward in normal mode) to launch
@@ -258,7 +261,7 @@ register their own media handling won't fire; the OSD + increments you see come 
   no overlap with Hyprland's `SUPER` (those combos are unbound there), nvim's `CTRL`,
   or tmux's `C-a` prefix.
 - **Hyprland uses physical keycodes for workspaces** → immune to the Norwegian layout.
-- **zsh `^F/^D/^E` only exist at the shell level** → nvim/tmux don't use them; no clash.
+- **fish `^E`/`^P` only exist at the shell level** → nvim/tmux don't use them; no clash.
 
 ---
 
@@ -266,5 +269,5 @@ register their own media handling won't fire; the OSD + increments you see come 
 
 | OS | Big picture |
 |----|-------------|
-| Arch | **`SUPER` does everything Hyprland** (windows, workspaces, system). Everything else lives `C-*` under nvim/tmux/zsh. |
+| Arch | **`SUPER` does everything Hyprland** (windows, workspaces, system). Everything else lives `C-*` under nvim/tmux/fish. |
 | macOS | **`⌥` (Option) is your WM**, `⌘` is macOS, `F1-F9` workspaces. Shell word-motion moves to `ESC b/f`. |

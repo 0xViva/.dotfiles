@@ -3,7 +3,8 @@ arch:
   packages:
     - stow
     - ghostty
-    - zsh
+    - fish
+    - fisher
     - git
     - openssh
     - hyprland
@@ -12,6 +13,7 @@ arch:
     - noctalia
     - fzf
     - fd
+    - bat
     - btop
     - mise
     - starship
@@ -33,7 +35,7 @@ arch:
     - zen-browser-bin
   stow:
     - .ssh
-    - zsh
+    - fish
     - tmux
     - bin
     - fcitx5
@@ -53,10 +55,12 @@ arch:
 
 macos:
   packages:
-    - zsh
+    - fish
+    - fisher
     - stow
     - gnupg
     - fd
+    - bat
     - fzf
     - ripgrep
     - make
@@ -75,7 +79,7 @@ macos:
     - starship
     - markdownlint-cli
   stow:
-    - zsh
+    - fish
     - .ssh
     - tmux
     - git

@@ -1,4 +1,2 @@
-.zcompdump*
-.zcompdump-*
-.zsh_history
+fish_variables
 .DS_Store

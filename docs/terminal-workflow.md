@@ -2,7 +2,7 @@
 
 How the three layers hand the keyboard to each other, and how to use the
 configured keybindings (`ghostty/config`, `tmux/tmux.conf`,
-`tmux/tmux-sessionizer.conf`, `zsh/.zshrc`, `fzf/fzf.zsh`, `nvim/lua/set.lua`).
+`tmux/tmux-sessionizer.conf`, `fish/config.fish`, `fzf/fzf.fish`, `nvim/lua/set.lua`).
 
 ## The layering model
 
@@ -10,14 +10,14 @@ One keyboard, three owners. The app that currently has focus owns the keys;
 the others pass them through:
 
 ```
-Ghostty (outer window)  →  tmux (prefix C-a)  →  zsh (prompt)  or  nvim
+Ghostty (outer window)  →  tmux (prefix C-a)  →  fish (prompt)  or  nvim
 ```
 
 - Ghostty only intercepts what you bind in `ghostty/config`. There are no
   split/zoom binds here — it is a pure pass-through layer.
 - tmux only intercepts keys *prefixed* by `C-a` (it unbinds the default `C-b`).
   Plain keys go to the app inside.
-- zsh/fzf bindings only apply while the shell prompt is focused.
+- fish/fzf bindings only apply while the shell prompt is focused.
 - nvim bindings only apply while an nvim window is focused.
 
 So the same chord can mean different things in different apps — that is the
@@ -71,18 +71,20 @@ The same project switcher is reached three ways:
 | Where              | Binding        | Effect                                    |
 |--------------------|----------------|-------------------------------------------|
 | inside tmux        | `C-a f`        | new window running `tmux-sessionizer`     |
-| zsh prompt         | `C-p`          | runs the switcher in-place (`zshrc:30`)   |
+| fish prompt        | `C-p`          | runs the switcher in-place (`config.fish`) |
 | nvim normal mode   | `C-f`          | new tmux window with the switcher (`set.lua:66`) |
 | tmux (bound, off)  | `C-a M-h/t/n/s`| sessionizer windows 0–3                   |
 
-## zsh (prompt-only bindings)
+## fish (prompt-only bindings)
 
-Applied by `fzf/zsh.zsh`, active only at the prompt:
+Active only at the shell prompt (`fzf/fzf.fish` + the fzf.fish plugin):
 
-- `C-p` — tmux-sessionizer (from `zshrc:30`)
-- `C-f` — fzf file picker, inserts the chosen path into your command
-- `C-d` — fzf directory picker (`fd`), inserts the dir
-- `C-e` — fzf file picker, then *opens the file in nvim*
+- `C-p` — tmux-sessionizer
+- `C-e` — fzf file picker from `/`, then *opens the file in nvim*
+- `C-Alt-f` — fzf directory search (cwd; prefix `/` for the whole machine)
+- `C-r` — fzf history
+- `C-Alt-l` / `C-Alt-s` — fzf git log / git status
+- `C-v` / `C-Alt-p` — fzf variables / processes
 
 ## nvim layer
 
@@ -110,7 +112,7 @@ Nothing here requires the mouse; Ghostty stays a dumb, transparent wrapper.
 
 ## Gotchas
 
-- **`C-a` vs beginning-of-line.** Inside tmux, `C-a` is the prefix, so zsh's
+- **`C-a` vs beginning-of-line.** Inside tmux, `C-a` is the prefix, so fish's
   emacs-mode `C-a` (cursor to line start) is shadowed. Press the prefix twice
   — `C-a C-a` sends a literal `C-a` through (`bind-key C-a send-prefix`,
   `:14`) — or just hit `Home` / `^A` via `C-a C-a`.
@@ -118,8 +120,8 @@ Nothing here requires the mouse; Ghostty stays a dumb, transparent wrapper.
   `tmux-sessionizer -s <n>`, which requires `TS_SESSION_COMMANDS` to be set in
   `tmux/tmux-sessionizer.conf` — it isn't, so they exit with an error. Either
   define `TS_SESSION_COMMANDS` or drop the bindings (`:25-28`).
-- **`C-f` means three different things**, never at the same time: zsh picks a
-  filepath, nvim-normal spawns the sessionizer, nvim-insert scrolls the cmp
+- **`C-f` means three different things**, never at the same time: fish moves the
+  cursor right, nvim-normal spawns the sessionizer, nvim-insert scrolls the cmp
   docs window (`cmp.lua:52`).
 - **Mouse is on in tmux, off in nvim.** tmux mouse selection works in shell
   panes; in nvim panes it passes through dead because `set.lua:11` disables

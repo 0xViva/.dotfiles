@@ -40,7 +40,7 @@ nvim's `C-w h/j/k/l`, which your `set.lua` already maps.
 
 | Chord | Verdict | Why |
 |-------|---------|-----|
-| `ctrl+shift+h/k/l` | ✅ use | unbound by ghostty 1.3.1, unbound by this stack's tmux/nvim/zsh/hyprland |
+| `ctrl+shift+h/k/l` | ✅ use | unbound by ghostty 1.3.1, unbound by this stack's tmux/nvim/fish/hyprland |
 | `ctrl+shift+j` | repurpose | default is `write_screen_file:paste` (nobody uses it) — unbind then take it |
 | `alt+h/j/k/l` | ❌ | `alt+j/k` = vim scroll by C-f/C-b; ghosts into nvim. Would steal them |
 | `ctrl+shift+v` | ❌ | Linux paste default, and your most-used copy/paste muscle memory |
@@ -48,7 +48,7 @@ nvim's `C-w h/j/k/l`, which your `set.lua` already maps.
 | `super+…` | ❌ | owned by Hyprland (and lookup-key on macOS) |
 
 `ctrl+shift+…` is the one freely-enterable keyspace in this stack: ghostty owns it,
-nothing below (tmux has no `ctrl+shift`, nvim/zsh only use plain `ctrl`, Hyprland has
+nothing below (tmux has no `ctrl+shift`, nvim/fish only use plain `ctrl`, Hyprland has
 no `ctrl+shift` binds). That is where all five lines live.
 
 ---
@@ -68,7 +68,7 @@ no `ctrl+shift` binds). That is where all five lines live.
 | OSC-52 copy over SSH | ✔ 1.3 | ✅ (xclip bind in this config) |
 
 **The deciding factor here is `tmux-sessionizer`.** Your daily flow routes through it:
-`prefix f`, zsh `C-p`, nvim `C-f`, and `prefix M-h/t/n/s` all open project windows in
+`prefix f`, fish `C-p`, nvim `C-f`, and `prefix M-h/t/n/s` all open project windows in
 tmux. Drop tmux and you lose your project-switching mechanism wholesale, plus every
 detached session you keep alive on servers. For a local, single-window, never-detach
 workflow you could live without it — but this setup is not that.
@@ -86,7 +86,7 @@ They are different **layers**, not rivals — the same way Hyprland needs a term
 Hyprland          composes/handles your windows
   └─ ghostty      is the terminal: rendering, scrollback, tabs
       └─ tmux     is the session manager: windows, persistence, sessionizer
-          └─ zsh / nvim   do their own thing inside a tmux pane
+          └─ fish / nvim   do their own thing inside a tmux pane
 ```
 
 The one place they *redundantly* overlap is **splits** (ghostty splits, tmux panes,

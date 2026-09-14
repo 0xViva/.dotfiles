@@ -37,7 +37,7 @@ Enabled in `noctalia/config.toml` under `[theme.templates]`:
 | `fcitx5` | `~/.local/share/fcitx5/themes/noctalia/theme.conf` | `fcitx5/conf/classicui.conf` |
 | `neovim` | `~/.config/nvim/lua/matugen.lua` | `nvim/lua/plugins/color.lua` (`require`) |
 | `opencode` | `~/.config/opencode/themes/matugen.json` | `opencode/opencode.json` (`theme`) |
-| `fzf` | `~/.config/fzf/themes/noctalia.sh` | `fzf/fzf.zsh` (guarded `source`) |
+| `fzf` | `~/.config/fzf/themes/noctalia.{sh,fish}` | not sourced — see `docs/fish.md` |
 | `gtk3`, `gtk4`, `qt` | `~/.config/gtk-*/noctalia.css`, `qt*ct/colors/noctalia.conf` | GTK/Qt apps |
 
 Re-render on demand: `noctalia msg templates-apply`. Templates re-render
