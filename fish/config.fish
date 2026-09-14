@@ -27,6 +27,9 @@ end
 
 # ── Interactive shells ───────────────────────────────────────────────────────
 if status is-interactive
+    # Suppress fish's "Welcome to fish" greeting on new shells.
+    set -g fish_greeting
+
     set -gx GIT_CONFIG_GLOBAL $HOME/.config/git/.gitconfig
     set -gx GIT_EDITOR nvim
     set -gx GPG_TTY (tty)

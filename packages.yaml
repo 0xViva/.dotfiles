@@ -1,4 +1,3 @@
-
 arch:
   packages:
     - stow
@@ -17,7 +16,6 @@ arch:
     - btop
     - mise
     - starship
-    - imv
     - mpv
     - wl-clipboard
     - pinentry
@@ -41,11 +39,9 @@ arch:
     - starship
     - git
     - hypr
-    - uwsm
     - noctalia
     - btop
     - mise
-    - imv
     - opencode
 
 macos:
@@ -84,4 +80,3 @@ macos:
     - opencode
     - aerospace
     - mise
-

@@ -94,7 +94,9 @@ if [[ "$OS_TYPE" == "arch" ]]; then
     echo "Setting up systemd user services..."
     systemctl --user daemon-reload
     echo "We're on arch, reload hyprland config after setup."
-    hyprctl reload
+    # Target the live instance explicitly: the inherited
+    # HYPRLAND_INSTANCE_SIGNATURE can point at a dead instance after a restart.
+    hyprctl -i 0 reload
 fi
 
 exec fish
