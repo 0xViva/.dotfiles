@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Snapshot the entire Google Drive remote one-way into
+# ~/backups/google_drive/google-drive_YYYY-MM-DD_HH-MM-SS.
+#
+# rclone runs with an empty config (--config=) and reads everything from the
+# environment: non-secret settings from rclone/rclone.env, secrets from the
+# repo-root .env. Nothing secret is ever written to disk.
+set -euo pipefail
+
+repo_root="$(cd -- "$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")/.." && pwd)"
+
+# shellcheck source=/dev/null
+source "$repo_root/rclone/rclone.env"
+
+if [[ ! -f "$repo_root/.env" ]]; then
+    echo "rclone-backup: $repo_root/.env not found — copy .env.example and fill it in." >&2
+    exit 1
+fi
+# shellcheck source=/dev/null
+set -a; source "$repo_root/.env"; set +a
+
+if [[ -z "${RCLONE_CONFIG_GDRIVE_TOKEN:-}" ]]; then
+    echo "rclone-backup: RCLONE_CONFIG_GDRIVE_TOKEN is not set in $repo_root/.env" >&2
+    exit 1
+fi
+
+backup_root="${RCLONE_BACKUP_ROOT:-$HOME/backups/google_drive}"
+snapshot="google-drive_$(date +%Y-%m-%d_%H-%M-%S)"
+dest="$backup_root/$snapshot"
+
+mkdir -p "$dest"
+echo "Backing up gdrive: -> $dest"
+
+rclone --config= copy gdrive: "$dest" \
+    --create-empty-src-dirs \
+    --stats-one-line \
+    --stats 15s
+
+echo "Done: $dest"

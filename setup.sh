@@ -93,6 +93,12 @@ echo "Done! Your shell is now using fish with dotfiles."
 if [[ "$OS_TYPE" == "arch" ]]; then
     echo "Setting up systemd user services..."
     systemctl --user daemon-reload
+    if [[ -f "$DOTFILES/.env" ]]; then
+        systemctl --user enable --now rclone-drive.service
+    else
+        echo "rclone-drive.service not started: create $DOTFILES/.env, then run"
+        echo "  systemctl --user enable --now rclone-drive.service"
+    fi
     echo "We're on arch, reload hyprland config after setup."
     # Target the live instance explicitly: the inherited
     # HYPRLAND_INSTANCE_SIGNATURE can point at a dead instance after a restart.

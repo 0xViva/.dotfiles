@@ -25,6 +25,8 @@ arch:
     - libnotify
     - tmux
     - markdownlint-cli
+    - rclone
+    - fuse3
   aurs:
     - nvim
     - zen-browser-bin
@@ -43,6 +45,7 @@ arch:
     - btop
     - mise
     - opencode
+    - systemd
 
 macos:
   packages:

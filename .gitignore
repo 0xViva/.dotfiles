@@ -11,3 +11,6 @@ opencode/node_modules
 # tracked; these rendered outputs are not.
 btop/themes/noctalia.theme
 nvim/lua/matugen.lua
+
+# rclone secrets (Google Drive OAuth client + token). Template: .env.example
+.env
