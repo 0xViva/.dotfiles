@@ -39,51 +39,14 @@ vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)
 
--- Clipboard. Setting 'clipboard' disables Neovim's own OSC 52 fallback (see
--- provider/clipboard.vim), so the provider is chosen explicitly here.
---
--- Inside tmux the copy path goes through tmux: `load-buffer -w` stores the text
--- in a tmux paste buffer and pushes it to the terminal clipboard over OSC 52
--- (so it survives ssh and is shared with tmux's own copy mode). Paste reads
--- tmux's newest paste buffer with `save-buffer`, which therefore contains every
--- copy made by any program inside tmux. It cannot contain text copied outside
--- tmux: tmux never returns an OSC 52 read reply to a pane, and its
--- `refresh-client -l` query cannot be relied on (Ghostty 1.3.1 answers it only
--- intermittently). Use the terminal's own paste for that.
---
--- Outside tmux (e.g. a direct ssh session) OSC 52 works both ways.
-local function env_is_set(name)
-  local value = os.getenv(name)
-  return value ~= nil and value ~= ''
-end
-
-if env_is_set 'TMUX' and vim.fn.executable 'tmux' == 1 then
-  local copy = { 'tmux', 'load-buffer', '-w', '-' }
-  local paste = { 'tmux', 'save-buffer', '-' }
-  vim.g.clipboard = {
-    name = 'tmux',
-    copy = {
-      ['+'] = copy,
-      ['*'] = copy,
-    },
-    paste = {
-      ['+'] = paste,
-      ['*'] = paste,
-    },
-  }
-elseif env_is_set 'SSH_TTY' then
-  local osc52 = require 'vim.ui.clipboard.osc52'
-  vim.g.clipboard = {
-    name = 'OSC 52',
-    copy = {
-      ['+'] = osc52.copy '+',
-      ['*'] = osc52.copy '*',
-    },
-    paste = {
-      ['+'] = osc52.paste '+',
-      ['*'] = osc52.paste '*',
-    },
-  }
+-- Clipboard. The system clipboard is the single source of truth. Locally
+-- Neovim auto-selects the Wayland provider (wl-copy/wl-paste) and tmux's
+-- `set-clipboard` puts tmux's own copies on the same clipboard, so a yank, a
+-- tmux copy-mode selection and a copy in any other app all agree. Over ssh
+-- there is no local clipboard, so use OSC 52 instead: tmux wraps it in DCS
+-- passthrough, which is what `allow-passthrough on` in tmux.conf is for.
+if (os.getenv 'SSH_TTY' or '') ~= '' then
+  vim.g.clipboard = 'osc52'
 end
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')

@@ -123,13 +123,15 @@ Nothing here requires the mouse; Ghostty stays a dumb, transparent wrapper.
 - **`C-f` means three different things**, never at the same time: fish moves the
   cursor right, nvim-normal spawns the sessionizer, nvim-insert scrolls the cmp
   docs window (`cmp.lua:52`).
-- **Clipboard is shared through tmux.** nvim copies with `tmux load-buffer -w`
-  (`set.lua`) so yanks land on the terminal clipboard and are shared with tmux
-  copy mode, over ssh included; pasting reads tmux's newest paste buffer, so
-  anything copied by any program inside tmux is pasteable. Text copied
-  **outside** tmux cannot be pulled in this way — tmux never returns an OSC 52
-  read to a pane, and its `refresh-client -l` query is unreliable on Ghostty
-  1.3.1 — so paste that with Ghostty's own `SUPER+V`.
+- **There is one clipboard: the system clipboard.** tmux copies reach it over
+  OSC 52 (`set-clipboard on`) and nvim auto-selects the Wayland provider
+  (`set.lua`), so an nvim yank, a tmux copy-mode selection and a copy in any
+  other app all land in the same place. Paste with Ghostty's `SUPER+V`: it is
+  the one paste path that always reads that clipboard. tmux's `paste-buffer`
+  (middle-click) still pastes tmux's own newest paste buffer, which nvim no
+  longer touches.
+- **Over ssh there is no local clipboard**, so nvim falls back to OSC 52 (which
+  tmux wraps in DCS passthrough — that is why `allow-passthrough on` is set).
 - **Mouse is on in tmux, off in nvim.** tmux mouse selection works in shell
   panes; in nvim panes it passes through dead because `set.lua:11` disables
   the mouse there. Use `]c`, `v`, etc. instead.
