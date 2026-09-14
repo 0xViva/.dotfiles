@@ -52,7 +52,7 @@ without delay, so chords feel instant.
 | `C-a c`      | new window                   |
 | `C-a %` / `"`| vertical / horizontal split   |
 | `C-a x`      | kill pane                     |
-| `C-a r`      | reload `~/.tmux.conf`         |
+| `C-a r`      | reload `$XDG_CONFIG_HOME/tmux/tmux.conf` |
 
 Repeatable means `C-a j j j j` walks you down four panes without re-pressing
 the prefix. Mouse is on outside nvim, so clicking a pane focuses it too.
