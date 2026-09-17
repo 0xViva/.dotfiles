@@ -38,6 +38,7 @@ Enabled in `noctalia/config.toml` under `[theme.templates]`:
 | `opencode` | `~/.config/opencode/themes/matugen.json` | `opencode/opencode.json` (`theme`) |
 | `fzf` | `~/.config/fzf/themes/noctalia.{sh,fish}` | not sourced — see `docs/fish.md` |
 | `gtk3`, `gtk4`, `qt` | `~/.config/gtk-*/noctalia.css`, `qt*ct/colors/noctalia.conf` | GTK/Qt apps |
+| `openrgb` (user) | `~/.cache/noctalia/openrgb.sh` | run by its own `post_hook` — RGB hardware follows the accent (see `docs/rgb.md`) |
 
 Re-render on demand: `noctalia msg templates-apply`. Templates re-render
 automatically whenever the palette changes.

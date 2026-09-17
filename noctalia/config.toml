@@ -704,6 +704,16 @@ wallpaper_scheme = "m3-content"
     enable_builtin_templates = true
     enable_community_templates = true
 
+    # User template: OpenRGB. Renders the palette's primary accent into a script
+    # in the cache and runs it, so the RGB hardware follows theme changes and is
+    # re-applied at every login. The script no-ops if OpenRGB is not installed.
+    [theme.templates.user.openrgb]
+    input_path = "templates/openrgb.sh"
+    output_path = "$XDG_CACHE_HOME/noctalia/openrgb.sh"
+    post_hook = 'bash "${XDG_CACHE_HOME:-$HOME/.cache}/noctalia/openrgb.sh"'
+    hook_async = false
+    index = 100
+
 [wallpaper]
 directory = ""
 directory_dark = ""

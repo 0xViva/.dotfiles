@@ -27,6 +27,8 @@ arch:
     - markdownlint-cli
     - rclone
     - fuse3
+    - openrgb
+    - python
   aurs:
     - nvim
     - zen-browser-bin

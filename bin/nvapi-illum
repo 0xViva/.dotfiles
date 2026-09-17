@@ -1,0 +1,370 @@
+#!/usr/bin/env python3
+"""Control NVIDIA GPU RGB illumination via NVAPI (Linux).
+
+Some GPUs (e.g. Gainward/Palit RTX 40-series Ghost) expose their lighting
+through NVIDIA's NVAPI "client illumination zones" API rather than an
+OpenRGB-supported controller. This talks to that API directly through the
+driver's libnvidia-api.so, so those cards can be driven like any other RGB
+device (colour, brightness, off).
+
+It is deliberately self-contained: no build step, no OpenRGB patch. The struct
+layout mirrors OpenRGB's Controllers/NVIDIAIlluminationController and the NVAPI
+query IDs are the ones OpenRGB resolves through nvapi_QueryInterface.
+
+Usage:
+    nvapi-illum --list
+    nvapi-illum --off
+    nvapi-illum --color RRGGBB [--brightness 0-100]
+"""
+
+from __future__ import annotations
+
+import argparse
+import ctypes
+import sys
+import time
+
+NVAPI_INITIALIZE = 0x0150E828
+NVAPI_ENUM_PHYSICAL_GPUS = 0xE5AC921F
+NVAPI_GPU_GET_PCI_IDENTIFIERS = 0x2DDFB66E
+NVAPI_ZONES_GET_CONTROL = 0x3DBF5764
+NVAPI_ZONES_SET_CONTROL = 0x197D065E
+
+NVIDIA_VENDOR = 0x10DE
+
+# NV_GPU_CLIENT_ILLUM_ZONE_CONTROL_PARAMS_V1 layout, sizeof() == 6476
+# (version 72012 == 6476 | (1 << 16); the number must match or the driver
+# rejects the struct).
+ZONE_TYPE = {"RGB": 1, "COLOR_FIXED": 2, "RGBW": 3, "SINGLE_COLOR": 4}
+CTRL_MODE_MANUAL = 0
+ZONES_MAX = 32
+
+# The array size the params struct must have; computed after the zone type is
+# defined below by comparing ctypes' sizeof against this.
+PARAMS_SIZE = 6476
+
+
+class ManualRgbParams(ctypes.Structure):
+    _fields_ = [
+        ("colorR", ctypes.c_uint8),
+        ("colorG", ctypes.c_uint8),
+        ("colorB", ctypes.c_uint8),
+        ("brightnessPct", ctypes.c_uint8),
+    ]
+
+
+class ManualRgb(ctypes.Structure):
+    _fields_ = [("rgbParams", ManualRgbParams)]
+
+
+class ManualRgbwParams(ctypes.Structure):
+    _fields_ = [
+        ("colorR", ctypes.c_uint8),
+        ("colorG", ctypes.c_uint8),
+        ("colorB", ctypes.c_uint8),
+        ("colorW", ctypes.c_uint8),
+        ("brightnessPct", ctypes.c_uint8),
+    ]
+
+
+class ManualRgbw(ctypes.Structure):
+    _fields_ = [("rgbwParams", ManualRgbwParams)]
+
+
+class ManualSingleColorParams(ctypes.Structure):
+    _fields_ = [("brightnessPct", ctypes.c_uint8)]
+
+
+class ManualSingleColor(ctypes.Structure):
+    _fields_ = [("singleColorParams", ManualSingleColorParams)]
+
+
+class ManualColorFixedParams(ctypes.Structure):
+    _fields_ = [("brightnessPct", ctypes.c_uint8)]
+
+
+class ManualColorFixed(ctypes.Structure):
+    _fields_ = [("colorFixedParams", ManualColorFixedParams)]
+
+
+class RgbData(ctypes.Union):
+    # The real union holds piecewise-linear variants (<= 20 bytes); the 64-byte
+    # reserved member below is what fixes the size, so listing the manual
+    # variant plus rsvd is sufficient.
+    _fields_ = [("manualRGB", ManualRgb), ("rsvd", ctypes.c_uint8 * 64)]
+
+
+class RgbwData(ctypes.Union):
+    _fields_ = [("manualRGBW", ManualRgbw), ("rsvd", ctypes.c_uint8 * 64)]
+
+
+class SingleColorData(ctypes.Union):
+    _fields_ = [("manualSingleColor", ManualSingleColor), ("rsvd", ctypes.c_uint8 * 64)]
+
+
+class ColorFixedData(ctypes.Union):
+    _fields_ = [("manualColorFixed", ManualColorFixed), ("rsvd", ctypes.c_uint8 * 64)]
+
+
+class RgbControl(ctypes.Structure):
+    _fields_ = [("data", RgbData), ("rsvd", ctypes.c_uint8 * 64)]
+
+
+class RgbwControl(ctypes.Structure):
+    _fields_ = [("data", RgbwData), ("rsvd", ctypes.c_uint8 * 64)]
+
+
+class SingleColorControl(ctypes.Structure):
+    _fields_ = [("data", SingleColorData), ("rsvd", ctypes.c_uint8 * 64)]
+
+
+class ColorFixedControl(ctypes.Structure):
+    _fields_ = [("data", ColorFixedData), ("rsvd", ctypes.c_uint8 * 64)]
+
+
+class ZoneData(ctypes.Union):
+    _fields_ = [
+        ("rgb", RgbControl),
+        ("colorFixed", ColorFixedControl),
+        ("rgbw", RgbwControl),
+        ("singleColor", SingleColorControl),
+        ("rsvd", ctypes.c_uint8 * 64),
+    ]
+
+
+class ZoneControl(ctypes.Structure):
+    _fields_ = [
+        ("type", ctypes.c_int),
+        ("ctrlMode", ctypes.c_int),
+        ("data", ZoneData),
+        ("rsvd", ctypes.c_uint8 * 64),
+    ]
+
+
+class ZoneControlParams(ctypes.Structure):
+    _fields_ = [
+        ("version", ctypes.c_uint32),
+        ("flags", ctypes.c_uint32),  # bDefault:1, rsvdField:31
+        ("numIllumZonesControl", ctypes.c_uint32),
+        ("rsvd", ctypes.c_uint8 * 64),
+        ("zones", ZoneControl * ZONES_MAX),
+    ]
+
+
+def _check_struct_size() -> None:
+    if ctypes.sizeof(ZoneControlParams) != PARAMS_SIZE:
+        raise RuntimeError(
+            "NVAPI struct layout mismatch: expected %d bytes, got %d"
+            % (PARAMS_SIZE, ctypes.sizeof(ZoneControlParams))
+        )
+
+
+class NvapiError(RuntimeError):
+    pass
+
+
+class NvapiUnavailable(NvapiError):
+    """NVAPI (or an NVIDIA GPU) is not present; there is simply nothing to do."""
+
+
+class Nvapi:
+    def __init__(self) -> None:
+        try:
+            self._lib = ctypes.CDLL("libnvidia-api.so.1")
+        except OSError:
+            try:
+                self._lib = ctypes.CDLL("libnvidia-api.so")
+            except OSError as exc:
+                raise NvapiUnavailable("libnvidia-api.so is not available") from exc
+
+        query = self._lib.nvapi_QueryInterface
+        query.restype = ctypes.c_void_p
+        query.argtypes = [ctypes.c_uint32]
+        self._query = query
+
+        self.initialize = self._resolve(
+            NVAPI_INITIALIZE, ctypes.c_int32
+        )
+        if self.initialize() != 0:
+            raise NvapiUnavailable("NvAPI_Initialize failed")
+
+        self.enum_physical_gpus = self._resolve(
+            NVAPI_ENUM_PHYSICAL_GPUS,
+            ctypes.c_int32,
+            ctypes.POINTER(ctypes.c_void_p),
+            ctypes.POINTER(ctypes.c_int32),
+        )
+        self.get_pci_identifiers = self._resolve(
+            NVAPI_GPU_GET_PCI_IDENTIFIERS,
+            ctypes.c_int32,
+            ctypes.c_void_p,
+            ctypes.POINTER(ctypes.c_uint32),
+            ctypes.POINTER(ctypes.c_uint32),
+            ctypes.POINTER(ctypes.c_uint32),
+            ctypes.POINTER(ctypes.c_uint32),
+        )
+        self.zones_get_control = self._resolve(
+            NVAPI_ZONES_GET_CONTROL,
+            ctypes.c_int32,
+            ctypes.c_void_p,
+            ctypes.POINTER(ZoneControlParams),
+        )
+        self.zones_set_control = self._resolve(
+            NVAPI_ZONES_SET_CONTROL,
+            ctypes.c_int32,
+            ctypes.c_void_p,
+            ctypes.POINTER(ZoneControlParams),
+        )
+
+    def _resolve(self, function_id: int, *argtypes):
+        address = self._query(function_id)
+        if not address:
+            raise NvapiUnavailable("driver does not expose NVAPI interface 0x%08X" % function_id)
+        return ctypes.CFUNCTYPE(*argtypes)(address)
+
+    def gpus(self):
+        handles = (ctypes.c_void_p * 64)()
+        count = ctypes.c_int32(0)
+        if self.enum_physical_gpus(handles, ctypes.byref(count)) != 0:
+            raise NvapiError("NvAPI_EnumPhysicalGPUs failed")
+        for index in range(count.value):
+            yield handles[index]
+
+    def pci_ids(self, handle):
+        device_id = ctypes.c_uint32()
+        subsystem_id = ctypes.c_uint32()
+        revision_id = ctypes.c_uint32()
+        ext_device_id = ctypes.c_uint32()
+        status = self.get_pci_identifiers(
+            handle,
+            ctypes.byref(device_id),
+            ctypes.byref(subsystem_id),
+            ctypes.byref(revision_id),
+            ctypes.byref(ext_device_id),
+        )
+        if status != 0:
+            raise NvapiError("NvAPI_GPU_GetPCIIdentifiers failed (0x%08X)" % status)
+        return device_id.value, subsystem_id.value
+
+    def get_zones(self, handle):
+        params = ZoneControlParams()  # ctypes zero-initialises the struct
+        params.version = PARAMS_SIZE | (1 << 16)
+        status = self.zones_get_control(handle, ctypes.byref(params))
+        time.sleep(0.05)
+        if status != 0:
+            raise NvapiError("NvAPI_GPU_ClientIllumZonesGetControl failed (0x%08X)" % status)
+        return params
+
+    def set_zones(self, handle, params):
+        status = self.zones_set_control(handle, ctypes.byref(params))
+        time.sleep(0.05)
+        if status != 0:
+            raise NvapiError("NvAPI_GPU_ClientIllumZonesSetControl failed (0x%08X)" % status)
+
+
+def apply_zones(params, colour, brightness):
+    """Set every zone to manual at the given colour/brightness."""
+    red, green, blue = colour
+    for index in range(params.numIllumZonesControl):
+        zone = params.zones[index]
+        zone.ctrlMode = CTRL_MODE_MANUAL
+        if zone.type == ZONE_TYPE["RGB"]:
+            p = zone.data.rgb.data.manualRGB.rgbParams
+            p.colorR, p.colorG, p.colorB = red, green, blue
+            p.brightnessPct = brightness
+        elif zone.type == ZONE_TYPE["RGBW"]:
+            p = zone.data.rgbw.data.manualRGBW.rgbwParams
+            p.colorR, p.colorG, p.colorB, p.colorW = red, green, blue, 0
+            p.brightnessPct = brightness
+        elif zone.type in (ZONE_TYPE["SINGLE_COLOR"], ZONE_TYPE["COLOR_FIXED"]):
+            # Fixed-colour zones (e.g. a logo) expose brightness only.
+            if zone.type == ZONE_TYPE["SINGLE_COLOR"]:
+                zone.data.singleColor.data.manualSingleColor.singleColorParams.brightnessPct = brightness
+            else:
+                zone.data.colorFixed.data.manualColorFixed.colorFixedParams.brightnessPct = brightness
+
+
+def describe(zone) -> str:
+    if zone.type == ZONE_TYPE["RGBW"]:
+        p = zone.data.rgbw.data.manualRGBW.rgbwParams
+        return "RGBW r=%d g=%d b=%d w=%d brightness=%d%%" % (
+            p.colorR, p.colorG, p.colorB, p.colorW, p.brightnessPct)
+    if zone.type == ZONE_TYPE["RGB"]:
+        p = zone.data.rgb.data.manualRGB.rgbParams
+        return "RGB r=%d g=%d b=%d brightness=%d%%" % (
+            p.colorR, p.colorG, p.colorB, p.brightnessPct)
+    if zone.type == ZONE_TYPE["SINGLE_COLOR"]:
+        return "SINGLE_COLOR brightness=%d%%" % zone.data.singleColor.data.manualSingleColor.singleColorParams.brightnessPct
+    if zone.type == ZONE_TYPE["COLOR_FIXED"]:
+        return "COLOR_FIXED brightness=%d%%" % zone.data.colorFixed.data.manualColorFixed.colorFixedParams.brightnessPct
+    return "unknown type %d" % zone.type
+
+
+def parse_colour(value: str):
+    value = value.lstrip("#")
+    if len(value) != 6:
+        raise argparse.ArgumentTypeError("colour must be RRGGBB")
+    try:
+        return tuple(int(value[i:i + 2], 16) for i in (0, 2, 4))
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("colour must be RRGGBB") from exc
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--list", action="store_true", help="list GPUs and illumination zones")
+    parser.add_argument("--off", action="store_true", help="turn all zones off")
+    parser.add_argument("--color", type=parse_colour, help="RRGGBB for colour zones")
+    parser.add_argument("--brightness", type=int, default=100, help="brightness 0-100 (default 100)")
+    args = parser.parse_args()
+
+    if not (args.list or args.off or args.color):
+        parser.error("nothing to do: pass --list, --off or --color")
+
+    if not 0 <= args.brightness <= 100:
+        parser.error("--brightness must be between 0 and 100")
+
+    try:
+        _check_struct_size()
+        nvapi = Nvapi()
+        found = False
+        for handle in nvapi.gpus():
+            device_id, subsystem_id = nvapi.pci_ids(handle)
+            vendor = device_id & 0xFFFF
+            device = device_id >> 16
+            sub_vendor = subsystem_id & 0xFFFF
+            sub_device = subsystem_id >> 16
+            if vendor != NVIDIA_VENDOR:
+                continue
+            params = nvapi.get_zones(handle)
+            if params.numIllumZonesControl == 0:
+                continue
+            found = True
+            label = "%04X:%04X (%04X:%04X)" % (vendor, device, sub_vendor, sub_device)
+            if args.list:
+                print(label)
+                for index in range(params.numIllumZonesControl):
+                    print("  zone %d: %s" % (index, describe(params.zones[index])))
+                continue
+            if args.off:
+                apply_zones(params, (0, 0, 0), 0)
+            else:
+                apply_zones(params, args.color, args.brightness)
+            nvapi.set_zones(handle, params)
+            action = "off" if args.off else "#%02X%02X%02X at %d%%" % (*args.color, args.brightness)
+            print("%s: set %s" % (label, action))
+        if not found:
+            print("no NVIDIA illumination zones found", file=sys.stderr)
+            return 0
+    except NvapiUnavailable as exc:
+        # No NVIDIA driver / no illumination zones: not an error for a theming hook.
+        print("nvapi-illum: %s" % exc, file=sys.stderr)
+        return 0
+    except NvapiError as exc:
+        print("nvapi-illum: %s" % exc, file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
