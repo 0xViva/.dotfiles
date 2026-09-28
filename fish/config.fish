@@ -6,6 +6,13 @@ set -gx XDG_CONFIG_HOME $HOME/.config
 set -gx EDITOR nvim
 set -gx DOTFILES $HOME/.dotfiles
 
+# Git discovers ~/.config/git/config natively. Drop any inherited
+# GIT_CONFIG_GLOBAL so sessions started before that layout don't point git at
+# the removed ~/.config/git/.gitconfig.
+if set -q GIT_CONFIG_GLOBAL
+    set -e GIT_CONFIG_GLOBAL
+end
+
 # fish_add_path prepends and de-dupes; a single call preserves the given order.
 fish_add_path --path \
     $HOME/.local/bin \
@@ -30,7 +37,6 @@ if status is-interactive
     # Suppress fish's "Welcome to fish" greeting on new shells.
     set -g fish_greeting
 
-    set -gx GIT_CONFIG_GLOBAL $HOME/.config/git/.gitconfig
     set -gx GIT_EDITOR nvim
     set -gx GPG_TTY (tty)
 

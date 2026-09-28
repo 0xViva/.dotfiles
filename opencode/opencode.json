@@ -1,5 +1,18 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "lsp": true,
-  "theme": "matugen"
+  "theme": "matugen",
+  "permissions": [
+    { "action": "shell", "resource": "*git* commit", "effect": "deny" },
+    { "action": "shell", "resource": "*git* commit *", "effect": "deny" },
+    { "action": "shell", "resource": "*git* merge", "effect": "deny" },
+    { "action": "shell", "resource": "*git* merge *", "effect": "deny" },
+    { "action": "shell", "resource": "*git* cherry-pick*", "effect": "deny" },
+    { "action": "shell", "resource": "*git* revert*", "effect": "deny" },
+    { "action": "shell", "resource": "*git* rebase*", "effect": "deny" },
+    { "action": "shell", "resource": "*git* am *", "effect": "deny" },
+    { "action": "shell", "resource": "*git* pull*", "effect": "deny" },
+    { "action": "shell", "resource": "*git* commit-tree*", "effect": "deny" },
+    { "action": "shell", "resource": "*git* filter-branch*", "effect": "deny" }
+  ]
 }
