@@ -13,5 +13,5 @@ hl.monitor({
     position = "1440x0",
     scale    = 1,
     bitdepth = 10,
-    cm       = "hdr",
+    cm       = "srgb",
 })
