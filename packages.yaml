@@ -6,6 +6,7 @@ arch:
     - fisher
     - git
     - openssh
+    - networkmanager
     - hyprland
     - hyprland-guiutils
     - hyprpicker
