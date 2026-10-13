@@ -57,6 +57,29 @@ Browse to `~/GoogleDrive`. Stop it with
 rclone-backup
 ```
 
-Each run copies the entire drive into a fresh timestamped snapshot and never
-deletes anything. Override the destination with `RCLONE_BACKUP_ROOT`, e.g.
+Each run copies the entire drive into a fresh timestamped
+`google-drive_<date>_<time>` snapshot. Once the copy succeeds, older snapshots
+are pruned so only the newest `RCLONE_BACKUP_KEEP` remain (default 3; set it to
+`0` to keep everything). Snapshots live under `$HOME`, which is btrfs mounted
+`compress=zstd:3`, so they are compressed at rest automatically.
+
+Override the destination with `RCLONE_BACKUP_ROOT`, e.g.
 `env RCLONE_BACKUP_ROOT=/mnt/disk/google_drive rclone-backup`.
+
+### Schedule
+
+`rclone-backup.timer` runs the backup monthly (`OnCalendar=monthly`) and is
+enabled by `setup.sh`. It triggers `rclone-backup.service`, a `Type=oneshot`
+unit, at the start of each month:
+
+```fish
+systemctl --user list-timers rclone-backup.timer
+journalctl --user -u rclone-backup.service     # run log
+```
+
+`Persistent=true` means a run missed while the machine was off happens at the
+next opportunity rather than being skipped. To run a snapshot immediately:
+
+```fish
+systemctl --user start rclone-backup.service
+```

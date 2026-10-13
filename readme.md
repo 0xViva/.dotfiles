@@ -18,7 +18,7 @@ stows configs. Safe to re-run — every step is idempotent.
 setup.sh          # entry point: read packages.yaml → install → stow
 packages.yaml     # single source of truth: packages + aurs + stow per OS
 stow.fish         # symlink targets: .ssh→~/.ssh, rest→~/.config/<name>
-bin/              # helper scripts (~/.config/bin, on PATH via hypr/noctalia)
+bin/              # helper scripts (stowed to ~/.config/bin, on PATH via fish)
 docs/             # keybindings, theming, ghostty/tmux, nvim, keychron, rgb, AI stack, webtools, rclone notes
 rclone/           # non-secret rclone settings (secrets live in the gitignored .env)
 <config dirs>/    # one stowed folder per app (hypr, noctalia, nvim, tmux, …)

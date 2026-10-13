@@ -1,0 +1,10 @@
+[Unit]
+Description=Snapshot Google Drive with rclone-backup
+Documentation=man:rclone(1)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.dotfiles/bin/rclone-backup
+IOSchedulingClass=idle

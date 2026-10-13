@@ -16,6 +16,7 @@ end
 # fish_add_path prepends and de-dupes; a single call preserves the given order.
 fish_add_path --path \
     $HOME/.local/bin \
+    $HOME/.config/bin \
     $HOME/bin \
     $HOME/.foundry/bin \
     $HOME/.opencode/bin \

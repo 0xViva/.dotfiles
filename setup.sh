@@ -95,9 +95,10 @@ if [[ "$OS_TYPE" == "arch" ]]; then
     systemctl --user daemon-reload
     if [[ -f "$DOTFILES/.env" ]]; then
         systemctl --user enable --now rclone-drive.service
+        systemctl --user enable --now rclone-backup.timer
     else
-        echo "rclone-drive.service not started: create $DOTFILES/.env, then run"
-        echo "  systemctl --user enable --now rclone-drive.service"
+        echo "rclone-drive.service / rclone-backup.timer not started: create $DOTFILES/.env, then run"
+        echo "  systemctl --user enable --now rclone-drive.service rclone-backup.timer"
     fi
     echo "We're on arch, reload hyprland config after setup."
     # Target the live instance explicitly: the inherited
