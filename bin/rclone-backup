@@ -10,7 +10,7 @@ set -euo pipefail
 repo_root="$(cd -- "$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")/.." && pwd)"
 
 # shellcheck source=/dev/null
-source "$repo_root/rclone/rclone.env"
+set -a; source "$repo_root/rclone/rclone.env"; set +a
 
 if [[ ! -f "$repo_root/.env" ]]; then
     echo "rclone-backup: $repo_root/.env not found — copy .env.example and fill it in." >&2
@@ -27,7 +27,7 @@ fi
 backup_root="${RCLONE_BACKUP_ROOT:-$HOME/backups/google_drive}"
 snapshot="google-drive_$(date +%Y-%m-%d_%H-%M-%S)"
 dest="$backup_root/$snapshot"
-keep="${RCLONE_BACKUP_KEEP:-3}"
+keep="${RCLONE_BACKUP_KEEP:-2}"
 
 # If the copy doesn't finish, remove the incomplete snapshot so a failed run
 # never leaves an empty or partial google-drive_* directory behind (which would

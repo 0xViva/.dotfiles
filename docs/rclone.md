@@ -59,7 +59,7 @@ rclone-backup
 
 Each run copies the entire drive into a fresh timestamped
 `google-drive_<date>_<time>` snapshot. Once the copy succeeds, older snapshots
-are pruned so only the newest `RCLONE_BACKUP_KEEP` remain (default 3; set it to
+are pruned so only the newest `RCLONE_BACKUP_KEEP` remain (default 2; set it to
 `0` to keep everything). Snapshots live under `$HOME`, which is btrfs mounted
 `compress=zstd:3`, so they are compressed at rest automatically.
 
