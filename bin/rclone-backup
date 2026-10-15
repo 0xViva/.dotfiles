@@ -44,8 +44,14 @@ trap cleanup EXIT
 mkdir -p "$dest"
 echo "Backing up gdrive: -> $dest"
 
+# Bounded write rate. The snapshot writes to the same NVMe the desktop runs
+# from, and unthrottled writeback is what froze the machine before; 50M keeps
+# the disk far from saturation. Raise/remove via RCLONE_BACKUP_BWLIMIT.
 rclone --config= copy gdrive: "$dest" \
     --create-empty-src-dirs \
+    --transfers 2 \
+    --checkers 4 \
+    --bwlimit "${RCLONE_BACKUP_BWLIMIT:-50M}" \
     --stats-one-line \
     --stats 15s
 

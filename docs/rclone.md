@@ -66,6 +66,15 @@ are pruned so only the newest `RCLONE_BACKUP_KEEP` remain (default 2; set it to
 Override the destination with `RCLONE_BACKUP_ROOT`, e.g.
 `env RCLONE_BACKUP_ROOT=/mnt/disk/google_drive rclone-backup`.
 
+### Keeping the desktop responsive
+
+Snapshots are written to the same disk the system runs on, so an unthrottled
+copy can starve the desktop. The copy is therefore rate-limited to
+`RCLONE_BACKUP_BWLIMIT` (default `50M`) and run with limited concurrency
+(`--transfers 2 --checkers 4`). `rclone-backup.service` additionally runs at
+idle I/O priority and low CPU/memory weight. Raise or remove the cap with e.g.
+`RCLONE_BACKUP_BWLIMIT=200M`, or `0` for no limit.
+
 ### Schedule
 
 `rclone-backup.timer` runs the backup monthly (`OnCalendar=monthly`) and is

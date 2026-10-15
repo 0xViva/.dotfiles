@@ -7,4 +7,17 @@ Wants=network-online.target
 [Service]
 Type=oneshot
 ExecStart=%h/.dotfiles/bin/rclone-backup
+
+# The snapshot is a full-drive write onto the same NVMe the desktop runs from.
+# Keep the desktop responsive: run at idle I/O and low CPU priority (the cpu
+# controller is delegated, so CPUWeight applies). The `io` cgroup controller is
+# NOT delegated to user sessions here, so IOWeight would be a silent no-op —
+# the write rate is instead bounded by RCLONE_BACKUP_BWLIMIT (see the script),
+# which is what actually stops dirty-page writeback from starving the desktop.
+# IOSchedulingClass alone cannot do that: writeback is issued by kernel workers,
+# not by rclone.
 IOSchedulingClass=idle
+CPUWeight=20
+Nice=10
+MemoryHigh=4G
+MemoryMax=8G
