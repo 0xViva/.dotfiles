@@ -49,6 +49,7 @@ arch:
     - mise
     - opencode
     - systemd
+    - rex
 
 macos:
   packages:
@@ -86,3 +87,4 @@ macos:
     - opencode
     - aerospace
     - mise
+    - rex

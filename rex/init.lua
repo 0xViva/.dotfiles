@@ -1,0 +1,14 @@
+-- Rex configuration. The Rex server loads this file; apply changes with
+-- `rex config reload` and check them with `rex config check`.
+-- See https://www.superlogical.com/rex/docs/customize/config
+--
+-- Rex ships sensible client defaults, so this file is empty on purpose.
+-- Bind a key to an action like this:
+--
+--   rex.bind("cmd+d", "pane.split", { direction = "right" })
+--
+-- Remove a default binding with:
+--
+--   rex.unbind("cmd+d")
+--
+-- Define a reusable action with rex.action{ ... } and bind it by name.
