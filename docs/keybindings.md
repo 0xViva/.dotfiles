@@ -3,7 +3,7 @@
 This document maps every keybinding in the dotfiles, split by operating system, and
 explains how the layers stack when two programs want the same key.
 
-Sources: `hypr/bindings/*.lua`, `noctalia/config.toml`, `tmux/tmux.conf`,
+Sources: `hypr/bindings/*.lua`, `noctalia/config.toml`, `rex/init.lua`,
 `ghostty/config`, `aerospace/aerospace.toml`, `fish/config.fish`, `fish/fzf.fish`,
 `nvim/lua/`.
 
@@ -11,10 +11,10 @@ Sources: `hypr/bindings/*.lua`, `noctalia/config.toml`, `tmux/tmux.conf`,
 
 ## Systems covered
 
-| OS | Tiling WM / compositor | Terminal app | Multiplexer | Shell | Editor |
-|----|------------------------|--------------|-------------|-------|--------|
-| **Arch (Linux)** | Hyprland | ghostty | tmux | fish | Neovim |
-| **macOS** | AeroSpace | ghostty | tmux | fish | Neovim |
+| OS | Tiling WM / compositor | Terminal app | Session manager | Shell | Editor |
+|----|------------------------|--------------|-----------------|-------|--------|
+| **Arch (Linux)** | Hyprland | ghostty | Rex | fish | Neovim |
+| **macOS** | AeroSpace | ghostty | Rex | fish | Neovim |
 
 `macos` configs are installed by `./setup.sh <arch|macos>`.
 
@@ -26,14 +26,14 @@ Keys are grabbed in priority order. A lower layer never sees a key the higher la
 1. OS / WM (Hyprland on Arch, AeroSpace on macOS)
 2. App window
 3. Terminal emulator (ghostty)
-4. tmux (prefix C-a)
+4. Rex (prefix C-a)
 5. Shell (fish)
 6. Editor (Neovim)
 ```
 
 Practical implication: **`SUPER`/`CMD` and `ALT`/`Option` are reserved by the window layer
 unless a program configures them back.** Everything unmodified, `Ctrl`, and `Shift+Ctrl`
-flows down to the app, tmux, shell, and editor.
+flows down to the app, Rex, shell, and editor.
 
 ---
 
@@ -115,14 +115,14 @@ brightness, notifications) live in the Control Center panel.
 
 ---
 
-## Arch / Linux — inside the terminal (ghostty → tmux → fish → nvim)
+## Arch / Linux — inside the terminal (ghostty → Rex → fish → nvim)
 
 ### ghostty (terminal emulator)
 Four custom bindings; the rest is stock:
 
 | Keys | Action |
 |------|--------|
-| `SHIFT + ENTER` | Send `ESC + CR` (custom; used to accept in fzf/tmux instead of inserting newline) |
+| `SHIFT + ENTER` | Send `ESC + CR` (custom; used to accept in fzf instead of inserting newline) |
 | `SUPER + C` | Copy selection to clipboard (custom; `performable:` — passes through when nothing selected) |
 | `SUPER + V` | Paste from clipboard (custom; `performable:` — passes through when clipboard empty) |
 | `SUPER + A` | Select all (custom) |
@@ -131,29 +131,24 @@ Four custom bindings; the rest is stock:
 | `CTRL + SHIFT + T` / `CTRL + SHIFT + D` | New tab / split (stock) |
 | `CTRL + =` / `CTRL + -` / `CTRL + 0` | Zoom in / out / reset (stock) |
 
-### tmux
-Prefix is **`C-a`** (changed from the default `C-b`). `set -g prefix C-a`.
-On `C-a` in a pane, VM-mode navigation uses `hjkl` (dwm-style):
+### Rex
+Rex is the session manager: sessions hold windows (tabs), which hold blocks
+(panes). `C-a` is the terminal prefix.
 
 | Keys | Action |
 |------|--------|
-| `C-a` `C-a` | Send a literal `Ctrl-A` to the app (e.g. bash line-start) |
-| `C-a` `r` | Reload `~/.tmux.conf` |
-| `C-a` `j/k/h/l` | Select pane down/up/left/right |
-| `C-a` `^` | Go to last window |
-| `C-a` `f` | New window + `tmux-sessionizer` (fuzzy project picker) |
-| `C-a` `M-h/M-t/M-n/M-s` | New window + sessionizer scoped to search path slot 0–3 |
-| `C-a` `[` | Enter copy-mode; then `v` select, `y` copy (OSC 52 to system clipboard) |
-| `C-a` `m` | Mouse mode (already on via `set -g mouse on`) |
+| `C-a` `f` | New Rex window running `rex-sessionizer` |
 
-Terminal pacing: `escape-time 0` (fast prefix); `base-index 1`; windows start at 1.
+Rex's own defaults handle tabs, splits, focus, the command palette, and the
+built-in session switcher (`cmd+k`). The custom bindings live in
+`rex/init.lua`; everything else is a Rex default.
 
 ### fish — shell keybindings
 `CTRL+E` is the custom widget (`fish/fzf.fish`); the rest are the fzf.fish plugin.
 | Keys | Action |
 |------|--------|
 | `CTRL + E` | fzf: pick a file from `/` and open it in nvim |
-| `CTRL + P` | tmux sessionizer (new tmux window) |
+| `CTRL + P` | `rex-sessionizer` project picker |
 | `CTRL + ALT + F` | fzf: search directory (prefix `/` to search the whole machine) |
 | `CTRL + R` | fzf: history |
 | `CTRL + ALT + L` / `CTRL + ALT + S` | fzf: git log / git status |
@@ -165,7 +160,7 @@ Leader is **`SPACE`**. Notable bindings:
 |------|--------|
 | `ESC` | Clear search highlight |
 | `CTRL + H/J/K/L` | Move between split windows |
-| `CTRL + F` | Open `tmux-sessionizer` in a new tmux window (**shadows** nvim's page-forward) |
+| `CTRL + F` | Open `rex-sessionizer` in a new Rex window (**shadows** nvim's page-forward) |
 | `SPACE` `tf` / `SPACE` `tF` | Toggle autoformat (buffer / global) |
 | `-` | Open parent directory (oil) |
 | `q` | Focus diagnostics/quickfix (auto-closes if empty) |
@@ -204,17 +199,17 @@ FN + top row   = F-keys (macOS media keys by default — see conflicts)
 Startup: sketchybar + jankyborders autostart; **zen-browser → workspace 1**, **ghostty →
 workspace 2** automatically (`on-window-detected`).
 
-Inside the terminal on macOS, the stack is the same as Arch (ghostty → tmux → fish → nvim),
+Inside the terminal on macOS, the stack is the same as Arch (ghostty → Rex → fish → nvim),
 with the notes below about `Option` being stolen.
 
 ---
 
 ## Conflict analysis
 
-### 1. tmux prefix `C-a` vs. shell "start of line" — **real, by design, workaround exists**
-`C-a` is the tmux prefix **and** the shell's default "jump to start of line".
-Because `escape-time = 0`, a *lone* `C-a` passes through quickly, but any `C-a <key>` is
-tmux. To type a literal `C-a` inside a tmux pane: **press `C-a C-a`**.
+### 1. Rex prefix `C-a` vs. shell "start of line" — **real, by design, no workaround needed**
+`C-a` starts a Rex key sequence **and** is the shell's default "jump to start of
+line". No literal-`C-a` escape is bound: `C-a` was only ever used as the tmux
+prefix, so use `Home` or `ESC`-prefixed motions for start-of-line instead.
 
 ### 2. AeroSpace `Option + arrows` vs. terminal word-motion — **real, unavoidable on macOS**
 In any terminal (ghostty, Terminal.app) `Option+Left/Right` means *jump word* and
@@ -224,7 +219,7 @@ binds (`ESC b` / `ESC f` / `ESC p/n`) or re-binding `CTRL+arrows` in `config.fis
 
 ### 3. Neovim `CTRL+F` — **real shadowing, nvim-internal**
 `set.lua` re-binds `CTRL+F` (default: page forward in normal mode) to launch
-`tmux-sessionizer`. Page-forward is still available via `CTRL+D`/`CTRL+U`.
+`rex-sessionizer`. Page-forward is still available via `CTRL+D`/`CTRL+U`.
 
 ### 4. Hyprland `ALT + TAB` steals from apps — **by design**
 On Linux, `ALT+TAB`/`ALT+SHIFT+TAB` are Hyprland's (cycle + raise). No app in the stack
@@ -246,22 +241,16 @@ sends real F-keys (e.g. `Fn` mapping, or **System Settings → Keyboard → "Use
 as standard function keys"** on a MacBook). External keyboards (Keychron via `Fn1` toggle)
 usually send real F-keys by default.
 
-### 8. tmux `escape-time 0` — **tradeoff, generally fine**
-Instant prefix response, but a fast `ESC <key>` in vim can occasionally be misread. This
-is the standard modern setting.
-
-### 9. Hyprland media keys win over app-level media — **by design**
+### 8. Hyprland media keys win over app-level media — **by design**
 `XF86Audio*`/`XF86MonBrightness*` are grabbed with `repeating` + `locked`, so apps that
 register their own media handling won't fire; the OSD + increments you see come from Hyprland.
 
 ### Non-issues worth internalizing (why your stack feels clean)
-- **tmux prefix is `C-a`, not `C-b`** → nvim's `CTRL+W`/`CTRL+H J K L` window commands
-  never hit the tmux prefix. This is the classic reason people abandon `C-b`.
 - **ghostty grabs `SUPER+C/V/A` for clipboard ops and `CTRL+SHIFT+…` for tabs/splits** →
   no overlap with Hyprland's `SUPER` (those combos are unbound there), nvim's `CTRL`,
-  or tmux's `C-a` prefix.
+  or Rex's `C-a` prefix.
 - **Hyprland uses physical keycodes for workspaces** → immune to the Norwegian layout.
-- **fish `^E`/`^P` only exist at the shell level** → nvim/tmux don't use them; no clash.
+- **fish `^E`/`^P` only exist at the shell level** → nvim/Rex don't use them; no clash.
 
 ---
 
@@ -269,5 +258,5 @@ register their own media handling won't fire; the OSD + increments you see come 
 
 | OS | Big picture |
 |----|-------------|
-| Arch | **`SUPER` does everything Hyprland** (windows, workspaces, system). Everything else lives `C-*` under nvim/tmux/fish. |
+| Arch | **`SUPER` does everything Hyprland** (windows, workspaces, system). Everything else lives `C-*` under nvim/Rex/fish. |
 | macOS | **`⌥` (Option) is your WM**, `⌘` is macOS, `F1-F9` workspaces. Shell word-motion moves to `ESC b/f`. |

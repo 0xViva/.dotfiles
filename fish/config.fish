@@ -65,6 +65,6 @@ if status is-interactive
 
     source $XDG_CONFIG_HOME/fish/fzf.fish
 
-    set -g TMUX_SESSIONIZER $DOTFILES/bin/tmux-sessionizer
-    bind ctrl-p 'commandline -i "$TMUX_SESSIONIZER"; commandline -f execute'
+    set -g REX_SESSIONIZER $DOTFILES/bin/rex-sessionizer
+    bind ctrl-p 'commandline -i "$REX_SESSIONIZER"; commandline -f execute'
 end

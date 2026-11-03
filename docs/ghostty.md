@@ -1,14 +1,13 @@
-# Ghostty: vim-flavoured keys & is tmux still needed?
+# Ghostty: vim-flavoured keys & where Rex fits
 
 Answers up front, details below:
 
 - **Vim-like keys?** Yes — a small set, see the block below. Do *not* blindly map
   `alt+hjkl` or `ctrl+shift+v`; the section after the config explains why.
-- **Do you need tmux?** Only if you detach/re-attach sessions or use the
-  sessionizer — which this whole setup is built around. **Keep it.**
-- **Must they coexist?** Yes, they nest naturally (ghostty → tmux) and never fight.
-  The *only* overlap is split management: use **one** split plane — you've already
-  picked tmux panes, so leave ghostty splits out of your routine.
+- **Do you need tmux?** No. Rex is the session manager; Ghostty is the window.
+- **Must they coexist?** Yes, they nest naturally (ghostty → Rex) and never fight.
+  The *only* overlap is split management: use **one** split plane — Rex blocks,
+  so leave ghostty splits out of your routine.
 
 ---
 
@@ -40,7 +39,7 @@ nvim's `C-w h/j/k/l`, which your `set.lua` already maps.
 
 | Chord | Verdict | Why |
 |-------|---------|-----|
-| `ctrl+shift+h/k/l` | ✅ use | unbound by ghostty 1.3.1, unbound by this stack's tmux/nvim/fish/hyprland |
+| `ctrl+shift+h/k/l` | ✅ use | unbound by ghostty 1.3.1, unbound by this stack's Rex/nvim/fish/hyprland |
 | `ctrl+shift+j` | repurpose | default is `write_screen_file:paste` (nobody uses it) — unbind then take it |
 | `alt+h/j/k/l` | ❌ | `alt+j/k` = vim scroll by C-f/C-b; ghosts into nvim. Would steal them |
 | `ctrl+shift+v` | ❌ | Linux paste default, and your most-used copy/paste muscle memory |
@@ -48,58 +47,34 @@ nvim's `C-w h/j/k/l`, which your `set.lua` already maps.
 | `super+…` | ❌ | owned by Hyprland (and lookup-key on macOS) |
 
 `ctrl+shift+…` is the one freely-enterable keyspace in this stack: ghostty owns it,
-nothing below (tmux has no `ctrl+shift`, nvim/fish only use plain `ctrl`, Hyprland has
+nothing below (Rex has no `ctrl+shift`, nvim/fish only use plain `ctrl`, Hyprland has
 no `ctrl+shift` binds). That is where all five lines live.
 
 ---
 
-## Do you need tmux?
+## Why Rex instead of tmux?
 
-**Only if you need what ghostty cannot do.** The split is:
-
-| Capability | ghostty | tmux |
-|-----------|---------|------|
-| Render + fonts + GPU | ✅ this setup's skin | ❌ |
-| Tabs / windows / splits | ✅ | ✅ (panes + windows) |
-| Scrollback + search | ✅ `ctrl+shift+f` | ✅ copy-mode, vim-style |
-| Sessions persist across reboot | ❌ | ✅ (attach/detach) |
-| Attach from SSH / another machine | ❌ | ✅ (`tmux attach`) |
-| Named projects, programmatic windows | ❌ | ✅ (via `tmux-sessionizer`) |
-| OSC-52 copy over SSH | ✔ 1.3 | ✅ (`set-clipboard on`) |
-
-**The deciding factor here is `tmux-sessionizer`.** Your daily flow routes through it:
-`prefix f`, fish `C-p`, nvim `C-f`, and `prefix M-h/t/n/s` all open project windows in
-tmux. Drop tmux and you lose your project-switching mechanism wholesale, plus every
-detached session you keep alive on servers. For a local, single-window, never-detach
-workflow you could live without it — but this setup is not that.
-
-So: **you need tmux as long as you want persistence + the sessionizer.** The cost is
-one learned chord (`C-a`) and the prefix dance described in `keybindings.md`.
-
----
-
-## Do ghostty and tmux need to coexist?
-
-They are different **layers**, not rivals — the same way Hyprland needs a terminal.
+Rex provides the session model tmux did — named sessions, windows (tabs), and
+blocks (panes) — but as a server/client system: the server keeps sessions
+running, and the app or CLI attaches to them. The project switcher is
+`rex-sessionizer` (`C-a f`, `C-p`, or nvim `C-f`), and it opens directories or
+existing sessions.
 
 ```
 Hyprland          composes/handles your windows
   └─ ghostty      is the terminal: rendering, scrollback, tabs
-      └─ tmux     is the session manager: windows, persistence, sessionizer
-          └─ fish / nvim   do their own thing inside a tmux pane
+      └─ Rex      is the session manager: windows, persistence, sessionizer
+          └─ fish / nvim   do their own thing inside a Rex block
 ```
 
-The one place they *redundantly* overlap is **splits** (ghostty splits, tmux panes,
-nvim windows all do this). Running two layers of splits is how you end up fighting
-"which `h` goes to which pane". Policy that keeps it simple:
+The one place they *redundantly* overlap is **splits** (ghostty splits, Rex
+blocks, nvim windows all do this). Running two layers of splits is how you end
+up fighting "which `h` goes to which pane". Policy that keeps it simple:
 
 - **nvim windows** — for entering/changing code layout (you already do this).
-- **tmux panes** — for multi-process layouts (editor + shell + logs side by side).
-- **ghostty splits** — don't create them; use ghostty **tabs** as "sessions" instead if
-  you want a second container level. `alt+1..9`/`tab` keys navigate them already.
-
-If you ever decide tmux isn't worth it, the honest trade is: ghostty tabs + splits +
-nvim windows replace it, but you give up persistence and the sessionizer forever.
+- **Rex blocks** — for multi-process layouts (editor + shell + logs side by side).
+- **ghostty splits** — don't create them; use ghostty **tabs** as an extra
+  container level if you want one. `alt+1..9`/`tab` keys navigate them already.
 
 ---
 

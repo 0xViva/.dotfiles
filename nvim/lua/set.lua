@@ -40,11 +40,9 @@ vim.schedule(function()
 end)
 
 -- Clipboard. The system clipboard is the single source of truth. Locally
--- Neovim auto-selects the Wayland provider (wl-copy/wl-paste) and tmux's
--- `set-clipboard` puts tmux's own copies on the same clipboard, so a yank, a
--- tmux copy-mode selection and a copy in any other app all agree. Over ssh
--- there is no local clipboard, so use OSC 52 instead: tmux wraps it in DCS
--- passthrough, which is what `allow-passthrough on` in tmux.conf is for.
+-- Neovim auto-selects the Wayland provider (wl-copy/wl-paste), so yanks and
+-- copies in other apps agree. Over ssh there is no local clipboard, so use
+-- OSC 52 instead.
 if (os.getenv 'SSH_TTY' or '') ~= '' then
   vim.g.clipboard = 'osc52'
 end
@@ -59,7 +57,7 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-vim.keymap.set('n', '<C-f>', '<cmd>silent !tmux neww $HOME/.dotfiles/bin/tmux-sessionizer<CR>')
+vim.keymap.set('n', '<C-f>', '<cmd>silent !rex run -- $HOME/.dotfiles/bin/rex-sessionizer<CR>')
 vim.keymap.set('n', '<leader>tf', function()
   vim.b.disable_autoformat = not vim.b.disable_autoformat
 

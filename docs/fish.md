@@ -16,7 +16,7 @@ All are stowed: `fish/` → `~/.config/fish`.
 git-ignored.
 
 `config.fish` covers env + PATH (`fish_add_path`), Homebrew, `fd`→`fdfind` on
-WSL, mise, starship, the window title, the `CTRL+E` picker, `CTRL+P` sessionizer,
+WSL, mise, starship, the window title, the `CTRL+E` picker, `CTRL+P` Rex sessionizer,
 and the tty1-login Hyprland autostart (login + tty1 + no `WAYLAND_DISPLAY`).
 
 ## fzf.fish plugin (hybrid)

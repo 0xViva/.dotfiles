@@ -18,7 +18,7 @@ A map of the actual keybindings and workflows configured in
 
 ## Opening / switching files
 
-- `<C-f>` — pop the tmux sessionizer (`set.lua:66`): fuzzy-switch to any tmux
+- `<C-f>` — open the Rex sessionizer (`set.lua`): fuzzy-switch to any Rex
   session or open a project by name. Your files live behind this; get in the
   habit of using it instead of `:e`.
 - `<leader>sf` — telescope find files.
@@ -99,7 +99,7 @@ gopls, html, lua_ls, ts_ls, tailwindcss, jdtls, rust_analyzer.
 - `q` overrides macro recording (default `q` was free because of `set.lua:86`).
   If you record macros, remap it — currently there is no macro mapping.
 - `-` no longer scrolls up a line; it's bound to oil.
-- `<C-f>` in normal mode is the tmux sessionizer, *not* scroll-page-down. Use
+- `<C-f>` in normal mode is the Rex sessionizer, *not* scroll-page-down. Use
   `<C-d>`/`<C-u>` to page.
 - Autoformat is on by default (`lsp_format` falls back to the LSP formatter) —
   if a save unexpectedly rewrites your file, `<leader>tf` is the switch.

@@ -1,21 +1,22 @@
-# Ghostty + tmux + nvim: workflow and keybindings
+# Ghostty + Rex + nvim: workflow and keybindings
 
-How the three layers hand the keyboard to each other, and how to use the
-configured keybindings (`ghostty/config`, `tmux/tmux.conf`,
-`tmux/tmux-sessionizer.conf`, `fish/config.fish`, `fish/fzf.fish`, `nvim/lua/set.lua`).
+How the layers hand the keyboard to each other, and how to use the
+configured keybindings (`ghostty/config`, `rex/init.lua`,
+`rex/rex-sessionizer.conf`, `fish/config.fish`, `fish/fzf.fish`,
+`nvim/lua/set.lua`).
 
 ## The layering model
 
-One keyboard, three owners. The app that currently has focus owns the keys;
+One keyboard, four owners. The app that currently has focus owns the keys;
 the others pass them through:
 
 ```
-Ghostty (outer window)  →  tmux (prefix C-a)  →  fish (prompt)  or  nvim
+Ghostty (outer window)  →  Rex (prefix C-a)  →  fish (prompt)  or  nvim
 ```
 
 - Ghostty only intercepts what you bind in `ghostty/config`. There are no
   split/zoom binds here — it is a pure pass-through layer.
-- tmux only intercepts keys *prefixed* by `C-a` (it unbinds the default `C-b`).
+- Rex only intercepts keys that start a configured sequence (currently `C-a`).
   Plain keys go to the app inside.
 - fish/fzf bindings only apply while the shell prompt is focused.
 - nvim bindings only apply while an nvim window is focused.
@@ -33,53 +34,40 @@ Almost nothing is rebound; the config only sets:
   glyph-reflow tricks and carries the terminfo over SSH. Leave these alone.
 
 Practical upshot: **Ghostty never eats your chords**, so every binding below
-reaches tmux or the app directly. The window manages itself via your WM — you
-work in splits/tabs inside tmux instead.
+reaches Rex or the app directly. The window manages itself via your WM — Rex
+provides the tabs, splits, and sessions inside it.
 
-## tmux layer
+## Rex layer
 
-Prefix is `C-a` (`tmux.conf:13`). With `escape-time 0` (`:1`) the prefix fires
-without delay, so chords feel instant.
+Rex is the session manager: sessions hold windows (tabs), which hold blocks
+(panes). The server keeps sessions running whether or not a client is looking
+at them.
 
-### Movement (repeatable — press `C-a` once, then `h/j/k/l` repeatedly)
+The custom bindings live in `rex/init.lua`:
 
-| Binding      | Action                        |
-|--------------|-------------------------------|
-| `C-a h` / `j` / `k` / `l` | select pane left / down / up / right |
-| `C-a ^`      | switch to last window         |
-| `C-a f`      | sessionizer (projects/tmux)   |
-| `C-a <n>`    | go to window `<n>` (base-index is 1) |
-| `C-a c`      | new window                   |
-| `C-a %` / `"`| vertical / horizontal split   |
-| `C-a x`      | kill pane                     |
-| `C-a r`      | reload `$XDG_CONFIG_HOME/tmux/tmux.conf` |
+| Binding | Action |
+|---------|--------|
+| `C-a` `f` | New Rex window running `rex-sessionizer` |
 
-Repeatable means `C-a j j j j` walks you down four panes without re-pressing
-the prefix. Mouse is on outside nvim, so clicking a pane focuses it too.
-
-### Copy mode (vi bindings, `mode-keys vi`)
-
-Press `C-a [`, then navigate with `hjkl`, `v` to begin selection, `y` to copy
-to the system clipboard via OSC 52 (`set-clipboard on`, `:11`; the `y` bind is
-`:20`). Practically you'll rarely need this — holding `shift` in Ghostty
-bypasses tmux mouse mode for native terminal selection.
+Rex's own defaults handle tabs, splits, focus, the command palette, and the
+built-in session switcher (`cmd+k`). The `rex` CLI exposes the same operations
+for scripts: `rex run`, `rex split`, `rex focus`, `rex window`, `rex block`.
 
 ### Sessionizer entry points
 
-The same project switcher is reached three ways:
+The project switcher is reached three ways:
 
-| Where              | Binding        | Effect                                    |
-|--------------------|----------------|-------------------------------------------|
-| inside tmux        | `C-a f`        | new window running `tmux-sessionizer`     |
-| fish prompt        | `C-p`          | runs the switcher in-place (`config.fish`) |
-| nvim normal mode   | `C-f`          | new tmux window with the switcher (`set.lua:66`) |
-| tmux (bound, off)  | `C-a M-h/t/n/s`| sessionizer windows 0–3                   |
+| Where              | Binding        | Effect                                            |
+|--------------------|----------------|---------------------------------------------------|
+| anywhere in Rex    | `C-a f`        | new Rex window running `rex-sessionizer`          |
+| fish prompt        | `C-p`          | runs `rex-sessionizer` in-place (`config.fish`)   |
+| nvim normal mode   | `C-f`          | new Rex window with `rex-sessionizer` (`set.lua`) |
 
 ## fish (prompt-only bindings)
 
 Active only at the shell prompt (`fish/fzf.fish` + the fzf.fish plugin):
 
-- `C-p` — tmux-sessionizer
+- `C-p` — rex-sessionizer
 - `C-e` — fzf file picker from `/`, then *opens the file in nvim*
 - `C-Alt-f` — fzf directory search (cwd; prefix `/` for the whole machine)
 - `C-r` — fzf history
@@ -91,49 +79,36 @@ Active only at the shell prompt (`fish/fzf.fish` + the fzf.fish plugin):
 Already covered in depth in `docs/nvim.md`; the parts that interact with the
 terminal:
 
-- `C-h/j/k/l` — move between nvim windows. Same keys move tmux panes — one
-  muscle memory, two layers. Inside nvim, tmux can't see them.
-- `C-f` (normal) — spawns the tmux sessionizer as a new window. Your fastest
+- `C-h/j/k/l` — move between nvim windows. Rex handles the outer blocks with
+  its own bindings; inside nvim, Rex doesn't see these keys.
+- `C-f` (normal) — opens the Rex sessionizer in a new Rex window. Your fastest
   "go work on another project" move from inside an editor.
 - `q` — buffer diagnostics loclist (not macro recording, see `docs/nvim.md`).
 
 ## Putting it together: one work session
 
-1. Ghostty opened at your WM → tmux starts automatically, `C-p` at the prompt
-   (or `C-a f`) picks the project, drops you in its session.
-2. `C-a %` / `C-a "` split a scratch pane on the right/below.
-3. `C-a l` / `C-a j` hop between your editor pane and the scratch shell; run
-   builds/tests there without leaving nvim.
-4. Inside nvim: `C-f` opens another project as a whole new window; `C-a ^`
-   (or `C-a 1`) bounces back to where you were.
-5. `C-a j` into the shell, `C-e` pick any file and have nvim open it.
+1. Open Rex (or Ghostty) and press `C-a f` or `C-p` to pick a project.
+2. Use Rex's default split binding (or `rex split`) for a scratch shell; the
+   new block starts in the current directory.
+3. Move between Rex blocks and nvim windows with their own bindings — one
+   muscle memory, two layers.
+4. Inside nvim, `C-f` opens another project in a new Rex window; use Rex's
+   session switcher to bounce back.
+5. At the shell prompt, `C-e` picks any file and opens it in nvim.
 
 Nothing here requires the mouse; Ghostty stays a dumb, transparent wrapper.
 
 ## Gotchas
 
-- **`C-a` vs beginning-of-line.** Inside tmux, `C-a` is the prefix, so fish's
-  emacs-mode `C-a` (cursor to line start) is shadowed. Press the prefix twice
-  — `C-a C-a` sends a literal `C-a` through (`bind-key C-a send-prefix`,
-  `:14`) — or just hit `Home` / `^A` via `C-a C-a`.
-- **`C-a M-h/M-t/M-n/M-s` are broken as configured.** They call
-  `tmux-sessionizer -s <n>`, which requires `TS_SESSION_COMMANDS` to be set in
-  `tmux/tmux-sessionizer.conf` — it isn't, so they exit with an error. Either
-  define `TS_SESSION_COMMANDS` or drop the bindings (`:25-28`).
+- **`C-a` vs beginning-of-line.** `C-a` starts a Rex sequence, so fish's
+  emacs-mode `C-a` (cursor to line start) is shadowed. No literal-`C-a` escape
+  is bound; use `Home` instead.
 - **`C-f` means three different things**, never at the same time: fish moves the
-  cursor right, nvim-normal spawns the sessionizer, nvim-insert scrolls the cmp
+  cursor right, nvim-normal opens the sessionizer, nvim-insert scrolls the cmp
   docs window (`cmp.lua:52`).
-- **There is one clipboard: the system clipboard.** tmux copies reach it over
-  OSC 52 (`set-clipboard on`) and nvim auto-selects the Wayland provider
-  (`set.lua`), so an nvim yank, a tmux copy-mode selection and a copy in any
-  other app all land in the same place. Paste with Ghostty's `SUPER+V`: it is
-  the one paste path that always reads that clipboard. tmux's `paste-buffer`
-  (middle-click) still pastes tmux's own newest paste buffer, which nvim no
-  longer touches.
-- **Over ssh there is no local clipboard**, so nvim falls back to OSC 52 (which
-  tmux wraps in DCS passthrough — that is why `allow-passthrough on` is set).
-- **Mouse is on in tmux, off in nvim.** tmux mouse selection works in shell
-  panes; in nvim panes it passes through dead because `set.lua:11` disables
-  the mouse there. Use `]c`, `v`, etc. instead.
-- **Windows start at 1**, not 0 (`base-index 1`, `:5`) — `C-a 1` is the first
-  window and also the default last-window target.
+- **There is one clipboard: the system clipboard.** nvim auto-selects the
+  Wayland provider (`set.lua`), so an nvim yank and a copy in any other app
+  land in the same place. Paste with Ghostty's `SUPER+V`.
+- **Over ssh there is no local clipboard**, so nvim falls back to OSC 52.
+- **Mouse is handled by Rex in terminals and disabled in nvim** (`set.lua:11`).
+  Use `]c`, `v`, etc. instead.

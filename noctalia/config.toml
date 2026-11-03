@@ -700,7 +700,7 @@ wallpaper_scheme = "m3-content"
     # is NOT installed or used — Noctalia does the rendering.
     [theme.templates]
     builtin_ids = [ "gtk3", "gtk4", "qt", "ghostty", "hyprland", "btop" ]
-    community_ids = [ "neovim", "tmux", "fzf", "opencode" ]
+    community_ids = [ "neovim", "fzf", "opencode" ]
     enable_builtin_templates = true
     enable_community_templates = true
 
