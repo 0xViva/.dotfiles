@@ -25,3 +25,4 @@ rex.action{
 }
 
 rex.bind("ctrl+a>f", "sessionizer")
+rex.bind("ctrl+p", "sessionizer")

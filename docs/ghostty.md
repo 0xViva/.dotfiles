@@ -57,8 +57,8 @@ no `ctrl+shift` binds). That is where all five lines live.
 Rex provides the session model tmux did — named sessions, windows (tabs), and
 blocks (panes) — but as a server/client system: the server keeps sessions
 running, and the app or CLI attaches to them. The project switcher is
-`rex-sessionizer` (`C-a f`, `C-p`, or nvim `C-f`), and it opens directories or
-existing sessions.
+`rex-sessionizer` (`C-p` or `C-a f`), and it opens directories or existing
+sessions.
 
 ```
 Hyprland          composes/handles your windows

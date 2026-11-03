@@ -64,7 +64,4 @@ if status is-interactive
     end
 
     source $XDG_CONFIG_HOME/fish/fzf.fish
-
-    set -g REX_SESSIONIZER $DOTFILES/bin/rex-sessionizer
-    bind ctrl-p 'commandline -i "$REX_SESSIONIZER"; commandline -f execute'
 end

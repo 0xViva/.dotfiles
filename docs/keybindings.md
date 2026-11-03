@@ -26,7 +26,7 @@ Keys are grabbed in priority order. A lower layer never sees a key the higher la
 1. OS / WM (Hyprland on Arch, AeroSpace on macOS)
 2. App window
 3. Terminal emulator (ghostty)
-4. Rex (prefix C-a)
+4. Rex (prefix C-a, plus C-p)
 5. Shell (fish)
 6. Editor (Neovim)
 ```
@@ -138,6 +138,7 @@ Rex is the session manager: sessions hold windows (tabs), which hold blocks
 | Keys | Action |
 |------|--------|
 | `C-a` `f` | New Rex window running `rex-sessionizer` |
+| `C-p` | New Rex window running `rex-sessionizer` |
 
 Rex's own defaults handle tabs, splits, focus, the command palette, and the
 built-in session switcher (`cmd+k`). The custom bindings live in
@@ -148,7 +149,6 @@ built-in session switcher (`cmd+k`). The custom bindings live in
 | Keys | Action |
 |------|--------|
 | `CTRL + E` | fzf: pick a file from `/` and open it in nvim |
-| `CTRL + P` | `rex-sessionizer` project picker |
 | `CTRL + ALT + F` | fzf: search directory (prefix `/` to search the whole machine) |
 | `CTRL + R` | fzf: history |
 | `CTRL + ALT + L` / `CTRL + ALT + S` | fzf: git log / git status |
@@ -160,7 +160,6 @@ Leader is **`SPACE`**. Notable bindings:
 |------|--------|
 | `ESC` | Clear search highlight |
 | `CTRL + H/J/K/L` | Move between split windows |
-| `CTRL + F` | Open `rex-sessionizer` in a new Rex window (**shadows** nvim's page-forward) |
 | `SPACE` `tf` / `SPACE` `tF` | Toggle autoformat (buffer / global) |
 | `-` | Open parent directory (oil) |
 | `q` | Focus diagnostics/quickfix (auto-closes if empty) |
@@ -217,9 +216,11 @@ In any terminal (ghostty, Terminal.app) `Option+Left/Right` means *jump word* an
 macOS you **lose word-wise cursor movement** in the shell. Alternatives: `Esc`-prefixed
 binds (`ESC b` / `ESC f` / `ESC p/n`) or re-binding `CTRL+arrows` in `config.fish`.
 
-### 3. Neovim `CTRL+F` — **real shadowing, nvim-internal**
-`set.lua` re-binds `CTRL+F` (default: page forward in normal mode) to launch
-`rex-sessionizer`. Page-forward is still available via `CTRL+D`/`CTRL+U`.
+### 3. Rex `CTRL+P` — **real shadowing, by design**
+Rex owns `CTRL+P` so the sessionizer works from every block, whatever shell or
+program is inside. The cost is that fish, nvim, and every fzf picker no longer
+see `CTRL+P` (history-previous, completion-previous, and fzf-up respectively);
+use `Up` / `CTRL+N` / `CTRL+K` for those.
 
 ### 4. Hyprland `ALT + TAB` steals from apps — **by design**
 On Linux, `ALT+TAB`/`ALT+SHIFT+TAB` are Hyprland's (cycle + raise). No app in the stack
@@ -250,7 +251,7 @@ register their own media handling won't fire; the OSD + increments you see come 
   no overlap with Hyprland's `SUPER` (those combos are unbound there), nvim's `CTRL`,
   or Rex's `C-a` prefix.
 - **Hyprland uses physical keycodes for workspaces** → immune to the Norwegian layout.
-- **fish `^E`/`^P` only exist at the shell level** → nvim/Rex don't use them; no clash.
+- **fish `^E` only exists at the shell level** → nvim/Rex don't use it; no clash.
 
 ---
 

@@ -18,9 +18,9 @@ A map of the actual keybindings and workflows configured in
 
 ## Opening / switching files
 
-- `<C-f>` — open the Rex sessionizer (`set.lua`): fuzzy-switch to any Rex
-  session or open a project by name. Your files live behind this; get in the
-  habit of using it instead of `:e`.
+- `C-p` (Rex) — open the Rex sessionizer: fuzzy-switch to any Rex session or
+  open a project by name. Your files live behind this; get in the habit of
+  using it instead of `:e`.
 - `<leader>sf` — telescope find files.
 - `<leader><leader>` — switch between already-open buffers (fuzzy).
 - `<leader>s.` — recent files.
@@ -88,7 +88,7 @@ gopls, html, lua_ls, ts_ls, tailwindcss, jdtls, rust_analyzer.
 
 ## Workflow worth stealing
 
-1. `<C-f>` open project → telescope live grep → jump.
+1. `C-p` open project → telescope live grep → jump.
 2. Edit with mini.ai text objects + surround; `<C-l>` through snippets.
 3. `q` to review this buffer's diagnostics, fix with `<leader>ca`.
 4. `]c` to reach your changed hunks, `<leader>hs` stage the ones you keep.
@@ -99,8 +99,6 @@ gopls, html, lua_ls, ts_ls, tailwindcss, jdtls, rust_analyzer.
 - `q` overrides macro recording (default `q` was free because of `set.lua:86`).
   If you record macros, remap it — currently there is no macro mapping.
 - `-` no longer scrolls up a line; it's bound to oil.
-- `<C-f>` in normal mode is the Rex sessionizer, *not* scroll-page-down. Use
-  `<C-d>`/`<C-u>` to page.
 - Autoformat is on by default (`lsp_format` falls back to the LSP formatter) —
   if a save unexpectedly rewrites your file, `<leader>tf` is the switch.
 - `set.lua` strips `\r` from every buffer on read/write, so CRLF files get

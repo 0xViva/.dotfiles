@@ -11,13 +11,13 @@ One keyboard, four owners. The app that currently has focus owns the keys;
 the others pass them through:
 
 ```
-Ghostty (outer window)  →  Rex (prefix C-a)  →  fish (prompt)  or  nvim
+Ghostty (outer window)  →  Rex (prefix C-a, plus C-p)  →  fish (prompt)  or  nvim
 ```
 
 - Ghostty only intercepts what you bind in `ghostty/config`. There are no
   split/zoom binds here — it is a pure pass-through layer.
-- Rex only intercepts keys that start a configured sequence (currently `C-a`).
-  Plain keys go to the app inside.
+- Rex intercepts the `C-a` sequences and `C-p`; every other plain key goes to
+  the app inside.
 - fish/fzf bindings only apply while the shell prompt is focused.
 - nvim bindings only apply while an nvim window is focused.
 
@@ -48,6 +48,7 @@ The custom bindings live in `rex/init.lua`:
 | Binding | Action |
 |---------|--------|
 | `C-a` `f` | New Rex window running `rex-sessionizer` |
+| `C-p` | New Rex window running `rex-sessionizer` |
 
 Rex's own defaults handle tabs, splits, focus, the command palette, and the
 built-in session switcher (`cmd+k`). The `rex` CLI exposes the same operations
@@ -55,19 +56,18 @@ for scripts: `rex run`, `rex split`, `rex focus`, `rex window`, `rex block`.
 
 ### Sessionizer entry points
 
-The project switcher is reached three ways:
+Rex owns the project switcher, so it works from any block — fish, nvim, or a
+program over ssh:
 
 | Where              | Binding        | Effect                                            |
 |--------------------|----------------|---------------------------------------------------|
+| anywhere in Rex    | `C-p`          | new Rex window running `rex-sessionizer`          |
 | anywhere in Rex    | `C-a f`        | new Rex window running `rex-sessionizer`          |
-| fish prompt        | `C-p`          | runs `rex-sessionizer` in-place (`config.fish`)   |
-| nvim normal mode   | `C-f`          | new Rex window with `rex-sessionizer` (`set.lua`) |
 
 ## fish (prompt-only bindings)
 
 Active only at the shell prompt (`fish/fzf.fish` + the fzf.fish plugin):
 
-- `C-p` — rex-sessionizer
 - `C-e` — fzf file picker from `/`, then *opens the file in nvim*
 - `C-Alt-f` — fzf directory search (cwd; prefix `/` for the whole machine)
 - `C-r` — fzf history
@@ -81,19 +81,17 @@ terminal:
 
 - `C-h/j/k/l` — move between nvim windows. Rex handles the outer blocks with
   its own bindings; inside nvim, Rex doesn't see these keys.
-- `C-f` (normal) — opens the Rex sessionizer in a new Rex window. Your fastest
-  "go work on another project" move from inside an editor.
 - `q` — buffer diagnostics loclist (not macro recording, see `docs/nvim.md`).
 
 ## Putting it together: one work session
 
-1. Open Rex (or Ghostty) and press `C-a f` or `C-p` to pick a project.
+1. Open Rex (or Ghostty) and press `C-p` to pick a project.
 2. Use Rex's default split binding (or `rex split`) for a scratch shell; the
    new block starts in the current directory.
 3. Move between Rex blocks and nvim windows with their own bindings — one
    muscle memory, two layers.
-4. Inside nvim, `C-f` opens another project in a new Rex window; use Rex's
-   session switcher to bounce back.
+4. `C-p` opens another project in a new Rex window from anywhere, including
+   inside nvim; use Rex's session switcher to bounce back.
 5. At the shell prompt, `C-e` picks any file and opens it in nvim.
 
 Nothing here requires the mouse; Ghostty stays a dumb, transparent wrapper.
@@ -103,9 +101,8 @@ Nothing here requires the mouse; Ghostty stays a dumb, transparent wrapper.
 - **`C-a` vs beginning-of-line.** `C-a` starts a Rex sequence, so fish's
   emacs-mode `C-a` (cursor to line start) is shadowed. No literal-`C-a` escape
   is bound; use `Home` instead.
-- **`C-f` means three different things**, never at the same time: fish moves the
-  cursor right, nvim-normal opens the sessionizer, nvim-insert scrolls the cmp
-  docs window (`cmp.lua:52`).
+- **`C-p` is Rex's**, so fish, nvim, and fzf never see it. Fish's history is
+  on `Up`, nvim's completion-previous is `C-n`, and fzf's up is `C-k`.
 - **There is one clipboard: the system clipboard.** nvim auto-selects the
   Wayland provider (`set.lua`), so an nvim yank and a copy in any other app
   land in the same place. Paste with Ghostty's `SUPER+V`.
