@@ -4,15 +4,13 @@
 # open it in Rex. Session commands (-s) open a command in a reusable window or
 # split of the current session.
 
-VERSION="1.1.0"
+VERSION="1.2.0"
 
 CONFIG_FILE_NAME="rex-sessionizer.conf"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/rex"
 CONFIG_FILE="$CONFIG_DIR/$CONFIG_FILE_NAME"
 
 CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/rex-sessionizer"
-WINDOW_CACHE_FILE="$CACHE_DIR/windows.tsv"
-BLOCK_CACHE_FILE="$CACHE_DIR/blocks.tsv"
 PATH_CACHE_FILE="$CACHE_DIR/paths.tsv"
 
 die() {
@@ -20,66 +18,51 @@ die() {
     exit 1
 }
 
-# Load the config file(s), if present. These are shell files, so arrays and
-# variables work.
-if [[ -f "$CONFIG_FILE" ]]; then
-    # shellcheck source=/dev/null
-    source "$CONFIG_FILE"
-fi
-
-if [[ -f "$CONFIG_FILE_NAME" ]]; then
-    # shellcheck source=/dev/null
-    source "$CONFIG_FILE_NAME"
-fi
+# Config files are shell, so arrays and variables work. The local file is
+# sourced after the global one and can override it.
+for conf in "$CONFIG_FILE" "$CONFIG_FILE_NAME"; do
+    if [[ -f "$conf" ]]; then
+        # shellcheck source=/dev/null
+        source "$conf"
+    fi
+done
 
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
 
-if [[ -n "${REX_SESSIONIZER_SEARCH_PATHS+x}" ]]; then
-    SEARCH_PATHS=("${REX_SESSIONIZER_SEARCH_PATHS[@]}")
-else
-    SEARCH_PATHS=()
-fi
+SEARCH_PATHS=("${REX_SESSIONIZER_SEARCH_PATHS[@]}"
+    "${REX_SESSIONIZER_EXTRA_SEARCH_PATHS[@]}")
+SESSION_COMMANDS=("${REX_SESSIONIZER_COMMANDS[@]}")
 
-if [[ -n "${REX_SESSIONIZER_EXTRA_SEARCH_PATHS+x}" ]]; then
-    SEARCH_PATHS+=("${REX_SESSIONIZER_EXTRA_SEARCH_PATHS[@]}")
-fi
-
-# Project discovery needs explicit configuration. There are no built-in search
-# paths, so a missing or empty list is an error rather than a silent default.
-require_search_paths() {
-    ((${#SEARCH_PATHS[@]} > 0)) && return 0
-
-    printf 'rex-sessionizer: no project search paths configured.\n\n' >&2
-    printf 'Create %s with the directories to search:\n\n' "$CONFIG_FILE" >&2
-    printf '  REX_SESSIONIZER_SEARCH_PATHS=(~/code ~/src)\n\n' >&2
-    printf 'See rex-sessionizer.conf.example for all options.\n' >&2
-    exit 1
-}
-
-MAX_DEPTH="${REX_SESSIONIZER_MAX_DEPTH:-1}"
-[[ "$MAX_DEPTH" =~ ^[0-9]+$ ]] ||
-    die "REX_SESSIONIZER_MAX_DEPTH must be a non-negative integer"
-
-if [[ -n "${REX_SESSIONIZER_COMMANDS+x}" ]]; then
-    SESSION_COMMANDS=("${REX_SESSIONIZER_COMMANDS[@]}")
-else
-    SESSION_COMMANDS=()
-fi
-
+# An unset list defaults to (.git); an explicitly empty list prunes nothing.
 if [[ -n "${REX_SESSIONIZER_EXCLUDES+x}" ]]; then
     EXCLUDES=("${REX_SESSIONIZER_EXCLUDES[@]}")
 else
     EXCLUDES=(".git")
 fi
 
+MAX_DEPTH="${REX_SESSIONIZER_MAX_DEPTH:-1}"
+[[ "$MAX_DEPTH" =~ ^[0-9]+$ ]] ||
+    die "REX_SESSIONIZER_MAX_DEPTH must be a non-negative integer"
+
+# Popup rectangle as fractions of the window: x y w h.
+if [[ -n "${REX_SESSIONIZER_POPUP_BOUNDS+x}" ]]; then
+    POPUP_BOUNDS=("${REX_SESSIONIZER_POPUP_BOUNDS[@]}")
+else
+    POPUP_BOUNDS=(0.1 0.1 0.8 0.8)
+fi
+
+is_true() {
+    case "${1:-}" in
+    1 | true | TRUE | True | yes | YES | Yes | on | ON | On) return 0 ;;
+    *) return 1 ;;
+    esac
+}
+
 LOG_MODE="${REX_SESSIONIZER_LOG:-}"
 LOG_FILE="${REX_SESSIONIZER_LOG_FILE:-}"
-
-case "$LOG_MODE" in
-1 | true | TRUE | yes | YES | on | ON) LOG_MODE="echo" ;;
-esac
+is_true "$LOG_MODE" && LOG_MODE="echo"
 
 if [[ "$LOG_MODE" == "file" && -z "$LOG_FILE" ]]; then
     LOG_FILE="${XDG_DATA_HOME:-$HOME/.local/share}/rex-sessionizer/rex-sessionizer.log"
@@ -99,21 +82,10 @@ SERVER="${REX_SESSIONIZER_SERVER:-}"
 TARGET_SESSION="${REX_SESSIONIZER_TARGET:-}"
 CLIENT_TARGET="${REX_SESSIONIZER_CLIENT:-${REX_CLIENT:-}}"
 
-is_true() {
-    case "${1:-}" in
-    1 | true | TRUE | True | yes | YES | Yes | on | ON | On) return 0 ;;
-    *) return 1 ;;
-    esac
-}
-
 log() {
     case "$LOG_MODE" in
-    echo)
-        printf '%s\n' "$*"
-        ;;
-    file)
-        printf '%s %s\n' "$(date -Is 2>/dev/null || date)" "$*" >>"$LOG_FILE"
-        ;;
+    echo) printf '%s\n' "$*" ;;
+    file) printf '%s %s\n' "$(date -Is 2>/dev/null || date)" "$*" >>"$LOG_FILE" ;;
     esac
 }
 
@@ -148,6 +120,8 @@ Options:
   -C, --client CLIENT    Rex app client to switch (label or ID)
   -S, --server SERVER    Rex server to use (host label or address)
       --list             List sessions and project directories, then exit
+      --popup            Open the picker as a floating layer in the current
+                         Rex window (run this inside Rex)
       --dry-run          Show what would happen without changing anything
       --no-switch        Create/select the session, but don't switch the app
       --no-hydrate       Don't source .rex-sessionizer in a new session
@@ -160,6 +134,7 @@ Configuration:
   REX_SESSIONIZER_EXTRA_SEARCH_PATHS=(...)
   REX_SESSIONIZER_MAX_DEPTH=1
   REX_SESSIONIZER_EXCLUDES=(.git node_modules)
+  REX_SESSIONIZER_POPUP_BOUNDS=(0.1 0.1 0.8 0.8)
   REX_SESSIONIZER_COMMANDS=("lazygit" "nvim" "htop")
   REX_SESSIONIZER_CLIENT="MacBook Pro M1"
   REX_SESSIONIZER_SERVER="studio"
@@ -176,12 +151,10 @@ REX_SESSIONIZER_SEARCH_PATHS is required for the picker and for --list;
 there are no built-in defaults. Create a config file with your project
 directories (see rex-sessionizer.conf.example).
 
-Project discovery needs REX_SESSIONIZER_SEARCH_PATHS; without it, pass a
-PATH or SESSION explicitly, or use -s/--session inside Rex. Directories may
-be written as DIR:DEPTH to override REX_SESSIONIZER_MAX_DEPTH for one entry.
-Hidden directories are skipped unless REX_SESSIONIZER_INCLUDE_HIDDEN is true.
-A local .rex-sessionizer (or ~/.rex-sessionizer) is sourced in a newly created
-session.
+Directories may be written as DIR:DEPTH to override REX_SESSIONIZER_MAX_DEPTH
+for one entry. Hidden directories are skipped unless
+REX_SESSIONIZER_INCLUDE_HIDDEN is true. A local .rex-sessionizer (or
+~/.rex-sessionizer) is sourced in a newly created session.
 
 The local ./rex-sessionizer.conf is sourced from the directory you run this
 script in. Only run it from directories you trust.
@@ -197,6 +170,7 @@ session_cmd=""
 user_selected=""
 split_type=""
 LIST_ONLY=0
+POPUP=0
 DRY_RUN=0
 rc=0
 
@@ -220,15 +194,11 @@ while [[ "$#" -gt 0 ]]; do
         [[ -n "$TARGET_SESSION" ]] || die "target session cannot be empty"
         shift
         ;;
-    --vsplit)
-        [[ -z "$split_type" || "$split_type" == "vsplit" ]] ||
+    --vsplit | --hsplit)
+        new_split="${1#--}"
+        [[ -z "$split_type" || "$split_type" == "$new_split" ]] ||
             die "--vsplit and --hsplit are mutually exclusive"
-        split_type="vsplit"
-        ;;
-    --hsplit)
-        [[ -z "$split_type" || "$split_type" == "hsplit" ]] ||
-            die "--vsplit and --hsplit are mutually exclusive"
-        split_type="hsplit"
+        split_type="$new_split"
         ;;
     -C | --client)
         CLIENT_TARGET="${2:-}"
@@ -240,18 +210,11 @@ while [[ "$#" -gt 0 ]]; do
         [[ -n "$SERVER" ]] || die "server cannot be empty"
         shift
         ;;
-    --list)
-        LIST_ONLY=1
-        ;;
-    --dry-run)
-        DRY_RUN=1
-        ;;
-    --no-switch)
-        SWITCH=0
-        ;;
-    --no-hydrate)
-        HYDRATE=0
-        ;;
+    --list) LIST_ONLY=1 ;;
+    --popup) POPUP=1 ;;
+    --dry-run) DRY_RUN=1 ;;
+    --no-switch) SWITCH=0 ;;
+    --no-hydrate) HYDRATE=0 ;;
     --)
         shift
         user_selected="${1:-}"
@@ -262,9 +225,7 @@ while [[ "$#" -gt 0 ]]; do
         usage >&2
         exit 2
         ;;
-    *)
-        user_selected="$1"
-        ;;
+    *) user_selected="$1" ;;
     esac
     shift
 done
@@ -279,6 +240,11 @@ fi
 
 if [[ "$LIST_ONLY" == "1" && -n "$session_idx" ]]; then
     die "--list cannot be combined with -s/--session"
+fi
+
+if [[ "$POPUP" == "1" ]] &&
+    [[ -n "$session_idx" || -n "$user_selected" || -n "$split_type" || "$LIST_ONLY" == "1" ]]; then
+    die "--popup only wraps the picker; don't combine it with -s, --list, --vsplit/--hsplit, or a PATH/SESSION"
 fi
 
 if [[ -n "$session_idx" ]]; then
@@ -315,6 +281,84 @@ sanity_check_fzf() {
     command -v fzf >/dev/null 2>&1 || die "fzf is not installed (or not on PATH)"
 }
 
+require_search_paths() {
+    ((${#SEARCH_PATHS[@]})) && return 0
+
+    printf 'rex-sessionizer: no project search paths configured.\n\n' >&2
+    printf 'Create %s with the directories to search:\n\n' "$CONFIG_FILE" >&2
+    printf '  REX_SESSIONIZER_SEARCH_PATHS=(~/code ~/src)\n\n' >&2
+    printf 'See rex-sessionizer.conf.example for all options.\n' >&2
+    exit 1
+}
+
+# Absolute path of this script, so a popup can re-run it directly.
+self_path() {
+    local self="${BASH_SOURCE[0]}"
+
+    if [[ "$self" != */* ]]; then
+        self=$(command -v -- "$self" 2>/dev/null) || return 1
+    fi
+
+    (cd -- "$(dirname -- "$self")" &&
+        printf '%s/%s\n' "$(pwd -P)" "$(basename -- "$self")")
+}
+
+# Open the picker in a floating layer over the current window. The layer has
+# to exist before fzf starts, so this is a separate mode that re-runs this
+# script inside the layer; use it from a shell or editor binding inside Rex.
+open_popup() {
+    local session_id="${REX_SESSION:-}" block_id="${REX_BLOCK:-}" window_id=""
+    local self bounds_json args_json output
+
+    [[ -n "$session_id" ]] ||
+        die "--popup must run inside a Rex terminal (REX_SESSION is not set)"
+
+    ((${#POPUP_BOUNDS[@]} == 4)) ||
+        die "REX_SESSIONIZER_POPUP_BOUNDS must contain four numbers: x y w h"
+
+    bounds_json=$(printf '%s\n' "${POPUP_BOUNDS[@]}" |
+        jq -sR 'split("\n") | map(select(length > 0) | tonumber)') ||
+        die "REX_SESSIONIZER_POPUP_BOUNDS must contain four numbers: x y w h"
+    (($(printf '%s\n' "$bounds_json" | jq 'length') == 4)) ||
+        die "REX_SESSIONIZER_POPUP_BOUNDS must contain four numbers: x y w h"
+
+    self=$(self_path) || die "could not resolve the path to this script"
+
+    if [[ -n "$block_id" ]]; then
+        window_id=$(rex block inspect -s "$session_id" "$block_id" --json 2>/dev/null |
+            jq -r '.block.window_id // empty' 2>/dev/null)
+    fi
+
+    args_json=$(jq -n \
+        --arg session_id "$session_id" \
+        --argjson bounds "$bounds_json" \
+        --arg command "$self" \
+        --arg cwd "$PWD" \
+        '{session_id: $session_id, bounds: $bounds, focus: true,
+          layout: {block: {flavor: "com.superlogical.terminal.shell",
+            options: {command: [$command], cwd: $cwd}}}}') ||
+        die "could not build the popup request"
+
+    [[ -z "$window_id" ]] ||
+        args_json=$(printf '%s\n' "$args_json" |
+            jq --arg w "$window_id" '. + {window_id: $w}')
+
+    if [[ "$DRY_RUN" == "1" ]]; then
+        printf '%s\n' "$args_json"
+        return 0
+    fi
+
+    if ! output=$(rex api call -s "$session_id" session.new_layer "$args_json" 2>&1); then
+        printf '%s\n' "$output" >&2
+        die "could not open the sessionizer popup"
+    fi
+    log "opened popup layer in $session_id"
+}
+
+count_nonempty() {
+    awk 'NF { n++ } END { print n + 0 }'
+}
+
 # Print "session_id<TAB>label" for every session, minus the current one.
 rex_sessions() {
     local skip="${REX_SESSION:-}"
@@ -329,32 +373,28 @@ rex_sessions() {
 
 RESOLVED_ID=""
 
-# Resolve a session by full ID, label (case-insensitive), or ID suffix.
-# Sets RESOLVED_ID. Returns 1 for no match, 2 for an ambiguous target.
+# Resolve a session by full ID, case-insensitive label, or (unless $2 is 0) a
+# unique ID suffix of at least 4 characters. Sets RESOLVED_ID.
+# Returns 1 for no match, 2 for an ambiguous target.
 resolve_session() {
-    local query="$1" matches count
+    local query="$1" suffix="${2:-1}" matches count
     RESOLVED_ID=""
     [[ -n "$query" ]] || return 1
 
-    matches=$(rex ls --json 2>/dev/null | jq -r --arg q "$query" '
-        ([.sessions[]? | select(.session_id == $q)]) as $exact
-        | if ($exact | length) > 0 then
-            $exact[] | .session_id
-          else
-            ([.sessions[]? | select((.label | ascii_downcase) == ($q | ascii_downcase))]) as $labels
-            | if ($labels | length) > 0 then
-                $labels[] | .session_id
-              else
-                if ($q | length) >= 4 then
-                  [.sessions[]? | select(.session_id | endswith($q))] | .[] | .session_id
-                else
-                  empty
-                end
-              end
+    matches=$(rex ls --json 2>/dev/null | jq -r --arg q "$query" --argjson suffix "$suffix" '
+        [.sessions[]?] as $s
+        | ([$s[] | select(.session_id == $q)]) as $exact
+        | if ($exact | length) > 0 then $exact
+          else ([$s[] | select((.label | ascii_downcase) == ($q | ascii_downcase))]) as $labels
+          | if ($labels | length) > 0 then $labels
+            elif $suffix == 1 and ($q | length) >= 4
+              then [$s[] | select(.session_id | endswith($q))]
+            else [] end
           end
+        | map(.session_id) | unique[]
     ')
 
-    count=$(printf '%s\n' "$matches" | awk 'NF { n++ } END { print n + 0 }')
+    count=$(printf '%s\n' "$matches" | count_nonempty)
     if ((count == 0)); then
         return 1
     elif ((count > 1)); then
@@ -364,33 +404,6 @@ resolve_session() {
     fi
 
     RESOLVED_ID="$matches"
-    return 0
-}
-
-# Resolve a session by exact label (case-insensitive). Sets RESOLVED_ID.
-# Returns 1 for no match, 2 for an ambiguous label.
-resolve_session_label() {
-    local label="$1" matches count
-    RESOLVED_ID=""
-    [[ -n "$label" ]] || return 1
-
-    matches=$(rex ls --json 2>/dev/null | jq -r --arg label "$label" '
-        .sessions[]?
-        | select((.label | ascii_downcase) == ($label | ascii_downcase))
-        | .session_id
-    ')
-
-    count=$(printf '%s\n' "$matches" | awk 'NF { n++ } END { print n + 0 }')
-    if ((count == 0)); then
-        return 1
-    elif ((count > 1)); then
-        printf 'rex-sessionizer: multiple sessions are labeled "%s":\n' "$label" >&2
-        printf '%s\n' "$matches" | sed 's/^/  /' >&2
-        return 2
-    fi
-
-    RESOLVED_ID="$matches"
-    return 0
 }
 
 session_exists() {
@@ -400,9 +413,8 @@ session_exists() {
 # Ask the app to show a session. The action is performed by a Rex app client,
 # so it needs Remote Control turned on and an app connected.
 switch_to() {
-    local session_id="$1"
-    local client="$CLIENT_TARGET"
-    local apps count
+    local session_id="$1" client="$CLIENT_TARGET" apps count output
+    local -a args
 
     is_true "$SWITCH" || return 0
     [[ -n "$session_id" ]] || return 0
@@ -419,31 +431,29 @@ switch_to() {
             | [.client_id, (.info.label // .info.name // "")]
             | @tsv
         ')
-        count=$(printf '%s\n' "$apps" | awk 'NF { n++ } END { print n + 0 }')
+        count=$(printf '%s\n' "$apps" | count_nonempty)
 
-        if [[ "$count" -eq 0 ]]; then
+        case "$count" in
+        0)
             printf 'rex-sessionizer: session %s is ready, but no Rex app client is connected.\n' \
                 "$session_id" >&2
             printf 'rex-sessionizer: enable Remote Control in the Rex app, or use --no-switch.\n' >&2
             return 0
-        elif [[ "$count" -eq 1 ]]; then
-            client="${apps%%$'\t'*}"
-        else
+            ;;
+        1) client="${apps%%$'\t'*}" ;;
+        *)
             printf 'rex-sessionizer: multiple Rex app clients are connected; use -C/--client to choose one:\n' >&2
             printf '%s\n' "$apps" | while IFS=$'\t' read -r id name; do
                 printf '  %s  %s\n' "$id" "$name" >&2
             done
             return 0
-        fi
+            ;;
+        esac
     fi
 
-    local -a args
-    args=("do" "session.select" "session_id=$session_id")
-    if [[ -n "$client" ]]; then
-        args=("-C" "$client" "${args[@]}")
-    fi
+    args=(do session.select "session_id=$session_id")
+    [[ -n "$client" ]] && args=(-C "$client" "${args[@]}")
 
-    local output
     if ! output=$(rex "${args[@]}" 2>&1); then
         printf 'rex-sessionizer: warning: could not switch client to %s: %s\n' \
             "$session_id" "$output" >&2
@@ -457,27 +467,19 @@ hydration_file() {
 
     if [[ -f "$dir/.rex-sessionizer" ]]; then
         printf '%s\n' "$dir/.rex-sessionizer"
-        return 0
-    fi
-
-    if [[ -f "$HOME/.rex-sessionizer" ]]; then
+    elif [[ -f "$HOME/.rex-sessionizer" ]]; then
         printf '%s\n' "$HOME/.rex-sessionizer"
-        return 0
+    else
+        return 1
     fi
-
-    return 1
 }
 
 # Source a shell setup file in a newly created session.
 hydrate() {
-    local session_id="$1"
-    local block_id="$2"
-    local dir="$3"
-    local file=""
-    local quoted capture
+    local session_id="$1" block_id="$2" dir="$3" file capture quoted
+    local -a target
 
     is_true "$HYDRATE" || return 0
-
     file=$(hydration_file "$dir") || return 0
 
     log "sourcing $file in $session_id"
@@ -488,8 +490,6 @@ hydrate() {
     fi
 
     quoted=$(printf '%q' "$file")
-
-    local -a target
     target=(-s "$session_id")
     [[ -n "$block_id" ]] && target+=(-b "$block_id")
 
@@ -525,9 +525,7 @@ expand_tilde() {
 }
 
 resolve_dir() {
-    local dir="$1"
-    dir=$(expand_tilde "$dir")
-    (cd -- "$dir" 2>/dev/null && pwd -P)
+    (cd -- "$(expand_tilde "$1")" 2>/dev/null && pwd -P)
 }
 
 find_dirs() {
@@ -544,22 +542,18 @@ find_dirs() {
         fi
 
         path=$(resolve_dir "$path") || continue
-        [[ -d "$path" ]] || continue
 
         cmd=(find)
         is_true "$FOLLOW_SYMLINKS" && cmd+=(-L)
         cmd+=("$path" -mindepth 1 -maxdepth "${depth:-1}")
 
         for ex in "${EXCLUDES[@]}"; do
-            [[ -n "$ex" ]] || continue
-            cmd+=(-name "$ex" -prune -o)
+            [[ -n "$ex" ]] && cmd+=(-name "$ex" -prune -o)
         done
 
-        if ! is_true "$INCLUDE_HIDDEN"; then
-            cmd+=(-name '.*' -prune -o)
-        fi
-
+        is_true "$INCLUDE_HIDDEN" || cmd+=(-name '.*' -prune -o)
         cmd+=(-type d -print)
+
         "${cmd[@]}" 2>/dev/null
     done
 }
@@ -567,123 +561,40 @@ find_dirs() {
 # fzf candidates use a tab between the machine-readable record and the
 # human-readable label, so paths and labels can contain spaces.
 find_candidates() {
-    local session_id label dir
+    rex_sessions | while IFS=$'\t' read -r id label; do
+        [[ -n "$id" ]] && printf 's:%s\t[REX] %s\n' "$id" "$label"
+    done
 
-    while IFS=$'\t' read -r session_id label; do
-        [[ -n "$session_id" ]] || continue
-        printf 's:%s\t[REX] %s\n' "$session_id" "$label"
-    done < <(rex_sessions)
-
-    while IFS= read -r dir; do
-        [[ -n "$dir" ]] || continue
+    find_dirs | LC_ALL=C sort -u | while IFS= read -r dir; do
         printf 'd:%s\t%s\n' "$dir" "$dir"
-    done < <(find_dirs | LC_ALL=C sort -u)
+    done
 }
 
 # ---------------------------------------------------------------------------
-# Session command cache
+# Path cache: one session per project directory, even when two projects share
+# a basename. The cache is a shortcut only; labels are the fallback.
 # ---------------------------------------------------------------------------
 
 cache_get() {
-    local file="$1"
-    local key="$2"
-    local k v
-
-    [[ -f "$file" ]] || return 0
-
-    while IFS=$'\t' read -r k v; do
-        if [[ "$k" == "$key" ]]; then
-            printf '%s\n' "$v"
-            return 0
-        fi
-    done <"$file"
+    [[ -f "$1" ]] && awk -F'\t' -v k="$2" '$1 == k { print $2; exit }' "$1"
+    return 0
 }
 
 cache_set() {
-    local file="$1"
-    local key="$2"
-    local value="$3"
-    local tmp k v
-
+    local file="$1" key="$2" value="$3" tmp
     mkdir -p "$(dirname "$file")" || return 1
-    tmp=$(mktemp "${file}.XXXXXX") || return 1
-
-    if [[ -f "$file" ]]; then
-        while IFS=$'\t' read -r k v; do
-            [[ "$k" == "$key" ]] && continue
-            printf '%s\t%s\n' "$k" "$v"
-        done <"$file" >"$tmp"
-    fi
-
-    printf '%s\t%s\n' "$key" "$value" >>"$tmp"
-    mv "$tmp" "$file"
+    tmp=$(mktemp "$file.XXXXXX") || return 1
+    {
+        [[ -f "$file" ]] && awk -F'\t' -v k="$key" '$1 != k' "$file"
+        printf '%s\t%s\n' "$key" "$value"
+    } >"$tmp" && mv "$tmp" "$file"
 }
 
 cache_remove() {
-    local file="$1"
-    local key="$2"
-    local tmp k v
-
+    local file="$1" key="$2" tmp
     [[ -f "$file" ]] || return 0
-    tmp=$(mktemp "${file}.XXXXXX") || return 1
-
-    while IFS=$'\t' read -r k v; do
-        [[ "$k" == "$key" ]] && continue
-        printf '%s\t%s\n' "$k" "$v"
-    done <"$file" >"$tmp"
-
-    mv "$tmp" "$file"
-}
-
-cache_remove_prefix() {
-    local file="$1"
-    local prefix="$2"
-    local tmp k v
-
-    [[ -f "$file" ]] || return 0
-    tmp=$(mktemp "${file}.XXXXXX") || return 1
-
-    while IFS=$'\t' read -r k v; do
-        [[ "$k" == "$prefix"* ]] && continue
-        printf '%s\t%s\n' "$k" "$v"
-    done <"$file" >"$tmp"
-
-    mv "$tmp" "$file"
-}
-
-# Drop cache rows for sessions that no longer exist. Legacy cache keys (which
-# use ':' separators) are kept so they can be migrated when used.
-prune_cache_sessions() {
-    local file="$1"
-    local live_json live tmp k v sid rest
-
-    [[ -f "$file" ]] || return 0
-
-    live_json=$(rex ls --json 2>/dev/null) || return 0
-    live=$(printf '%s\n' "$live_json" | jq -r '.sessions[]?.session_id')
-
-    tmp=$(mktemp "${file}.XXXXXX") || return 1
-    while IFS=$'\t' read -r k v; do
-        # Keep legacy keys (no scope) so they can be migrated when used.
-        if [[ "$k" != *"|"* ]]; then
-            printf '%s\t%s\n' "$k" "$v"
-            continue
-        fi
-
-        # Only prune entries for the server we are talking to.
-        if [[ "$k" != "$REX_SCOPE|"* ]]; then
-            printf '%s\t%s\n' "$k" "$v"
-            continue
-        fi
-
-        rest="${k#*|}"
-        sid="${rest%%|*}"
-        if printf '%s\n' "$live" | grep -Fxq -e "$sid"; then
-            printf '%s\t%s\n' "$k" "$v"
-        fi
-    done <"$file" >"$tmp"
-
-    mv "$tmp" "$file"
+    tmp=$(mktemp "$file.XXXXXX") || return 1
+    awk -F'\t' -v k="$key" '$1 != k' "$file" >"$tmp" && mv "$tmp" "$file"
 }
 
 # A short stable key for the command and working directory. Changing either
@@ -696,18 +607,25 @@ cmd_key() {
 # Session commands (the -s/--session mode)
 # ---------------------------------------------------------------------------
 
+# Print the ID of the live window/block in $2 whose label is $3.
+find_pane() {
+    local kind="$1" session_id="$2" label="$3"
+    rex "$kind" ls -s "$session_id" --json 2>/dev/null |
+        jq -r --arg l "$label" --arg id "${kind}_id" \
+            ".${kind}s[]? | select(.label == \$l) | .[\$id]" |
+        head -n 1
+}
+
 handle_session_cmd() {
     local session_id=""
-    local rc
 
     if [[ -n "$TARGET_SESSION" ]]; then
         resolve_session "$TARGET_SESSION"
-        rc=$?
-        if ((rc == 2)); then
-            exit 3
-        fi
-        ((rc == 0)) || die "unknown Rex session: $TARGET_SESSION"
-        session_id="$RESOLVED_ID"
+        case $? in
+        0) session_id="$RESOLVED_ID" ;;
+        2) exit 3 ;;
+        *) die "unknown Rex session: $TARGET_SESSION" ;;
+        esac
     else
         session_id="${REX_SESSION:-}"
         [[ -n "$session_id" ]] ||
@@ -717,221 +635,72 @@ handle_session_cmd() {
     rex session inspect "$session_id" >/dev/null 2>&1 ||
         die "the Rex session ($session_id) is not available"
 
-    if [[ "$DRY_RUN" != "1" ]]; then
-        prune_cache_sessions "$WINDOW_CACHE_FILE"
-        prune_cache_sessions "$BLOCK_CACHE_FILE"
-    fi
-
-    if [[ -n "$split_type" ]]; then
-        handle_split_session_cmd "$session_id"
-    else
-        handle_window_session_cmd "$session_id"
-    fi
-
+    handle_pane "$session_id"
     exit 0
 }
 
-handle_window_session_cmd() {
-    local session_id="$1"
-    local hash label key legacy_key window_id output
+# Focus the pane labelled for this command, or create it. Windows and splits
+# differ only in the create call, so they share one implementation.
+handle_pane() {
+    local session_id="$1" kind="window" direction="" label id output
     local -a args
 
-    hash=$(cmd_key)
-    label="rex-cmd-$session_idx-$hash"
-    key="$REX_SCOPE|$session_id|window|$session_idx|$label"
-    legacy_key="$session_id:$session_idx"
-
-    window_id=$(cache_get "$WINDOW_CACHE_FILE" "$key")
-
-    # Migrate the pre-1.1 cache key, if the window is still alive.
-    if [[ -z "$window_id" ]]; then
-        window_id=$(cache_get "$WINDOW_CACHE_FILE" "$legacy_key")
-        if [[ -n "$window_id" ]]; then
-            if [[ "$DRY_RUN" != "1" ]]; then
-                cache_remove "$WINDOW_CACHE_FILE" "$legacy_key"
-                cache_set "$WINDOW_CACHE_FILE" "$key" "$window_id"
-            fi
-        fi
+    if [[ -n "$split_type" ]]; then
+        kind="block"
+        case "$split_type" in
+        vsplit) direction="right" ;;
+        hsplit) direction="below" ;;
+        esac
+        label="rex-cmd-$session_idx-$split_type-$(cmd_key)"
+    else
+        label="rex-cmd-$session_idx-$(cmd_key)"
     fi
 
-    if [[ -n "$window_id" ]] &&
-        rex window inspect -s "$session_id" "$window_id" >/dev/null 2>&1; then
+    id=$(find_pane "$kind" "$session_id" "$label")
+
+    if [[ -n "$id" ]]; then
         if [[ "$DRY_RUN" == "1" ]]; then
-            printf 'rex-sessionizer: would focus window %s for command %s\n' \
-                "$window_id" "$session_idx"
+            printf 'rex-sessionizer: would focus %s %s for command %s\n' \
+                "$kind" "$id" "$session_idx"
         else
-            log "focusing existing window $window_id for command $session_idx"
-            rex window focus -s "$session_id" "$window_id" >/dev/null 2>&1 || true
-        fi
-        return
-    fi
-
-    if [[ -n "$window_id" && "$DRY_RUN" != "1" ]]; then
-        cache_remove "$WINDOW_CACHE_FILE" "$key"
-    fi
-
-    # The cache is a convenience, not the source of truth. If it was lost or
-    # cleared, find the existing window by its label.
-    window_id=$(rex window ls -s "$session_id" --json 2>/dev/null |
-        jq -r --arg label "$label" '
-            .windows[]? | select(.label == $label) | .window_id
-        ' | head -n 1)
-
-    if [[ -z "$window_id" ]]; then
-        window_id=$(rex window ls -s "$session_id" --json 2>/dev/null |
-            jq -r --arg label "rex-cmd-$session_idx" '
-                .windows[]? | select(.label == $label) | .window_id
-            ' | head -n 1)
-    fi
-
-    if [[ -n "$window_id" ]]; then
-        if [[ "$DRY_RUN" == "1" ]]; then
-            printf 'rex-sessionizer: would focus window %s for command %s\n' \
-                "$window_id" "$session_idx"
-        else
-            log "reusing window $window_id for command $session_idx"
-            cache_remove "$WINDOW_CACHE_FILE" "$legacy_key"
-            cache_remove_prefix "$WINDOW_CACHE_FILE" \
-                "$REX_SCOPE|$session_id|window|$session_idx|"
-            cache_set "$WINDOW_CACHE_FILE" "$key" "$window_id"
-            rex window focus -s "$session_id" "$window_id" >/dev/null 2>&1 || true
-        fi
-        return
-    fi
-
-    if [[ "$DRY_RUN" == "1" ]]; then
-        printf 'rex-sessionizer: would create window %s running: %s (cwd %s)\n' \
-            "$label" "$session_cmd" "$PWD"
-        return
-    fi
-
-    log "creating window for command $session_idx: $session_cmd"
-
-    args=(window new -s "$session_id" "$label" --cwd "$PWD" --json)
-    is_true "$KEEP_OPEN" && args+=(--keep-open)
-    args+=(-- sh -c "$session_cmd")
-
-    if ! output=$(rex "${args[@]}" 2>&1); then
-        printf '%s\n' "$output" >&2
-        die "could not create a window for command $session_idx"
-    fi
-
-    window_id=$(printf '%s\n' "$output" | jq -r '.window_id // empty' 2>/dev/null)
-    if [[ -z "$window_id" && "$output" == window:* ]]; then
-        window_id="$output"
-    fi
-    [[ -n "$window_id" ]] || die "Rex did not return a window ID"
-
-    cache_remove "$WINDOW_CACHE_FILE" "$legacy_key"
-    cache_remove_prefix "$WINDOW_CACHE_FILE" \
-        "$REX_SCOPE|$session_id|window|$session_idx|"
-    cache_set "$WINDOW_CACHE_FILE" "$key" "$window_id"
-    rex window focus -s "$session_id" "$window_id" >/dev/null 2>&1 || true
-}
-
-handle_split_session_cmd() {
-    local session_id="$1"
-    local hash label key legacy_key block_id output direction
-    local -a args
-
-    case "$split_type" in
-    vsplit) direction="right" ;;
-    hsplit) direction="below" ;;
-    *) die "unknown split type: $split_type" ;;
-    esac
-
-    hash=$(cmd_key)
-    label="rex-cmd-$session_idx-$split_type-$hash"
-    key="$REX_SCOPE|$session_id|block|$session_idx|$split_type|$label"
-    legacy_key="$session_id:$session_idx:$split_type"
-
-    block_id=$(cache_get "$BLOCK_CACHE_FILE" "$key")
-
-    # Migrate the pre-1.1 cache key, if the block is still alive.
-    if [[ -z "$block_id" ]]; then
-        block_id=$(cache_get "$BLOCK_CACHE_FILE" "$legacy_key")
-        if [[ -n "$block_id" && "$DRY_RUN" != "1" ]]; then
-            cache_remove "$BLOCK_CACHE_FILE" "$legacy_key"
-            cache_set "$BLOCK_CACHE_FILE" "$key" "$block_id"
-        fi
-    fi
-
-    if [[ -n "$block_id" ]] &&
-        rex block inspect -s "$session_id" "$block_id" >/dev/null 2>&1; then
-        if [[ "$DRY_RUN" == "1" ]]; then
-            printf 'rex-sessionizer: would focus block %s for command %s (%s)\n' \
-                "$block_id" "$session_idx" "$split_type"
-        else
-            log "focusing existing block $block_id for command $session_idx ($split_type)"
-            rex block focus -s "$session_id" "$block_id" >/dev/null 2>&1 || true
-        fi
-        return
-    fi
-
-    if [[ -n "$block_id" && "$DRY_RUN" != "1" ]]; then
-        cache_remove "$BLOCK_CACHE_FILE" "$key"
-    fi
-
-    # Recover from a cleared cache by looking the block up by label.
-    block_id=$(rex block ls -s "$session_id" --json 2>/dev/null |
-        jq -r --arg label "$label" '
-            .blocks[]? | select(.label == $label) | .block_id
-        ' | head -n 1)
-
-    if [[ -z "$block_id" ]]; then
-        block_id=$(rex block ls -s "$session_id" --json 2>/dev/null |
-            jq -r --arg label "rex-cmd-$session_idx-$split_type" '
-                .blocks[]? | select(.label == $label) | .block_id
-            ' | head -n 1)
-    fi
-
-    if [[ -n "$block_id" ]]; then
-        if [[ "$DRY_RUN" == "1" ]]; then
-            printf 'rex-sessionizer: would focus block %s for command %s (%s)\n' \
-                "$block_id" "$session_idx" "$split_type"
-        else
-            log "reusing block $block_id for command $session_idx ($split_type)"
-            cache_remove "$BLOCK_CACHE_FILE" "$legacy_key"
-            cache_remove_prefix "$BLOCK_CACHE_FILE" \
-                "$REX_SCOPE|$session_id|block|$session_idx|$split_type|"
-            cache_set "$BLOCK_CACHE_FILE" "$key" "$block_id"
-            rex block focus -s "$session_id" "$block_id" >/dev/null 2>&1 || true
+            log "focusing existing $kind $id for command $session_idx"
+            rex "$kind" focus -s "$session_id" "$id" >/dev/null 2>&1 || true
         fi
         return
     fi
 
     if [[ "$DRY_RUN" == "1" ]]; then
         printf 'rex-sessionizer: would create %s %s running: %s (cwd %s)\n' \
-            "$split_type" "$label" "$session_cmd" "$PWD"
+            "${split_type:-window}" "$label" "$session_cmd" "$PWD"
         return
     fi
 
-    log "creating $split_type for command $session_idx: $session_cmd"
+    log "creating ${split_type:-window} for command $session_idx: $session_cmd"
 
-    args=(split -s "$session_id" --split="$direction" --cwd "$PWD"
-        --label "$label" --json)
-    is_true "$KEEP_OPEN" && args+=(--keep-open)
-
-    if [[ -n "${REX_BLOCK:-}" && "$session_id" == "${REX_SESSION:-}" ]] &&
-        rex block inspect -s "$session_id" "$REX_BLOCK" >/dev/null 2>&1; then
-        args+=(-b "$REX_BLOCK")
+    if [[ "$kind" == "window" ]]; then
+        args=(window new -s "$session_id" "$label" --cwd "$PWD" --json)
+        is_true "$KEEP_OPEN" && args+=(--keep-open)
+        args+=(-- sh -c "$session_cmd")
+        output=$(rex "${args[@]}" 2>&1) ||
+            { printf '%s\n' "$output" >&2; die "could not create a window for command $session_idx"; }
+        id=$(printf '%s\n' "$output" | jq -r '.window_id // empty' 2>/dev/null)
+        [[ -n "$id" || "$output" != window:* ]] || id="$output"
+    else
+        args=(split -s "$session_id" --split="$direction" --cwd "$PWD"
+            --label "$label" --json)
+        is_true "$KEEP_OPEN" && args+=(--keep-open)
+        if [[ -n "${REX_BLOCK:-}" && "$session_id" == "${REX_SESSION:-}" ]] &&
+            rex block inspect -s "$session_id" "$REX_BLOCK" >/dev/null 2>&1; then
+            args+=(-b "$REX_BLOCK")
+        fi
+        args+=(-- sh -c "$session_cmd")
+        output=$(rex "${args[@]}" 2>&1) ||
+            { printf '%s\n' "$output" >&2; die "could not create a split for command $session_idx"; }
+        id=$(printf '%s\n' "$output" | jq -r '.block_ids[0] // empty' 2>/dev/null)
     fi
 
-    args+=(-- sh -c "$session_cmd")
-
-    if ! output=$(rex "${args[@]}" 2>&1); then
-        printf '%s\n' "$output" >&2
-        die "could not create a split for command $session_idx"
-    fi
-
-    block_id=$(printf '%s\n' "$output" | jq -r '.block_ids[0] // empty' 2>/dev/null)
-    [[ -n "$block_id" ]] || die "Rex did not return a block ID"
-
-    cache_remove "$BLOCK_CACHE_FILE" "$legacy_key"
-    cache_remove_prefix "$BLOCK_CACHE_FILE" \
-        "$REX_SCOPE|$session_id|block|$session_idx|$split_type|"
-    cache_set "$BLOCK_CACHE_FILE" "$key" "$block_id"
-    rex block focus -s "$session_id" "$block_id" >/dev/null 2>&1 || true
+    [[ -n "$id" ]] || die "Rex did not return a $kind ID"
+    rex "$kind" focus -s "$session_id" "$id" >/dev/null 2>&1 || true
 }
 
 # ---------------------------------------------------------------------------
@@ -940,21 +709,21 @@ handle_split_session_cmd() {
 
 sanity_check
 
-# Cache entries and path mappings belong to one server. Prefer an explicit
-# --server, then the server's endpoint, then REX_SERVER. This keeps cache keys
-# stable whether the script runs inside a Rex terminal or from a plain shell.
+if [[ "$POPUP" == "1" ]]; then
+    require_search_paths
+    open_popup
+    exit 0
+fi
+
+# Path-cache entries belong to one server, so scope them by endpoint.
 if [[ -n "$SERVER" ]]; then
-    REX_SCOPE=$(command rex -S "$SERVER" whoami --json 2>/dev/null |
+    endpoint=$(command rex -S "$SERVER" whoami --json 2>/dev/null |
         jq -r '.endpoint // empty')
-    if [[ -n "$REX_SCOPE" ]]; then
-        REX_SCOPE="server:$REX_SCOPE"
-    else
-        REX_SCOPE="server:$SERVER"
-    fi
+    REX_SCOPE="server:${endpoint:-$SERVER}"
 else
-    REX_SCOPE=$(rex whoami --json 2>/dev/null | jq -r '.endpoint // empty')
-    if [[ -n "$REX_SCOPE" ]]; then
-        REX_SCOPE="server:$REX_SCOPE"
+    endpoint=$(rex whoami --json 2>/dev/null | jq -r '.endpoint // empty')
+    if [[ -n "$endpoint" ]]; then
+        REX_SCOPE="server:$endpoint"
     elif [[ -n "${REX_SERVER:-}" ]]; then
         REX_SCOPE="server:$REX_SERVER"
     else
@@ -974,12 +743,8 @@ fi
 
 if [[ "$LIST_ONLY" == "1" ]]; then
     # --list is a diagnostic view; include the current session too.
-    saved_rex_session="${REX_SESSION:-}"
     REX_SESSION=""
-    find_candidates | while IFS=$'\t' read -r _ display; do
-        printf '%s\n' "$display"
-    done
-    REX_SESSION="$saved_rex_session"
+    find_candidates | cut -f2-
     exit 0
 fi
 
@@ -996,9 +761,7 @@ if [[ -n "$user_selected" ]]; then
     else
         resolve_session "$user_selected"
         rc=$?
-        if ((rc == 2)); then
-            exit 3
-        fi
+        ((rc == 2)) && exit 3
         ((rc == 0)) || die "not a directory or a known Rex session: $user_selected"
         selected_kind="s"
         selected_value="$RESOLVED_ID"
@@ -1011,9 +774,7 @@ else
     rc=$?
 
     if [[ -z "$selected" ]]; then
-        if ((rc == 0 || rc == 1 || rc == 130)); then
-            exit 0
-        fi
+        ((rc == 0 || rc == 1 || rc == 130)) && exit 0
         die "fzf failed (exit $rc); run this from an interactive terminal"
     fi
 
@@ -1027,14 +788,17 @@ s)
     switch_to "$selected_value"
     ;;
 d)
-    directory="$selected_value"
-    [[ -d "$directory" ]] || die "not a directory: $directory"
-    resolved_dir=$(resolve_dir "$directory") ||
-        die "not a directory: $directory"
-    directory="$resolved_dir"
+    directory=$(resolve_dir "$selected_value") ||
+        die "not a directory: $selected_value"
 
-    # A path cache keeps two projects with the same basename from sharing a
-    # session. Sessions created by older versions are still found by label.
+    session_name=$(basename "$directory")
+    ((${#session_name} > 128)) && session_name="${session_name:0:128}"
+    [[ -n "$session_name" && "$session_name" != "/" ]] || session_name="root"
+    [[ "$session_name" != -* ]] ||
+        die "cannot use a directory name starting with '-': $session_name"
+
+    # The path cache keeps two projects with the same basename from sharing a
+    # session; labels are the fallback when the cache is missing or stale.
     path_key="$REX_SCOPE|$directory"
     session_id=$(cache_get "$PATH_CACHE_FILE" "$path_key")
     if [[ -n "$session_id" ]] && ! session_exists "$session_id"; then
@@ -1042,31 +806,10 @@ d)
         [[ "$DRY_RUN" == "1" ]] || cache_remove "$PATH_CACHE_FILE" "$path_key"
     fi
 
-    session_name=$(basename "$directory")
-    if ((${#session_name} > 128)); then
-        session_name="${session_name:0:128}"
-    fi
-    [[ -n "$session_name" && "$session_name" != "/" ]] || session_name="root"
-    [[ "$session_name" != -* ]] ||
-        die "cannot use a directory name starting with '-': $session_name"
-
-    legacy_name=${session_name//./_}
-
     if [[ -z "$session_id" ]]; then
-        resolve_session_label "$session_name"
+        resolve_session "$session_name" 0
         rc=$?
-        if ((rc == 2)); then
-            exit 3
-        fi
-        ((rc == 0)) && session_id="$RESOLVED_ID"
-    fi
-
-    if [[ -z "$session_id" && "$legacy_name" != "$session_name" ]]; then
-        resolve_session_label "$legacy_name"
-        rc=$?
-        if ((rc == 2)); then
-            exit 3
-        fi
+        ((rc == 2)) && exit 3
         ((rc == 0)) && session_id="$RESOLVED_ID"
     fi
 
@@ -1085,47 +828,27 @@ d)
 
         log "creating session $session_name in $directory"
 
-        new_json=$(rex new "$session_name" --cwd "$directory" --json 2>&1)
-        rc=$?
-
-        if ((rc != 0)); then
-            # A duplicate label can race, or an older rex may not know --json.
-            printf '%s\n' "$new_json" >&2
-
-            resolve_session_label "$session_name"
-            rc=$?
-            if ((rc == 2)); then
-                exit 3
-            fi
-            ((rc == 0)) && session_id="$RESOLVED_ID"
-
-            if [[ -z "$session_id" && "$legacy_name" != "$session_name" ]]; then
-                resolve_session_label "$legacy_name"
-                rc=$?
-                if ((rc == 2)); then
-                    exit 3
-                fi
-                ((rc == 0)) && session_id="$RESOLVED_ID"
-            fi
-
-            [[ -n "$session_id" ]] ||
-                die "could not create session $session_name"
-        else
+        if new_json=$(rex new "$session_name" --cwd "$directory" --json 2>&1); then
             session_id=$(printf '%s\n' "$new_json" |
                 jq -r '.session_id // empty' 2>/dev/null)
             session_block=$(printf '%s\n' "$new_json" |
                 jq -r '.initial_windows[0].block_ids[0] // empty' 2>/dev/null)
-
-            if [[ -z "$session_id" && "$new_json" == session:* ]]; then
-                session_id="$new_json"
-            fi
+            [[ "$new_json" == session:* ]] && session_id="$new_json"
 
             if [[ -z "$session_id" ]]; then
                 printf '%s\n' "$new_json" >&2
                 die "Rex did not return a session ID"
             fi
-
             created=1
+        else
+            # A duplicate label can race, or an older rex may not know --json.
+            printf '%s\n' "$new_json" >&2
+            resolve_session "$session_name" 0
+            rc=$?
+            ((rc == 2)) && exit 3
+            ((rc == 0)) && session_id="$RESOLVED_ID"
+            [[ -n "$session_id" ]] ||
+                die "could not create session $session_name"
         fi
     else
         log "session $session_name already exists as $session_id"
@@ -1134,9 +857,7 @@ d)
     [[ "$DRY_RUN" == "1" ]] ||
         cache_set "$PATH_CACHE_FILE" "$path_key" "$session_id"
 
-    if ((created == 1)); then
-        hydrate "$session_id" "$session_block" "$directory"
-    fi
+    ((created == 1)) && hydrate "$session_id" "$session_block" "$directory"
 
     switch_to "$session_id"
     ;;
