@@ -137,8 +137,8 @@ Rex is the session manager: sessions hold windows (tabs), which hold blocks
 
 | Keys | Action |
 |------|--------|
-| `C-a` `f` | New Rex window running `rex-sessionizer` |
-| `C-S-p` | New Rex window running `rex-sessionizer` |
+| `C-a` `f` | Floating picker in the active window (`rex-sessionizer`) |
+| `C-S-p` | Floating picker in the active window (`rex-sessionizer`) |
 | `C-p` | Alias, used when the app does not pass `Ctrl+P` to the terminal |
 
 Rex's own defaults handle tabs, splits, focus, the command palette, and the

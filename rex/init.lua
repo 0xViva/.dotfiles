@@ -11,7 +11,11 @@ rex.action{
   description = "Pick a project directory or existing Rex session with fzf.",
   keywords    = "session project directory fzf switch",
   run         = function(ctx, args)
-    local w, err = rex.session.new_window{
+    -- Float the picker over the active window so it behaves like a popup:
+    -- no new tab to switch to, and the layer closes when the picker exits.
+    local layer, err = rex.session.new_layer{
+      bounds = { 0.1, 0.1, 0.8, 0.8 },
+      focus  = true,
       layout = rex.layout.block{
         flavor  = "com.superlogical.terminal.shell",
         options = {
@@ -20,7 +24,7 @@ rex.action{
       },
     }
     if err ~= nil then error(err, 0) end
-    return { window_id = w.window_id }
+    return { layer_id = layer.layer_id }
   end,
 }
 

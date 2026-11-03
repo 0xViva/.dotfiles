@@ -47,8 +47,8 @@ The custom bindings live in `rex/init.lua`:
 
 | Binding | Action |
 |---------|--------|
-| `C-a` `f` | New Rex window running `rex-sessionizer` |
-| `C-S-p` | New Rex window running `rex-sessionizer` |
+| `C-a` `f` | Floating picker in the active window (`rex-sessionizer`) |
+| `C-S-p` | Floating picker in the active window (`rex-sessionizer`) |
 | `C-p` | Alias, used when the app does not pass `Ctrl+P` to the terminal |
 
 Rex's own defaults handle tabs, splits, focus, the command palette, and the
@@ -62,9 +62,9 @@ program over ssh:
 
 | Where              | Binding        | Effect                                            |
 |--------------------|----------------|---------------------------------------------------|
-| anywhere in Rex    | `C-S-p`        | new Rex window running `rex-sessionizer`          |
+| anywhere in Rex    | `C-S-p`        | floating `rex-sessionizer` picker in the active window |
 | anywhere in Rex    | `C-p`          | same, when the app lets Rex see `Ctrl+P`          |
-| anywhere in Rex    | `C-a f`        | new Rex window running `rex-sessionizer`          |
+| anywhere in Rex    | `C-a f`        | floating `rex-sessionizer` picker in the active window |
 
 ## fish (prompt-only bindings)
 
@@ -92,8 +92,8 @@ terminal:
    new block starts in the current directory.
 3. Move between Rex blocks and nvim windows with their own bindings — one
    muscle memory, two layers.
-4. `C-S-p` opens another project in a new Rex window from anywhere, including
-   inside nvim; use Rex's session switcher to bounce back.
+4. `C-S-p` opens another project in a floating picker over the active window;
+   use Rex's session switcher to bounce back.
 5. At the shell prompt, `C-e` picks any file and opens it in nvim.
 
 Nothing here requires the mouse; Ghostty stays a dumb, transparent wrapper.
