@@ -18,9 +18,9 @@ A map of the actual keybindings and workflows configured in
 
 ## Opening / switching files
 
-- `C-p` (Rex) — open the Rex sessionizer: fuzzy-switch to any Rex session or
+- `C-S-p` (Rex) — open the Rex sessionizer: fuzzy-switch to any Rex session or
   open a project by name. Your files live behind this; get in the habit of
-  using it instead of `:e`.
+  using it instead of `:e`. (`C-p` is an alias when the app lets Rex see it.)
 - `<leader>sf` — telescope find files.
 - `<leader><leader>` — switch between already-open buffers (fuzzy).
 - `<leader>s.` — recent files.
@@ -88,7 +88,7 @@ gopls, html, lua_ls, ts_ls, tailwindcss, jdtls, rust_analyzer.
 
 ## Workflow worth stealing
 
-1. `C-p` open project → telescope live grep → jump.
+1. `C-S-p` open project → telescope live grep → jump.
 2. Edit with mini.ai text objects + surround; `<C-l>` through snippets.
 3. `q` to review this buffer's diagnostics, fix with `<leader>ca`.
 4. `]c` to reach your changed hunks, `<leader>hs` stage the ones you keep.

@@ -62,7 +62,25 @@ install_packages() {
     esac
 }
 
+# rex-sessionizer drives the rex CLI. On Arch, the supported installer adds the
+# Rex repository and package; on macOS the Rex app is the only installer, so
+# there is nothing to do here.
+install_rex() {
+    [[ "$OS_TYPE" == "arch" ]] || return 0
+    command -v rex >/dev/null 2>&1 && return 0
+
+    echo "Installing Rex..."
+    command -v curl >/dev/null 2>&1 ||
+        sudo pacman -S --noconfirm --needed curl
+    curl -fsSL https://pkgs.superlogical.com/rex/install.sh | sh
+    command -v rex >/dev/null 2>&1 || {
+        echo "Rex install failed; rex-sessionizer needs the rex CLI"
+        exit 1
+    }
+}
+
 install_packages
+install_rex
 
 if ! command -v fish >/dev/null 2>&1; then
     echo "fish not found — make sure the manifest lists fish for $OS_TYPE"

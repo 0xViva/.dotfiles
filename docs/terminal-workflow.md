@@ -11,12 +11,12 @@ One keyboard, four owners. The app that currently has focus owns the keys;
 the others pass them through:
 
 ```
-Ghostty (outer window)  →  Rex (prefix C-a, plus C-p)  →  fish (prompt)  or  nvim
+Ghostty (outer window)  →  Rex (prefix C-a, plus C-S-p)  →  fish (prompt)  or  nvim
 ```
 
 - Ghostty only intercepts what you bind in `ghostty/config`. There are no
   split/zoom binds here — it is a pure pass-through layer.
-- Rex intercepts the `C-a` sequences and `C-p`; every other plain key goes to
+- Rex intercepts the `C-a` sequences and `C-S-p`; every other plain key goes to
   the app inside.
 - fish/fzf bindings only apply while the shell prompt is focused.
 - nvim bindings only apply while an nvim window is focused.
@@ -48,7 +48,8 @@ The custom bindings live in `rex/init.lua`:
 | Binding | Action |
 |---------|--------|
 | `C-a` `f` | New Rex window running `rex-sessionizer` |
-| `C-p` | New Rex window running `rex-sessionizer` |
+| `C-S-p` | New Rex window running `rex-sessionizer` |
+| `C-p` | Alias, used when the app does not pass `Ctrl+P` to the terminal |
 
 Rex's own defaults handle tabs, splits, focus, the command palette, and the
 built-in session switcher (`cmd+k`). The `rex` CLI exposes the same operations
@@ -61,7 +62,8 @@ program over ssh:
 
 | Where              | Binding        | Effect                                            |
 |--------------------|----------------|---------------------------------------------------|
-| anywhere in Rex    | `C-p`          | new Rex window running `rex-sessionizer`          |
+| anywhere in Rex    | `C-S-p`        | new Rex window running `rex-sessionizer`          |
+| anywhere in Rex    | `C-p`          | same, when the app lets Rex see `Ctrl+P`          |
 | anywhere in Rex    | `C-a f`        | new Rex window running `rex-sessionizer`          |
 
 ## fish (prompt-only bindings)
@@ -85,12 +87,12 @@ terminal:
 
 ## Putting it together: one work session
 
-1. Open Rex (or Ghostty) and press `C-p` to pick a project.
+1. Open Rex (or Ghostty) and press `C-S-p` to pick a project.
 2. Use Rex's default split binding (or `rex split`) for a scratch shell; the
    new block starts in the current directory.
 3. Move between Rex blocks and nvim windows with their own bindings — one
    muscle memory, two layers.
-4. `C-p` opens another project in a new Rex window from anywhere, including
+4. `C-S-p` opens another project in a new Rex window from anywhere, including
    inside nvim; use Rex's session switcher to bounce back.
 5. At the shell prompt, `C-e` picks any file and opens it in nvim.
 
@@ -101,8 +103,10 @@ Nothing here requires the mouse; Ghostty stays a dumb, transparent wrapper.
 - **`C-a` vs beginning-of-line.** `C-a` starts a Rex sequence, so fish's
   emacs-mode `C-a` (cursor to line start) is shadowed. No literal-`C-a` escape
   is bound; use `Home` instead.
-- **`C-p` is Rex's**, so fish, nvim, and fzf never see it. Fish's history is
-  on `Up`, nvim's completion-previous is `C-n`, and fzf's up is `C-k`.
+- **`C-S-p` is Rex's**, so fish, nvim, and fzf never see it. Fish's history is
+  on `Up`, nvim's completion-previous is `C-n`, and fzf's up is `C-k`. `C-p`
+  also works when the macOS app lets Rex see it; otherwise it stays fish's
+  history-previous.
 - **There is one clipboard: the system clipboard.** nvim auto-selects the
   Wayland provider (`set.lua`), so an nvim yank and a copy in any other app
   land in the same place. Paste with Ghostty's `SUPER+V`.

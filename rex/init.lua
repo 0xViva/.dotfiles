@@ -15,7 +15,7 @@ rex.action{
       layout = rex.layout.block{
         flavor  = "com.superlogical.terminal.shell",
         options = {
-          command = { os.getenv("HOME") .. "/.dotfiles/bin/rex-sessionizer" },
+          command = { os.getenv("HOME") .. "/.config/bin/rex-sessionizer" },
         },
       },
     }
@@ -24,5 +24,9 @@ rex.action{
   end,
 }
 
+-- Ctrl+P is sometimes handed to the focused terminal by the macOS app
+-- (fish turns it into history recall). Ctrl+Shift+P is the reliable chord;
+-- keep Ctrl+P as an alias for setups where the app lets it through.
 rex.bind("ctrl+a>f", "sessionizer")
 rex.bind("ctrl+p", "sessionizer")
+rex.bind("ctrl+shift+p", "sessionizer")

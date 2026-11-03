@@ -26,7 +26,7 @@ Keys are grabbed in priority order. A lower layer never sees a key the higher la
 1. OS / WM (Hyprland on Arch, AeroSpace on macOS)
 2. App window
 3. Terminal emulator (ghostty)
-4. Rex (prefix C-a, plus C-p)
+4. Rex (prefix C-a, plus C-S-p; C-p is an alias)
 5. Shell (fish)
 6. Editor (Neovim)
 ```
@@ -138,7 +138,8 @@ Rex is the session manager: sessions hold windows (tabs), which hold blocks
 | Keys | Action |
 |------|--------|
 | `C-a` `f` | New Rex window running `rex-sessionizer` |
-| `C-p` | New Rex window running `rex-sessionizer` |
+| `C-S-p` | New Rex window running `rex-sessionizer` |
+| `C-p` | Alias, used when the app does not pass `Ctrl+P` to the terminal |
 
 Rex's own defaults handle tabs, splits, focus, the command palette, and the
 built-in session switcher (`cmd+k`). The custom bindings live in
@@ -216,11 +217,13 @@ In any terminal (ghostty, Terminal.app) `Option+Left/Right` means *jump word* an
 macOS you **lose word-wise cursor movement** in the shell. Alternatives: `Esc`-prefixed
 binds (`ESC b` / `ESC f` / `ESC p/n`) or re-binding `CTRL+arrows` in `config.fish`.
 
-### 3. Rex `CTRL+P` — **real shadowing, by design**
-Rex owns `CTRL+P` so the sessionizer works from every block, whatever shell or
-program is inside. The cost is that fish, nvim, and every fzf picker no longer
-see `CTRL+P` (history-previous, completion-previous, and fzf-up respectively);
-use `Up` / `CTRL+N` / `CTRL+K` for those.
+### 3. Rex `CTRL+P` — **app-dependent; `CTRL+SHIFT+P` is the reliable chord**
+`rex/init.lua` binds both `CTRL+P` and `CTRL+SHIFT+P`. In some macOS app
+setups `CTRL+P` is handed to the focused terminal instead of Rex, where fish
+treats it as history-previous. If that happens, use `CTRL+SHIFT+P`.
+While Rex owns `CTRL+SHIFT+P`, fish, nvim, and every fzf picker no longer see
+it; use `Up` / `CTRL+N` / `CTRL+K` for history, completion-previous, and
+fzf-up respectively.
 
 ### 4. Hyprland `ALT + TAB` steals from apps — **by design**
 On Linux, `ALT+TAB`/`ALT+SHIFT+TAB` are Hyprland's (cycle + raise). No app in the stack
