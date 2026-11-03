@@ -5,21 +5,9 @@
 -- Rex is the session manager now: sessions, windows (tabs), and blocks
 -- (panes) all live here. Ctrl-A is the terminal prefix.
 
--- The script is stowed under the config home (usually ~/.config/bin) or
--- lives in the repo at <repo>/bin. Prefer whichever exists, so macOS and
--- Linux share one config without a hardcoded home directory.
-local config_home = os.getenv("XDG_CONFIG_HOME") or (os.getenv("HOME") .. "/.config")
-local repo_root = os.getenv("DOTFILES") or (os.getenv("HOME") .. "/.dotfiles")
-local sessionizer = config_home .. "/bin/rex-sessionizer"
-for _, path in ipairs({ sessionizer, repo_root .. "/bin/rex-sessionizer" }) do
-    local file = io.open(path, "r")
-    if file then
-        file:close()
-        sessionizer = path
-        break
-    end
-end
-
+-- Rex runs the command through the target server's shell, which loads that
+-- machine's startup files. Use the bare name so a local or remote session
+-- finds its own stowed copy instead of a path from the client machine.
 rex.action{
   name        = "sessionizer",
   title       = "Open Rex Sessionizer",
@@ -34,7 +22,7 @@ rex.action{
       layout = rex.layout.block{
         flavor  = "com.superlogical.terminal.shell",
         options = {
-          command = { sessionizer },
+          command = { "rex-sessionizer" },
         },
       },
     }
