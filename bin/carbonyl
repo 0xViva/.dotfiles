@@ -1,11 +1,22 @@
 #!/bin/sh
 # Run the user-local Carbonyl release, which keeps its bundled libraries
 # beside the binary. Falls back to a carbonyl already on PATH.
+#
+# Zoom is adjustable without editing this file:
+#   echo 60 > ~/.config/rex/carbonyl-zoom
+# or set CARBONYL_ZOOM=60 in the environment.
+
 set -eu
 
 dir=${CARBONYL_DIR:-"$HOME/.local/share/carbonyl"}
+zoom=${CARBONYL_ZOOM:-}
+if [ -z "$zoom" ] && [ -f "$HOME/.config/rex/carbonyl-zoom" ]; then
+  zoom=$(cat "$HOME/.config/rex/carbonyl-zoom")
+fi
+[ -n "$zoom" ] || zoom=70
+
 if [ -x "$dir/carbonyl" ]; then
   cd "$dir"
-  exec ./carbonyl "$@"
+  exec ./carbonyl --zoom="$zoom" "$@"
 fi
-exec carbonyl "$@"
+exec carbonyl --zoom="$zoom" "$@"
