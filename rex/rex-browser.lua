@@ -63,6 +63,7 @@ run_browser() {
       -o "input.use-mouse=$mouse" \
       -o input.osc52-copy=true \
       -o input.bracketed-paste=true \
+      -o display.color-mode=true-color \
       -o display.image-mode=auto "$url"
   fi
   if command -v cha >/dev/null 2>&1; then
@@ -72,6 +73,7 @@ run_browser() {
       -o "input.use-mouse=$mouse" \
       -o input.osc52-copy=true \
       -o input.bracketed-paste=true \
+      -o display.color-mode=true-color \
       -o display.image-mode=auto "$url"
   fi
   if command -v w3m >/dev/null 2>&1; then exec w3m "$url"; fi
