@@ -29,7 +29,6 @@ arch:
     - fuse3
     - openrgb
     - python
-    - chawan
   aurs:
     - nvim
     - zen-browser-bin
@@ -73,7 +72,6 @@ macos:
     - openssl
     - ca-certificates
     - libssh2
-    - chawan
     - mise
     - starship
     - markdownlint-cli

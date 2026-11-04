@@ -34,10 +34,6 @@ rex.action{
 -- Cmd+P opens the sessionizer.
 rex.bind("cmd+p", "sessionizer")
 
--- TUI browser panes: Cmd+U opens the URL prompt. `rex do open_url url=...`
--- is also available. See ~/.config/rex/rex-browser.lua.
-require("rex-browser")
-
 -- Image paste: Cmd+Shift+V turns a clipboard image into a file path, copying
 -- it to the pane's host when that is another server. The plugin reads the
 -- Mac's clipboard, so it only loads on macOS. Vendored at

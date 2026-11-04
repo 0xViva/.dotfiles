@@ -99,16 +99,7 @@ echo "Cleaning up existing Fish config files..."
 rm -f $HOME/.config/fish/config.fish $HOME/.config/fish/fish_plugins
 
 echo "Running stow for OS type: $OS_TYPE..."
-# `bin` and `rex` are in packages.yaml's stow lists. Stowing those folders
-# brings in rex-browser, rex-browser-prompt, rex/rex-browser.lua, and
-# rex/init.lua, so there is no separate file list to maintain here.
 STOW_FOLDERS=$(get stow | paste -sd, -) DOTFILES=$DOTFILES fish "$DOTFILES/stow.fish"
-
-if ! command -v chawan >/dev/null 2>&1 &&
-   ! command -v cha >/dev/null 2>&1 &&
-   ! command -v w3m >/dev/null 2>&1; then
-    echo "Warning: no text browser found. 'Open URL…' needs chawan or w3m."
-fi
 
 echo "Installing fish plugins (fisher)..."
 fish -c 'fisher update'
