@@ -31,9 +31,9 @@ rex.action{
   end,
 }
 
--- Ctrl+P opens the sessionizer.
-rex.bind("ctrl+p", "sessionizer")
+-- Cmd+P opens the sessionizer.
+rex.bind("cmd+p", "sessionizer")
 
--- TUI browser panes: Ctrl+U opens the URL prompt. `rex do open_url url=...`
+-- TUI browser panes: Cmd+U opens the URL prompt. `rex do open_url url=...`
 -- is also available. See ~/.config/rex/rex-browser.lua.
 require("rex-browser")

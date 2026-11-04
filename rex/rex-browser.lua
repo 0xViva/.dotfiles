@@ -42,6 +42,9 @@ export LC_CTYPE="${LC_CTYPE:-$LANG}"
 local browser_picker = [[
 run_browser() {
   url=$1
+  if [ -z "${REX_BROWSER:-}" ] && [ -f "$HOME/.config/rex/browser" ]; then
+    REX_BROWSER=$(cat "$HOME/.config/rex/browser")
+  fi
   if [ -n "${REX_BROWSER:-}" ] && command -v "$REX_BROWSER" >/dev/null 2>&1; then
     exec "$REX_BROWSER" "$url"
   fi

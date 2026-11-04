@@ -1,0 +1,11 @@
+#!/bin/sh
+# Run the user-local Carbonyl release, which keeps its bundled libraries
+# beside the binary. Falls back to a carbonyl already on PATH.
+set -eu
+
+dir=${CARBONYL_DIR:-"$HOME/.local/share/carbonyl"}
+if [ -x "$dir/carbonyl" ]; then
+  cd "$dir"
+  exec ./carbonyl "$@"
+fi
+exec carbonyl "$@"
