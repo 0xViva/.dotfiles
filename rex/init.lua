@@ -31,13 +31,9 @@ rex.action{
   end,
 }
 
--- Ctrl+P is sometimes handed to the focused terminal by the macOS app
--- (fish turns it into history recall). Ctrl+Shift+P is the reliable chord;
--- keep Ctrl+P as an alias for setups where the app lets it through.
-rex.bind("ctrl+a>f", "sessionizer")
+-- Ctrl+P opens the sessionizer.
 rex.bind("ctrl+p", "sessionizer")
-rex.bind("ctrl+shift+p", "sessionizer")
 
--- TUI browser panes: `rex do open_url url=...`, or Ctrl-A then w for a prompt.
--- See ~/.config/rex/rex-browser.lua.
+-- TUI browser panes: Ctrl+U opens the URL prompt. `rex do open_url url=...`
+-- is also available. See ~/.config/rex/rex-browser.lua.
 require("rex-browser")

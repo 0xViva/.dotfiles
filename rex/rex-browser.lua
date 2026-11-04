@@ -17,7 +17,8 @@
 --   rex do open_url url=https://example.com where=float
 --   rex do open_url url=https://example.com where=window
 --
--- Direct bindings: Ctrl+Shift+U and Cmd+Shift+U. Ctrl-A then w is also bound.
+-- Direct binding: Ctrl+U. `open_url` remains available from the CLI and the
+-- command palette.
 
 local shell = "com.superlogical.terminal.shell"
 
@@ -187,10 +188,4 @@ rex.action{
   end,
 }
 
-rex.bind("ctrl+a>w", "web_prompt")
-
--- The macOS app sometimes hands bare Ctrl chords to the focused terminal
--- (the same reason init.lua uses Ctrl+Shift+P for the sessionizer), so also
--- provide modified chords that reliably reach Rex.
-rex.bind("ctrl+shift+u", "web_prompt")
-rex.bind("cmd+shift+u", "web_prompt")
+rex.bind("ctrl+u", "web_prompt")
