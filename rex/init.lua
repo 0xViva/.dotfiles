@@ -37,3 +37,18 @@ rex.bind("cmd+p", "sessionizer")
 -- TUI browser panes: Cmd+U opens the URL prompt. `rex do open_url url=...`
 -- is also available. See ~/.config/rex/rex-browser.lua.
 require("rex-browser")
+
+-- Image paste: Cmd+Shift+V turns a clipboard image into a file path, copying
+-- it to the pane's host when that is another server. The plugin reads the
+-- Mac's clipboard, so it only loads on macOS. Vendored at
+-- rex/rex-image-paste (MIT), from https://github.com/pablasso/rex-image-paste.
+local uname = rex.exec({ "uname", "-s" })
+if uname and uname.ok and uname.stdout:match("Darwin") then
+  local ok, image_paste = pcall(require, "rex-image-paste")
+  if ok then
+    image_paste.setup()
+    rex.bind("cmd+shift+v", "image_paste")
+  else
+    rex.log("warn", "rex-image-paste: " .. tostring(image_paste))
+  end
+end

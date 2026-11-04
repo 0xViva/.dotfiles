@@ -15,8 +15,11 @@ if [ -z "$zoom" ] && [ -f "$HOME/.config/rex/carbonyl-zoom" ]; then
 fi
 [ -n "$zoom" ] || zoom=70
 
+profile=${CARBONYL_PROFILE:-"$HOME/.local/share/carbonyl-profile"}
+mkdir -p "$profile"
+
 if [ -x "$dir/carbonyl" ]; then
   cd "$dir"
-  exec ./carbonyl --zoom="$zoom" "$@"
+  exec ./carbonyl --zoom="$zoom" --user-data-dir="$profile" "$@"
 fi
-exec carbonyl --zoom="$zoom" "$@"
+exec carbonyl --zoom="$zoom" --user-data-dir="$profile" "$@"
