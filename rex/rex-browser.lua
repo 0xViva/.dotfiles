@@ -17,7 +17,7 @@
 --   rex do open_url url=https://example.com where=float
 --   rex do open_url url=https://example.com where=window
 --
--- Direct binding: Ctrl+U. `open_url` remains available from the CLI and the
+-- Direct binding: Cmd+U. `open_url` remains available from the CLI and the
 -- command palette.
 
 local shell = "com.superlogical.terminal.shell"
@@ -207,4 +207,4 @@ rex.action{
   end,
 }
 
-rex.bind("ctrl+u", "web_prompt")
+rex.bind("cmd+u", "web_prompt")
