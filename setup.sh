@@ -79,8 +79,22 @@ install_rex() {
     }
 }
 
+# rexpad draws an agent's todo list in a Rex pane. Go installs it into
+# ~/.local/bin so a Go upgrade doesn't drop the binary, and the skill goes
+# where OpenCode discovers global skills (~/.config/opencode/skills).
+install_rexpad() {
+    if ! command -v go >/dev/null 2>&1; then
+        echo "rexpad skipped: Go not found. Run 'mise install go', then rerun setup."
+        return 0
+    fi
+
+    GOBIN="$HOME/.local/bin" go install github.com/almonk/rexpad@latest
+    "$HOME/.local/bin/rexpad" skill install --dir "$HOME/.config/opencode/skills"
+}
+
 install_packages
 install_rex
+install_rexpad
 
 if ! command -v fish >/dev/null 2>&1; then
     echo "fish not found — make sure the manifest lists fish for $OS_TYPE"
