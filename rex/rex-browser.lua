@@ -45,11 +45,27 @@ run_browser() {
   if [ -n "${REX_BROWSER:-}" ] && command -v "$REX_BROWSER" >/dev/null 2>&1; then
     exec "$REX_BROWSER" "$url"
   fi
+  case "${REX_BROWSER_JS:-true}" in
+    false|no|0) js=false ;;
+    *) js=true ;;
+  esac
+  case "${REX_BROWSER_MOUSE:-true}" in
+    false|no|0) mouse=false ;;
+    *) mouse=true ;;
+  esac
   if command -v chawan >/dev/null 2>&1; then
-    exec chawan -O UTF-8 -o buffer.images=true -o display.image-mode=auto "$url"
+    exec chawan -O UTF-8 \
+      -o buffer.images=true \
+      -o "buffer.scripting=$js" \
+      -o "input.use-mouse=$mouse" \
+      -o display.image-mode=auto "$url"
   fi
   if command -v cha >/dev/null 2>&1; then
-    exec cha -O UTF-8 -o buffer.images=true -o display.image-mode=auto "$url"
+    exec cha -O UTF-8 \
+      -o buffer.images=true \
+      -o "buffer.scripting=$js" \
+      -o "input.use-mouse=$mouse" \
+      -o display.image-mode=auto "$url"
   fi
   if command -v w3m >/dev/null 2>&1; then exec w3m "$url"; fi
   if command -v lynx >/dev/null 2>&1; then exec lynx "$url"; fi
