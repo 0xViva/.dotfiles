@@ -37,3 +37,7 @@ rex.action{
 rex.bind("ctrl+a>f", "sessionizer")
 rex.bind("ctrl+p", "sessionizer")
 rex.bind("ctrl+shift+p", "sessionizer")
+
+-- TUI browser panes: `rex do open_url url=...`, or Ctrl-A then w for a prompt.
+-- See ~/.config/rex/rex-browser.lua.
+require("rex-browser")
