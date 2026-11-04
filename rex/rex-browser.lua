@@ -1,14 +1,16 @@
 -- Rex actions for opening URLs in a text-mode browser inside a Rex pane.
 --
--- Install (dotfiles/stow layout):
---   1. `bin/rex-browser` and `bin/rex-browser-prompt` are stowed to
---      ~/.config/bin and are on PATH.
---   2. This file is stowed to ~/.config/rex/rex-browser.lua.
---   3. ~/.config/rex/init.lua has `require("rex-browser")`.
---   4. Run `rex config reload`.
+-- The actions are self-contained: they run /bin/sh and find a browser from
+-- PATH, so they do not depend on helper scripts being installed. The optional
+-- `bin/rex-browser` wrapper is still useful from the CLI.
 --
--- Without dotfiles, put the scripts in ~/.local/bin, copy this file to
--- ~/.config/rex/rex-browser.lua, and add the same require line.
+-- Install (dotfiles/stow layout):
+--   1. This file is stowed to ~/.config/rex/rex-browser.lua.
+--   2. ~/.config/rex/init.lua has `require("rex-browser")`.
+--   3. Run `rex config reload`.
+--
+-- Without dotfiles, copy this file to ~/.config/rex/rex-browser.lua and add
+-- the same require line.
 --
 -- Usage:
 --   rex do open_url url=https://example.com
@@ -19,31 +21,43 @@
 
 local shell = "com.superlogical.terminal.shell"
 
--- The Rex server can start with a minimal PATH, so prefer an explicit
--- environment override, then the user's local bin, then the bare name.
-local function default_bin(env_name, name)
-  local configured = os.getenv(env_name)
-  if configured ~= nil and configured ~= "" then
-    return configured
-  end
-  local home = os.getenv("HOME")
-  if home ~= nil and home ~= "" then
-    -- ~/.config/bin is the dotfiles/stow location; ~/.local/bin is the
-    -- plain user-local location. Try both before falling back to PATH.
-    for _, dir in ipairs({ home .. "/.config/bin", home .. "/.local/bin" }) do
-      local candidate = dir .. "/" .. name
-      local file = io.open(candidate, "r")
-      if file ~= nil then
-        file:close()
-        return candidate
-      end
-    end
-  end
-  return name
-end
+-- The Rex server can start with a minimal PATH (especially on macOS), so
+-- every shell command puts the usual local and Homebrew directories first.
+local path_setup = [[
+export PATH="$HOME/.local/bin:$HOME/.config/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+if [ -z "${LANG:-}" ]; then
+  if command -v locale >/dev/null 2>&1 && locale -a 2>/dev/null | grep -Eiq '^C\.(UTF-8|utf8)$'; then
+    export LANG=C.UTF-8
+  else
+    export LANG=en_US.UTF-8
+  fi
+fi
+export LC_CTYPE="${LC_CTYPE:-$LANG}"
+]]
 
-local browser_bin = default_bin("REX_BROWSER_BIN", "rex-browser")
-local prompt_bin = default_bin("REX_BROWSER_PROMPT", "rex-browser-prompt")
+-- One browser picker shared by the direct action and the prompt. It prefers
+-- $REX_BROWSER when set, then Chawan (best text/CSS/images), then common text
+-- browsers.
+local browser_picker = [[
+run_browser() {
+  url=$1
+  if [ -n "${REX_BROWSER:-}" ] && command -v "$REX_BROWSER" >/dev/null 2>&1; then
+    exec "$REX_BROWSER" "$url"
+  fi
+  if command -v chawan >/dev/null 2>&1; then
+    exec chawan -O UTF-8 -o buffer.images=true -o display.image-mode=auto "$url"
+  fi
+  if command -v cha >/dev/null 2>&1; then
+    exec cha -O UTF-8 -o buffer.images=true -o display.image-mode=auto "$url"
+  fi
+  if command -v w3m >/dev/null 2>&1; then exec w3m "$url"; fi
+  if command -v lynx >/dev/null 2>&1; then exec lynx "$url"; fi
+  if command -v links >/dev/null 2>&1; then exec links "$url"; fi
+  if command -v elinks >/dev/null 2>&1; then exec elinks "$url"; fi
+  printf 'No text browser found. Install chawan (brew install chawan) or w3m.\n' >&2
+  exit 127
+}
+]]
 
 local function label_for(url)
   local host = url:match("^%a[%w+.-]*://([^/]+)") or url:match("^([^/]+)")
@@ -53,13 +67,33 @@ local function label_for(url)
   return "web: " .. host
 end
 
+local function browser_command(url)
+  local script = path_setup .. "\n" .. browser_picker .. '\nrun_browser "$1"\n'
+  -- /bin/sh -c SCRIPT NAME URL: inside the script, $1 is the URL.
+  return { "/bin/sh", "-c", script, "rex-browser", url }
+end
+
+local function prompt_command()
+  local script = path_setup .. "\n" .. browser_picker .. [[
+printf 'URL: '
+IFS= read -r url
+[ -n "$url" ] || exit 0
+case "$url" in
+  *://*) ;;
+  *) url="https://$url" ;;
+esac
+run_browser "$url"
+]]
+  return { "/bin/sh", "-c", script }
+end
+
 local function browser_block(url, label, exit_on_completion)
   return rex.layout.block{
     flavor = shell,
     label = label,
     options = {
       shell = "none",
-      command = { browser_bin, url },
+      command = browser_command(url),
       exit = { on_completion = exit_on_completion },
     },
   }
@@ -119,25 +153,33 @@ rex.action{
 rex.action{
   name = "web_prompt",
   title = "Open URL…",
-  description = "Ask for a URL and open it in a floating Rex browser pane.",
+  description = "Ask for a URL and open it in a Rex browser pane beside the current one.",
   category = "Web",
   keywords = "web browser url link open prompt",
-  run = function()
+  run = function(ctx)
     local block = rex.layout.block{
       flavor = shell,
       label = "web",
       options = {
         shell = "none",
-        command = { prompt_bin },
+        command = prompt_command(),
         exit = { on_completion = true },
       },
     }
 
-    local result, err = rex.session.new_layer{
-      bounds = { 0.1, 0.1, 0.8, 0.8 },
+    -- Open the prompt/browser in a normal split pane, not a floating layer.
+    local split = {
+      direction = "horizontal",
+      side = "after",
+      ratio = 0.5,
       layout = block,
       focus = true,
     }
+    if ctx.block_id ~= nil then
+      split.anchor_id = ctx.block_id
+    end
+
+    local result, err = rex.session.new_split(split)
     if err ~= nil then
       error(err, 0)
     end
