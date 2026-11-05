@@ -3,6 +3,11 @@
   "lsp": true,
   "theme": "matugen",
   "skills": ["~/.config/opencode/vendor/cursor-plugins/pstack/skills"],
+  "instructions": [
+    "~/.config/opencode/pstack-adapter.md",
+    "~/.config/opencode/pstack-models.md"
+  ],
+  "experimental": { "todo": true },
   "permissions": [
     { "action": "shell", "resource": "*git* commit", "effect": "deny" },
     { "action": "shell", "resource": "*git* commit *", "effect": "deny" },
