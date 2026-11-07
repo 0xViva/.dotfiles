@@ -19,7 +19,7 @@
     "footer": "show",
     "splash": "show",
     "work_spinner": "block-soft-slide",
-    "mono": true,
+    "mono": false,
     "replay": true,
     "replay_limit": 200
   }
