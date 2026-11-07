@@ -30,7 +30,11 @@ hl.workspace_rule({ workspace = "1", monitor = "DP-1", default = true, persisten
 
 hl.workspace_rule({ workspace = "2", monitor = "DP-2", default = true, persistent = true })
 
-hl.workspace_rule({ workspace = "special:scratchpad", on_created_empty = terminal })
+hl.on("workspace.created", function(ws)
+    if ws.addressable_name == "special:scratchpad" and ws.is_empty then
+        hl.exec_cmd(terminal, { workspace = "special:scratchpad" })
+    end
+end)
 
 hl.layer_rule({
     name  = "noctalia",
