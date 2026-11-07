@@ -1,5 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "model": "opencode-go/deepseek-v4.1-flash#high",
   "lsp": true,
   "theme": "matugen",
   "skills": ["~/.config/opencode/vendor/cursor-plugins/pstack/skills"],
