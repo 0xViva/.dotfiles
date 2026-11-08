@@ -5,10 +5,17 @@ set -e
 DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 <arch|macos>"
+    echo "Usage: $0 <arch|macos|archmac>"
     exit 1
 fi
 OS_TYPE=$1
+case "$OS_TYPE" in
+    arch|macos|archmac) ;;
+    *)
+        echo "Unknown setup: $OS_TYPE (expected arch, macos, or archmac)"
+        exit 1
+        ;;
+esac
 echo "Setting up: $OS_TYPE"
 
 yaml_list() {
@@ -40,7 +47,7 @@ install_packages() {
                 rm -rf /tmp/yay
             fi
 
-            yay -S --noconfirm --needed --quiet -- $(get packages) $(get aurs) < /dev/null
+            yay -S --noconfirm --needed --quiet -- $(get packages) < /dev/null
             sudo systemctl enable --now bluetooth.service
 
             if [[ -f "$DOTFILES/udev/rules.d/99-keychron.rules" ]]; then
@@ -49,6 +56,14 @@ install_packages() {
                 sudo udevadm control --reload-rules
                 sudo udevadm trigger
             fi
+            ;;
+
+        archmac)
+            if [[ ! -d "${OMARCHY_PATH:-/usr/share/omarchy}" ]]; then
+                echo "Omarchy not found. Run this on an existing Omarchy install."
+                exit 1
+            fi
+            sudo pacman -S --noconfirm --needed -- $(get packages) < /dev/null
             ;;
 
         macos)
@@ -83,6 +98,8 @@ install_rex() {
 # ~/.local/bin so a Go upgrade doesn't drop the binary, and the skill goes
 # where OpenCode discovers global skills (~/.config/opencode/skills).
 install_rexpad() {
+    [[ "$OS_TYPE" == "archmac" ]] && return 0
+
     if ! command -v go >/dev/null 2>&1; then
         echo "rexpad skipped: Go not found. Run 'mise install go', then rerun setup."
         return 0
@@ -94,7 +111,6 @@ install_rexpad() {
 
 install_packages
 install_rex
-install_rexpad
 
 if ! command -v fish >/dev/null 2>&1; then
     echo "fish not found — make sure the manifest lists fish for $OS_TYPE"
@@ -110,10 +126,24 @@ echo "Changing default shell to $FISH_PATH..."
 chsh -s "$FISH_PATH"
 
 echo "Cleaning up existing Fish config files..."
-rm -f $HOME/.config/fish/config.fish $HOME/.config/fish/fish_plugins
+rm -f "$HOME/.config/fish/config.fish" "$HOME/.config/fish/fish_plugins"
 
 echo "Running stow for OS type: $OS_TYPE..."
-STOW_FOLDERS=$(get stow | paste -sd, -) DOTFILES=$DOTFILES fish "$DOTFILES/stow.fish"
+STOW_FOLDERS=$(get stow | paste -sd, -) \
+    FORCE_STOW=$(get force_stow | paste -sd, -) \
+    DOTFILES=$DOTFILES fish "$DOTFILES/stow.fish"
+
+if [[ "$OS_TYPE" != "archmac" ]]; then
+    if ! fish -c 'type -q mise'; then
+        echo "mise not found. Make sure packages.yaml installs it for $OS_TYPE."
+        exit 1
+    fi
+    echo "Installing mise tools..."
+    fish -c 'mise -C "$HOME" install'
+    export PATH="$HOME/.local/share/mise/shims:$PATH"
+fi
+
+install_rexpad
 
 echo "Installing fish plugins (fisher)..."
 fish -c 'fisher update'
@@ -132,9 +162,14 @@ if [[ "$OS_TYPE" == "arch" ]]; then
         echo "rclone-drive.service / rclone-backup.timer not started: create $DOTFILES/.env, then run"
         echo "  systemctl --user enable --now rclone-drive.service rclone-backup.timer"
     fi
-    echo "We're on arch, reload hyprland config after setup."
-    # Target the live instance explicitly: the inherited
-    # HYPRLAND_INSTANCE_SIGNATURE can point at a dead instance after a restart.
+    if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+        echo "We're on arch, reload hyprland config after setup."
+        # Target the live instance explicitly: the inherited
+        # HYPRLAND_INSTANCE_SIGNATURE can point at a dead instance after a restart.
+        hyprctl -i 0 reload
+    fi
+elif [[ "$OS_TYPE" == "archmac" && -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+    echo "Reloading Hyprland config..."
     hyprctl -i 0 reload
 fi
 

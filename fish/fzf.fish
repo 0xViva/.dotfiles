@@ -5,7 +5,7 @@
 
 # The Noctalia-generated theme (themes/noctalia.fish) is deliberately NOT sourced:
 # it uses `set -Ux`, so sourcing it every shell appends the palette repeatedly and
-# storing it as a universal would defeat re-theming. See docs/fish.md.
+# storing it as a universal would defeat re-theming.
 
 # One fd invocation for every whole-machine picker, so the exclude list stays
 # in sync. $base is a directory, $kind is fd's type (f or d).

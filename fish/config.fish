@@ -1,4 +1,4 @@
-# Fish config — the default login shell. See docs/fish.md.
+# Fish config — the default login shell.
 # Environment + PATH (every shell), interactive setup, and tty1 session start.
 
 # ── Environment (every shell) ────────────────────────────────────────────────
@@ -27,10 +27,13 @@ if test (uname -s) = Darwin
 end
 
 # Homebrew (macOS). This stays outside the interactive block so login shells
-# that run commands, such as Rex's sessionizer, see brew tools like fzf and jq.
+# that run commands, such as Rex's sessionizer, see brew tools.
 if test -x /opt/homebrew/bin/brew
     /opt/homebrew/bin/brew shellenv fish | source
 end
+
+# Shims precede brew and the system so pinned versions win in every shell.
+fish_add_path --path $HOME/.local/share/mise/shims
 
 # ── Login shell on tty1 starts the Wayland session ───────────────────────────
 # Runs before the interactive block on purpose: this shell is replaced by

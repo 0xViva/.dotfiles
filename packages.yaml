@@ -5,32 +5,29 @@ arch:
     - fish
     - fisher
     - git
+    - gnupg
     - openssh
     - networkmanager
+    - bluez
+    - bluez-utils
     - hyprland
     - hyprland-guiutils
     - hyprpicker
     - noctalia
-    - fzf
-    - fd
-    - bat
-    - btop
+    - nautilus
     - mise
-    - starship
     - mpv
+    - ffmpeg
+    - v4l-utils
+    - gpu-screen-recorder
     - wl-clipboard
     - pinentry
-    - jq
     - xdg-desktop-portal-gtk
     - xdg-desktop-portal-hyprland
     - libnotify
-    - markdownlint-cli
     - rclone
     - fuse3
     - openrgb
-    - python
-  aurs:
-    - nvim
     - zen-browser-bin
   stow:
     - .ssh
@@ -49,32 +46,42 @@ arch:
     - systemd
     - rex
 
+archmac:
+  packages:
+    - stow
+    - fish
+    - fisher
+    - gnupg
+    - pinentry
+  force_stow:
+    - git
+    - opencode
+  stow:
+    - fish
+    - bin
+    - git
+    - opencode
+    - starship
+    - hypr-mac
+
 macos:
   packages:
     - fish
     - fisher
     - stow
     - gnupg
-    - fd
-    - bat
-    - fzf
-    - jq
-    - ripgrep
+    - pinentry
     - make
     - unzip
     - xz
     - zlib
     - zstd
     - lz4
-    - tree-sitter
     - git
-    - gh
     - openssl
     - ca-certificates
     - libssh2
     - mise
-    - starship
-    - markdownlint-cli
   stow:
     - fish
     - .ssh
