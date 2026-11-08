@@ -5,17 +5,24 @@ set -e
 DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 <arch|macos|archmac>"
+    echo "Usage: $0 <arch|macos>"
     exit 1
 fi
 OS_TYPE=$1
 case "$OS_TYPE" in
-    arch|macos|archmac) ;;
+    arch|macos) ;;
     *)
-        echo "Unknown setup: $OS_TYPE (expected arch, macos, or archmac)"
+        echo "Unknown setup: $OS_TYPE (expected arch or macos)"
         exit 1
         ;;
 esac
+
+# The Apple Silicon hardware layer supplies most packages, so the arch target
+# uses the smaller archmac manifest section when it is installed.
+if [[ "$OS_TYPE" == "arch" && -d "${OMARCHY_PATH:-/usr/share/omarchy}" ]]; then
+    echo "Hardware layer detected: using the archmac setup."
+    OS_TYPE=archmac
+fi
 echo "Setting up: $OS_TYPE"
 
 yaml_list() {
@@ -36,34 +43,30 @@ get() { yaml_list "$OS_TYPE" "$1"; }
 
 install_packages() {
     case "$OS_TYPE" in
-        arch)
-            if ! command -v yay >/dev/null 2>&1; then
-                echo "Installing yay..."
-                sudo pacman -Sy --noconfirm base-devel git
-                git clone https://aur.archlinux.org/yay.git /tmp/yay
-                pushd /tmp/yay >/dev/null
-                makepkg -si --noconfirm
-                popd >/dev/null
-                rm -rf /tmp/yay
-            fi
+        arch|archmac)
+            if [[ "$OS_TYPE" == "archmac" ]]; then
+                sudo pacman -S --noconfirm --needed -- $(get packages) < /dev/null
+            else
+                if ! command -v yay >/dev/null 2>&1; then
+                    echo "Installing yay..."
+                    sudo pacman -Sy --noconfirm base-devel git
+                    git clone https://aur.archlinux.org/yay.git /tmp/yay
+                    pushd /tmp/yay >/dev/null
+                    makepkg -si --noconfirm
+                    popd >/dev/null
+                    rm -rf /tmp/yay
+                fi
 
-            yay -S --noconfirm --needed --quiet -- $(get packages) < /dev/null
-            sudo systemctl enable --now bluetooth.service
+                yay -S --noconfirm --needed --quiet -- $(get packages) < /dev/null
+                sudo systemctl enable --now bluetooth.service
 
-            if [[ -f "$DOTFILES/udev/rules.d/99-keychron.rules" ]]; then
-                echo "Installing keychron udev rule..."
-                sudo install -m 644 "$DOTFILES/udev/rules.d/99-keychron.rules" /etc/udev/rules.d/99-keychron.rules
-                sudo udevadm control --reload-rules
-                sudo udevadm trigger
+                if [[ -f "$DOTFILES/udev/rules.d/99-keychron.rules" ]]; then
+                    echo "Installing keychron udev rule..."
+                    sudo install -m 644 "$DOTFILES/udev/rules.d/99-keychron.rules" /etc/udev/rules.d/99-keychron.rules
+                    sudo udevadm control --reload-rules
+                    sudo udevadm trigger
+                fi
             fi
-            ;;
-
-        archmac)
-            if [[ ! -d "${OMARCHY_PATH:-/usr/share/omarchy}" ]]; then
-                echo "Omarchy not found. Run this on an existing Omarchy install."
-                exit 1
-            fi
-            sudo pacman -S --noconfirm --needed -- $(get packages) < /dev/null
             ;;
 
         macos)
@@ -109,7 +112,24 @@ install_rexpad() {
     "$HOME/.local/bin/rexpad" skill install --dir "$HOME/.config/opencode/skills"
 }
 
+# Arch Linux ARM has no official mise package. Install the upstream CLI so the
+# dotfiles do not depend on the vendor's mise-bin package; ~/.local/bin wins on
+# the fish PATH, so the vendor keeps its own copy for its own scripts.
+install_mise() {
+    [[ "$OS_TYPE" == "archmac" ]] || return 0
+    [[ -x "$HOME/.local/bin/mise" ]] && return 0
+
+    echo "Installing mise..."
+    mkdir -p "$HOME/.local/bin"
+    curl -fsSL https://mise.run | sh
+    [[ -x "$HOME/.local/bin/mise" ]] || {
+        echo "mise install failed"
+        exit 1
+    }
+}
+
 install_packages
+install_mise
 install_rex
 
 if ! command -v fish >/dev/null 2>&1; then
@@ -168,9 +188,36 @@ if [[ "$OS_TYPE" == "arch" ]]; then
         # HYPRLAND_INSTANCE_SIGNATURE can point at a dead instance after a restart.
         hyprctl -i 0 reload
     fi
-elif [[ "$OS_TYPE" == "archmac" && -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
-    echo "Reloading Hyprland config..."
-    hyprctl -i 0 reload
+elif [[ "$OS_TYPE" == "archmac" ]]; then
+    echo "Setting up systemd user services..."
+    if [[ -n "${XDG_RUNTIME_DIR:-}" ]]; then
+        systemctl --user daemon-reload
+        systemctl --user enable --now power-profile-watch.service
+        # The extra desktop user services are not part of this setup; mask
+        # them so the other session cannot start them either.
+        for unit in \
+            omarchy-crash-watch \
+            omarchy-fcitx5 \
+            omarchy-asahi-mic \
+            omarchy-audio-watchdog \
+            omarchy-recover-internal-monitor \
+            omarchy-sleep-lock \
+            omarchy-migrate-notify \
+            omarchy-tailscale-receive \
+            owed; do
+            systemctl --user disable --now "$unit.service" 2>/dev/null || true
+            systemctl --user mask "$unit.service" 2>/dev/null || true
+        done
+    else
+        echo "No user session; run after logging in:"
+        echo "  systemctl --user enable --now power-profile-watch.service"
+    fi
+    rm -f "$HOME/.config/systemd/user/graphical-session.target.wants/superwhisper.service"
+
+    echo "Applying native SDDM/Plymouth session..."
+    sudo "$DOTFILES/bin/archmac-system-setup"
+
+    echo "The native session starts at the next login."
 fi
 
 exec fish

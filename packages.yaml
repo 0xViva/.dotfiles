@@ -29,6 +29,8 @@ arch:
     - fuse3
     - openrgb
     - zen-browser-bin
+  force_stow:
+    - fish
   stow:
     - .ssh
     - fish
@@ -47,13 +49,36 @@ arch:
     - rex
 
 archmac:
+  # mise is installed by setup.sh from https://mise.run; Arch Linux ARM has no
+  # mise package and this setup does not use the vendor's mise-bin.
   packages:
     - stow
     - fish
     - fisher
+    - git
     - gnupg
     - pinentry
+    - curl
+    - fzf
+    - starship
+    - neovim
+    - hyprland
+    - hyprland-guiutils
+    - sddm
+    - noctalia
+    - alacritty
+    - nautilus
+    - chromium
+    - hyprpicker
+    - gpu-screen-recorder
+    - v4l-utils
+    - ffmpeg
+    - wl-clipboard
+    - libnotify
+    - xdg-desktop-portal-gtk
+    - xdg-desktop-portal-hyprland
   force_stow:
+    - fish
     - git
     - opencode
   stow:
@@ -62,7 +87,9 @@ archmac:
     - git
     - opencode
     - starship
-    - hypr-mac
+    - noctalia
+    - assets
+    - systemd
 
 macos:
   packages:

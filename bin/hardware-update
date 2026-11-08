@@ -1,0 +1,12 @@
+#!/bin/bash
+# Hardware-stack updates for the Apple Silicon machine.
+# Not the full desktop update: that migrates the desktop config and restarts
+# its shell, which this setup does not use.
+
+set -e
+
+omarchy-update-requires-free-space
+omarchy-update-keyring
+omarchy-update-system-pkgs
+omarchy-update-boot
+omarchy-update-restart --reboot-only

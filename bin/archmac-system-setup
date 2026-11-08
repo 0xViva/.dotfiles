@@ -1,0 +1,67 @@
+#!/bin/bash
+# Root-only: install the native Hyprland SDDM session and drop the vendor's
+# login/boot branding. Run as: sudo ~/.dotfiles/bin/archmac-system-setup
+set -euo pipefail
+
+if (( EUID != 0 )); then
+    echo "Run as root: sudo $0" >&2
+    exit 1
+fi
+
+user=${SUDO_USER:-}
+if [[ -z $user || $user == root ]]; then
+    echo "Run with sudo from your user account." >&2
+    exit 1
+fi
+
+home=$(getent passwd "$user" | cut -d: -f6)
+wrapper=$home/.config/bin/hyprland-session
+[[ -x $wrapper ]] || {
+    echo "Missing $wrapper; stow the dotfiles first." >&2
+    exit 1
+}
+
+install -d /usr/local/share/wayland-sessions /etc/sddm.conf.d
+cat >/usr/local/share/wayland-sessions/hyprland-dotfiles.desktop <<EOF
+[Desktop Entry]
+Name=Hyprland (dotfiles)
+Comment=Hyprland with the dotfiles config
+Exec=$wrapper
+Type=Application
+DesktopNames=Hyprland
+EOF
+
+cat >/etc/sddm.conf.d/autologin.conf <<EOF
+[Autologin]
+User=$user
+Session=hyprland-dotfiles.desktop
+EOF
+
+cat >/etc/sddm.conf.d/99-z-local.conf <<'EOF'
+[Theme]
+Current=maya
+EOF
+
+# Native power-profiles-daemon replaces the vendor fork; the dotfiles watcher
+# calls powerprofilesctl directly.
+if pacman -Q omarchy-power-profiles-daemon >/dev/null 2>&1; then
+    pacman -Rns --noconfirm omarchy-power-profiles-daemon
+fi
+pacman -S --needed --noconfirm power-profiles-daemon python-gobject
+systemctl restart power-profiles-daemon.service
+
+# Packages the dotfiles no longer use.
+for package in mise-bin omarchy-hyprland-titlebars zen-browser-bin ghostty; do
+    if pacman -Q "$package" >/dev/null 2>&1; then
+        pacman -Rns --noconfirm "$package"
+    fi
+done
+
+# Native boot splash.
+if ! grep -qx 'Theme=bgrt' /etc/plymouth/plymouthd.conf 2>/dev/null; then
+    cat >/etc/plymouth/plymouthd.conf <<'EOF'
+[Daemon]
+Theme=bgrt
+EOF
+    mkinitcpio -P
+fi

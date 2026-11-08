@@ -1,3 +1,11 @@
+-- Outputs that are not connected are ignored, so one file serves both the
+-- laptop panel and the desktop's two monitors.
+hl.monitor({
+    output   = "eDP-1",
+    mode     = "preferred",
+    position = "0x0",
+    scale    = 2,
+})
 
 hl.monitor({
     output    = "DP-1",

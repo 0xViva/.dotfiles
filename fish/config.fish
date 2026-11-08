@@ -22,6 +22,10 @@ fish_add_path --path \
     $HOME/.opencode/bin \
     $HOME/.local/share/solana/install/active_release/bin
 
+# An inherited ~/.local/bin can sit after /usr/bin. Force it to the front so
+# the dotfiles' binaries (including the upstream mise) win over system copies.
+set -gx PATH $HOME/.local/bin (string match -v -- $HOME/.local/bin $PATH)
+
 if test (uname -s) = Darwin
     fish_add_path --path /Applications/Blender.app/Contents/MacOS
 end
@@ -55,7 +59,9 @@ if status is-interactive
         alias fd fdfind
     end
 
-    mise activate fish | source
+    # Bypass the vendor mise function so the binary first on PATH wins: the
+    # upstream ~/.local/bin/mise on archmac, the packaged mise on Arch.
+    command mise activate fish | source
 
     set -gx STARSHIP_CONFIG $HOME/.config/starship/starship.toml
     if type -q starship
@@ -69,3 +75,6 @@ if status is-interactive
 
     source $XDG_CONFIG_HOME/fish/fzf.fish
 end
+
+# opencode
+fish_add_path /home/ajg/.opencode/bin

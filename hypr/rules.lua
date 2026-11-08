@@ -30,6 +30,9 @@ hl.workspace_rule({ workspace = "1", monitor = "DP-1", default = true, persisten
 
 hl.workspace_rule({ workspace = "2", monitor = "DP-2", default = true, persistent = true })
 
+-- Laptop panel. Only one workspace per monitor may be the default.
+hl.workspace_rule({ workspace = "1", monitor = "eDP-1", default = true, persistent = true })
+
 hl.on("workspace.created", function(ws)
     if ws.addressable_name == "special:scratchpad" and ws.is_empty then
         hl.exec_cmd(terminal, { workspace = "special:scratchpad" })

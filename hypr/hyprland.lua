@@ -1,7 +1,7 @@
 
-terminal    = "ghostty"
+terminal    = os.getenv("HYPR_TERMINAL") or "ghostty"
 fileManager = "nautilus"
-browser     = "zen-browser"
+browser     = os.getenv("HYPR_BROWSER") or "zen-browser"
 editor      = terminal .. " -e nvim"
 
 mainMod = "SUPER"
@@ -18,15 +18,19 @@ require("bindings/util")
 
 hl.on("hyprland.start", function()
 
+    hl.exec_cmd("dbus-update-activation-environment --systemd --all")
     hl.exec_cmd("noctalia")
 
 end)
 
 -- For Noctalia Color templates
--- Noctalia generates ~/.config/hypr/noctalia.lua and appends this include to
--- hyprland.lua. Load it defensively: on a fresh machine (before Noctalia has run
--- once) the module does not exist yet, and a bare require() would abort the whole
--- config. The literal require("noctalia") call is kept so the template's apply.sh
--- still recognises this include and won't append a duplicate.
+-- Noctalia writes ~/.config/hypr/noctalia.lua and appends this include to that
+-- hyprland.lua. On archmac this config runs from the repo instead, so fall back
+-- to the untouched ~/.config/hypr file. The literal require("noctalia") call is
+-- kept so the template's apply.sh recognises it.
 local ok, noctalia = pcall(function() return require("noctalia") end)
+if not ok then
+    local home = os.getenv("HOME") or ""
+    ok, noctalia = pcall(function() return dofile(home .. "/.config/hypr/noctalia.lua") end)
+end
 if ok then noctalia.apply_theme() end

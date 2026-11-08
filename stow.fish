@@ -41,7 +41,7 @@ for folder in (string split , $STOW_FOLDERS)
             set target $HOME/.ssh
             mkdir -p $target; or exit 1
             chmod 700 $target; or exit 1
-        case hypr hypr-mac
+        case hypr
             set target $HOME/.config/hypr
         case '*'
             set target $HOME/.config/$folder
@@ -52,17 +52,13 @@ for folder in (string split , $STOW_FOLDERS)
 
     rm -f $target/.stow
 
-    if contains -- $folder hypr hypr-mac
-        if test "$folder" = hypr-mac
-            adopt_conflicts $folder $target
-        else
-            for stub in hyprland.conf hyprland.lua
-                set -l src $DOTFILES/$folder/$stub
-                if test -f $target/$stub; and not test -L $target/$stub; and test -f $src
-                    set -l rel (realpath --relative-to=$target $src); or exit 1
-                    ln -sfn $rel $target/$stub.new; or exit 1
-                    mv -f $target/$stub.new $target/$stub; or exit 1
-                end
+    if test "$folder" = hypr
+        for stub in hyprland.conf hyprland.lua
+            set -l src $DOTFILES/$folder/$stub
+            if test -f $target/$stub; and not test -L $target/$stub; and test -f $src
+                set -l rel (realpath --relative-to=$target $src); or exit 1
+                ln -sfn $rel $target/$stub.new; or exit 1
+                mv -f $target/$stub.new $target/$stub; or exit 1
             end
         end
         stow -t $target $folder; or exit 1

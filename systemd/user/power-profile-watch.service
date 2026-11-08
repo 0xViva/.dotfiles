@@ -1,0 +1,11 @@
+[Unit]
+Description=Apply a power profile on AC/battery changes
+ConditionPathExists=/usr/bin/powerprofilesctl
+
+[Service]
+ExecStart=%h/.config/bin/power-profile-watch
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target
