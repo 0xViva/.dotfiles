@@ -82,6 +82,7 @@ archmac:
     - git
     - opencode
   stow:
+    - .ssh
     - fish
     - bin
     - git
