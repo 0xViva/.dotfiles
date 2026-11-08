@@ -128,7 +128,23 @@ install_mise() {
     }
 }
 
+# The drop-in leaves the distro's sshd_config untouched. It disables password
+# auth, so an authorized key must exist before remote SSH access is needed.
+install_sshd_config() {
+    [[ -f "$DOTFILES/sshd/00-dotfiles.conf" ]] || return 0
+    echo "Installing sshd configuration..."
+    sudo install -Dm644 "$DOTFILES/sshd/00-dotfiles.conf" \
+        /etc/ssh/sshd_config.d/00-dotfiles.conf
+    sudo sshd -t
+    sudo systemctl enable --now sshd
+    sudo systemctl reload sshd
+}
+
 install_packages
+# Only the laptop (archmac) leaves the LAN; the desktop keeps its current sshd.
+if [[ "$OS_TYPE" == "archmac" ]]; then
+    install_sshd_config
+fi
 install_mise
 install_rex
 

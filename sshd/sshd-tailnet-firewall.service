@@ -1,0 +1,15 @@
+[Unit]
+Description=Restrict SSH to the Tailscale interface
+Documentation=file:///etc/nftables.d/sshd-tailnet.nft
+After=network-pre.target
+Wants=network-pre.target
+Before=sshd.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/nft -f /etc/nftables.d/sshd-tailnet.nft
+ExecReload=/usr/bin/nft -f /etc/nftables.d/sshd-tailnet.nft
+
+[Install]
+WantedBy=multi-user.target

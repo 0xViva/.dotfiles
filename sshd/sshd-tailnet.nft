@@ -1,0 +1,19 @@
+#!/usr/bin/nft -f
+# Managed by dotfiles: sshd/sshd-tailnet.nft
+# Installed to /etc/nftables.d/sshd-tailnet.nft by sshd/install-tailnet-only.sh.
+#
+# Allow SSH only when it arrives on the Tailscale interface. This is
+# interface-based, so no fixed tailnet IP is required. Only port 22 is
+# filtered; the rest of the host's traffic is untouched.
+
+destroy table inet ssh_tailnet
+
+table inet ssh_tailnet {
+  chain input {
+    type filter hook input priority filter; policy accept;
+
+    iifname "tailscale0" tcp dport 22 accept comment "SSH over Tailscale"
+    iifname "lo" tcp dport 22 accept comment "local SSH"
+    tcp dport 22 counter drop comment "SSH is tailnet-only"
+  }
+}
