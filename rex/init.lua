@@ -34,12 +34,24 @@ rex.action{
 -- Cmd+P opens the sessionizer.
 rex.bind("cmd+p", "sessionizer")
 
+local uname = rex.exec({ "uname", "-s" })
+local is_mac = uname and uname.ok and uname.stdout:match("Darwin") ~= nil
+
+-- The desktop's Rex server is reachable through the desktop's own Tailscale
+-- node. Only a Mac declares it: on the desktop itself the local socket is the
+-- right endpoint, and the tailnet listener refuses self-connections.
+if is_mac then
+  rex.host{
+    label    = "desktop",
+    endpoint = "http://desktop.tail76e5ad.ts.net:7297",
+  }
+end
+
 -- Image paste: Cmd+Shift+V turns a clipboard image into a file path, copying
 -- it to the pane's host when that is another server. The plugin reads the
 -- Mac's clipboard, so it only loads on macOS. Vendored at
 -- rex/rex-image-paste (MIT), from https://github.com/pablasso/rex-image-paste.
-local uname = rex.exec({ "uname", "-s" })
-if uname and uname.ok and uname.stdout:match("Darwin") then
+if is_mac then
   local ok, image_paste = pcall(require, "rex-image-paste")
   if ok then
     image_paste.setup()
