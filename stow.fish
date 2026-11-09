@@ -43,6 +43,8 @@ for folder in (string split , $STOW_FOLDERS)
             chmod 700 $target; or exit 1
         case hypr
             set target $HOME/.config/hypr
+        case obsidian
+            set target $HOME/obsidian/August
         case '*'
             set target $HOME/.config/$folder
     end

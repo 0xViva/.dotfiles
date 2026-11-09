@@ -14,3 +14,9 @@ nvim/lua/matugen.lua
 
 # rclone secrets (Google Drive OAuth client + token). Template: .env.example
 .env
+
+# Obsidian: per-machine UI state, and LiveSync credentials copied locally from
+# the desktop. Never commit the credentials.
+obsidian/.obsidian/workspace.json
+obsidian/.obsidian/workspace-mobile.json
+obsidian/.obsidian/plugins/obsidian-livesync/data.json

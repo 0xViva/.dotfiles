@@ -91,6 +91,7 @@ archmac:
     - noctalia
     - assets
     - systemd
+    - obsidian
 
 macos:
   packages:

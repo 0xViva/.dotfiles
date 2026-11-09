@@ -35,7 +35,7 @@ desktop config and restart its shell. Noctalia handles idle/lock
 setup.sh          # entry point: system packages → stow → mise install
 packages.yaml     # system packages + stow targets per OS
 mise/config.toml  # user CLI tool versions, installed by setup after stow
-stow.fish         # symlink targets: .ssh→~/.ssh, hypr→~/.config/hypr, rest→~/.config/<name>
+stow.fish         # symlink targets: .ssh→~/.ssh, hypr→~/.config/hypr, obsidian→~/obsidian/August, rest→~/.config/<name>
 bin/              # helper scripts (stowed to ~/.config/bin, on PATH via fish)
 docs/             # human notes (pstack setup)
 rclone/           # non-secret rclone settings (secrets live in the gitignored .env)
@@ -57,8 +57,10 @@ keybindings and scripts see the same tools as an interactive shell.
 
 Every tracked dir is either stowed above, or deliberate:
 `docs/` = human notes (not stowed), `gpg/` = setup script run by `setup.sh`,
-`udev/` = root-installed rule, `rclone/` = settings env read by the mount
-service and `rclone-backup` (secrets live in the gitignored `.env`; see
-`.env.example`). `hypr/` is stowed on Arch and read in place on archmac.
+`udev/` = root-installed rule, `obsidian/` = vault settings stowed into
+`~/obsidian/August` (LiveSync credentials are gitignored), `rclone/` = settings
+env read by the mount service and `rclone-backup` (secrets live in the
+gitignored `.env`; see `.env.example`). `hypr/` is stowed on Arch and read in
+place on archmac.
 Fresh machine: clone the repo and run setup. The package manager installs fish,
 stow, git, gpg, and mise; setup installs the rest of the CLI tools.
