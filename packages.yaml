@@ -15,6 +15,7 @@ arch:
     - hyprpicker
     - noctalia
     - nautilus
+    - obsidian-bin
     - mise
     - mpv
     - ffmpeg
@@ -47,6 +48,7 @@ arch:
     - opencode
     - systemd
     - rex
+    - obsidian
 
 archmac:
   # mise is installed by setup.sh from https://mise.run; Arch Linux ARM has no
@@ -68,6 +70,7 @@ archmac:
     - noctalia
     - alacritty
     - nautilus
+    - obsidian
     - chromium
     - hyprpicker
     - gpu-screen-recorder
@@ -123,3 +126,4 @@ macos:
     - aerospace
     - mise
     - rex
+    - obsidian

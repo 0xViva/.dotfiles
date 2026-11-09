@@ -76,6 +76,8 @@ install_packages() {
                 eval "$(/opt/homebrew/bin/brew shellenv)"
             fi
             brew install --quiet $(get packages)
+            brew list --cask obsidian >/dev/null 2>&1 ||
+                brew install --cask --quiet obsidian
             ;;
     esac
 }
