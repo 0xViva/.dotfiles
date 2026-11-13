@@ -233,6 +233,9 @@ elif [[ "$OS_TYPE" == "archmac" ]]; then
     echo "Applying native SDDM/Plymouth session..."
     sudo "$DOTFILES/bin/archmac-system-setup"
 
+    if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+        hyprctl -i 0 reload
+    fi
     echo "The native session starts at the next login."
 fi
 

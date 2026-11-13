@@ -5,6 +5,14 @@ hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("noctalia msg volume-mute"), { l
 hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("noctalia msg mic-mute"),    { locked = true, repeating = true, description = "Mute microphone" })
 hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("noctalia msg brightness-up"),   { locked = true, repeating = true, description = "Brightness up" })
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("noctalia msg brightness-down"), { locked = true, repeating = true, description = "Brightness down" })
+hl.bind("SHIFT + XF86MonBrightnessUp",   hl.dsp.exec_cmd("noctalia msg brightness-set 100%"), { locked = true, repeating = true, description = "Brightness maximum" })
+hl.bind("SHIFT + XF86MonBrightnessDown", hl.dsp.exec_cmd("noctalia msg brightness-set 1%"),   { locked = true, repeating = true, description = "Brightness minimum" })
+
+hl.bind("XF86KbdBrightnessUp",   hl.dsp.exec_cmd("noctalia msg keyboard-backlight-up"),   { locked = true, repeating = true, description = "Keyboard brightness up" })
+hl.bind("XF86KbdBrightnessDown", hl.dsp.exec_cmd("noctalia msg keyboard-backlight-down"), { locked = true, repeating = true, description = "Keyboard brightness down" })
+hl.bind("XF86KbdLightOnOff",     hl.dsp.exec_cmd("noctalia msg keyboard-backlight-toggle"), { locked = true, description = "Keyboard backlight toggle" })
+hl.bind("CTRL + XF86MonBrightnessUp",   hl.dsp.exec_cmd("noctalia msg keyboard-backlight-up"),   { locked = true, repeating = true, description = "Keyboard brightness up" })
+hl.bind("CTRL + XF86MonBrightnessDown", hl.dsp.exec_cmd("noctalia msg keyboard-backlight-down"), { locked = true, repeating = true, description = "Keyboard brightness down" })
 
 hl.bind("ALT + XF86AudioRaiseVolume", hl.dsp.exec_cmd("noctalia msg volume-up 1"),   { locked = true, repeating = true, description = "Volume up precise" })
 hl.bind("ALT + XF86AudioLowerVolume", hl.dsp.exec_cmd("noctalia msg volume-down 1"), { locked = true, repeating = true, description = "Volume down precise" })

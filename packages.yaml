@@ -86,6 +86,7 @@ archmac:
     - git
     - opencode
     - mise
+    - hypr
   stow:
     - .ssh
     - fish
@@ -95,6 +96,7 @@ archmac:
     - opencode
     - starship
     - mise
+    - hypr
     - noctalia
     - assets
     - systemd

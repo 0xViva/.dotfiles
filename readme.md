@@ -60,7 +60,8 @@ Every tracked dir is either stowed above, or deliberate:
 `udev/` = root-installed rule, `obsidian/` = vault settings stowed into
 `~/obsidian/August` (LiveSync credentials are gitignored), `rclone/` = settings
 env read by the mount service and `rclone-backup` (secrets live in the
-gitignored `.env`; see `.env.example`). `hypr/` is stowed on Arch and read in
-place on archmac.
+gitignored `.env`; see `.env.example`). `hypr/` and `noctalia/` are stowed on
+every Arch target; on archmac the hardware layer's own hypr files are adopted
+by stow first.
 Fresh machine: clone the repo and run setup. The package manager installs fish,
 stow, git, gpg, and mise; setup installs the rest of the CLI tools.

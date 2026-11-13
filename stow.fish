@@ -55,6 +55,11 @@ for folder in (string split , $STOW_FOLDERS)
     rm -f $target/.stow
 
     if test "$folder" = hypr
+        # The hardware layer ships its own hypr files. Adopt them when this
+        # target opts in, so stow does not abort on the conflicts.
+        if contains -- $folder $force_folders
+            adopt_conflicts $folder $target
+        end
         for stub in hyprland.conf hyprland.lua
             set -l src $DOTFILES/$folder/$stub
             if test -f $target/$stub; and not test -L $target/$stub; and test -f $src
