@@ -41,9 +41,11 @@ fish_add_path --path $HOME/.local/share/mise/shims
 
 # ── Login shell on tty1 starts the Wayland session ───────────────────────────
 # Runs before the interactive block on purpose: this shell is replaced by
-# Hyprland, so it doesn't need mise/starship/fzf set up.
-if status is-login; and test -z "$WAYLAND_DISPLAY"; and test (tty) = /dev/tty1
-    exec start-hyprland
+# Hyprland, so it doesn't need mise/starship/fzf set up. SDDM also runs the
+# login shell on tty1 to capture its environment; XDG_SESSION_PATH marks that
+# shell, which must return so SDDM can start the session itself.
+if status is-login; and test -z "$WAYLAND_DISPLAY"; and test -z "$XDG_SESSION_PATH"; and test (tty) = /dev/tty1
+    exec $HOME/.config/bin/hyprland-session
 end
 
 # ── Interactive shells ───────────────────────────────────────────────────────

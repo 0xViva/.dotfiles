@@ -171,15 +171,13 @@ STOW_FOLDERS=$(get stow | paste -sd, -) \
     FORCE_STOW=$(get force_stow | paste -sd, -) \
     DOTFILES=$DOTFILES fish "$DOTFILES/stow.fish"
 
-if [[ "$OS_TYPE" != "archmac" ]]; then
-    if ! fish -c 'type -q mise'; then
-        echo "mise not found. Make sure packages.yaml installs it for $OS_TYPE."
-        exit 1
-    fi
-    echo "Installing mise tools..."
-    fish -c 'mise -C "$HOME" install'
-    export PATH="$HOME/.local/share/mise/shims:$PATH"
+if ! fish -c 'type -q mise'; then
+    echo "mise not found. Make sure packages.yaml installs it for $OS_TYPE."
+    exit 1
 fi
+echo "Installing mise tools..."
+fish -c 'mise -C "$HOME" install'
+export PATH="$HOME/.local/share/mise/shims:$PATH"
 
 install_rexpad
 

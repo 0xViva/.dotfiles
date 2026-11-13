@@ -32,6 +32,7 @@ arch:
     - zen-browser-bin
   force_stow:
     - fish
+    - mise
   stow:
     - .ssh
     - fish
@@ -84,13 +85,16 @@ archmac:
     - fish
     - git
     - opencode
+    - mise
   stow:
     - .ssh
     - fish
     - bin
+    - nvim
     - git
     - opencode
     - starship
+    - mise
     - noctalia
     - assets
     - systemd
@@ -113,6 +117,8 @@ macos:
     - openssl
     - ca-certificates
     - libssh2
+    - mise
+  force_stow:
     - mise
   stow:
     - fish

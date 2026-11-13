@@ -47,11 +47,11 @@ rclone/           # non-secret rclone settings (secrets live in the gitignored .
 `packages.yaml` owns system packages and AUR packages. That covers the desktop,
 fish, stow, git, gpg, systemd integration, and rclone because the user service
 calls `/usr/bin/rclone`. `mise/config.toml` owns user CLI tools, with pinned or
-`latest` versions. On plain Arch and macOS, `setup.sh` runs `mise install`
-after stowing. Arch Linux ARM has no `mise` package, so archmac installs only
-the upstream CLI into `~/.local/bin`; the hardware layer's tool config is left
-alone. Fish puts the mise shims on PATH before the tty1 session starts, so
-keybindings and scripts see the same tools as an interactive shell.
+`latest` versions. `setup.sh` runs `mise install` after stowing on every target.
+Arch Linux ARM has no `mise` package, so archmac installs the upstream CLI into
+`~/.local/bin`; the hardware layer's tool config is left alone. Fish activates
+mise for interactive shells and puts the shims on PATH before the tty1 session
+starts, so keybindings and scripts see the same tools as an interactive shell.
 
 ## Config inventory
 

@@ -51,7 +51,7 @@ pacman -S --needed --noconfirm power-profiles-daemon python-gobject
 systemctl restart power-profiles-daemon.service
 
 # Packages the dotfiles no longer use.
-for package in mise-bin omarchy-hyprland-titlebars zen-browser-bin ghostty; do
+for package in mise-bin omarchy-hyprland-titlebars zen-browser-bin ghostty omarchy-nvim; do
     if pacman -Q "$package" >/dev/null 2>&1; then
         pacman -Rns --noconfirm "$package"
     fi

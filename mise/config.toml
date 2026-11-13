@@ -1,4 +1,8 @@
 # User CLI tools; system packages stay in packages.yaml.
+[settings]
+# Keep SDKs out of an inherited DOTNET_ROOT, which can be root-owned (archmac).
+dotnet.isolated = true
+
 [tools]
 air = "latest"
 bat = "latest"
