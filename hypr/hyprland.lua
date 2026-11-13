@@ -1,7 +1,7 @@
 
 terminal    = os.getenv("HYPR_TERMINAL") or "ghostty"
 fileManager = "nautilus"
-browser     = os.getenv("HYPR_BROWSER") or "zen-browser"
+browser     = os.getenv("HYPR_BROWSER") or "omarchy-launch-browser"
 editor      = terminal .. " -e nvim"
 
 mainMod = "SUPER"
