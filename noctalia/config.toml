@@ -169,7 +169,6 @@ magnification_scale = 1.5
 main_axis_padding = 0
 margin_edge = 0
 margin_ends = 0
-monitors = []
 pinned = []
 position = "bottom"
 radius = 0

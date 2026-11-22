@@ -36,6 +36,7 @@ end
 
 for folder in (string split , $STOW_FOLDERS)
     set -l target
+    set -l stow_flags
     switch $folder
         case .ssh
             set target $HOME/.ssh
@@ -45,6 +46,11 @@ for folder in (string split , $STOW_FOLDERS)
             set target $HOME/.config/hypr
         case obsidian
             set target $HOME/obsidian/August
+        case systemd
+            # systemd ignores a drop-in directory that is a symlink, so link
+            # the files inside it instead of folding the directory.
+            set target $HOME/.config/systemd
+            set stow_flags --no-folding
         case '*'
             set target $HOME/.config/$folder
     end
@@ -87,7 +93,7 @@ for folder in (string split , $STOW_FOLDERS)
         adopt_conflicts $folder $target
     end
 
-    stow -D -t $target $folder >/dev/null 2>&1; or true
+    stow -D $stow_flags -t $target $folder >/dev/null 2>&1; or true
 
-    stow -t $target $folder; or exit 1
+    stow $stow_flags -t $target $folder; or exit 1
 end
