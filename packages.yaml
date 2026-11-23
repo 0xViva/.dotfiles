@@ -73,6 +73,7 @@ archmac:
     - nautilus
     - obsidian
     - chromium
+    - zen-browser-bin
     - hyprpicker
     - gpu-screen-recorder
     - v4l-utils

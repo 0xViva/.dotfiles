@@ -6,9 +6,11 @@ export GDK_SCALE=2
 export EDITOR=nvim
 export TERMINAL=alacritty
 export HYPR_TERMINAL=alacritty
-export HYPR_BROWSER=chromium
 export XDG_CURRENT_DESKTOP=Hyprland
 export XDG_SESSION_DESKTOP=Hyprland
 export XDG_SESSION_TYPE=wayland
+
+# SDDM runs this without a login shell, so add Flatpak's exported desktop entries.
+[ -f /etc/profile.d/flatpak.sh ] && . /etc/profile.d/flatpak.sh
 
 exec /usr/bin/start-hyprland

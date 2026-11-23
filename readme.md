@@ -16,16 +16,16 @@ step is idempotent.
 On the Apple Silicon machine, `arch` sees the hardware layer at
 `/usr/share/omarchy` and uses the archmac manifest instead: the same Hyprland +
 Noctalia setup as plain Arch, on the Apple Silicon hardware layer. The manifest
-lists the packages the dotfiles need; Chromium and Alacritty stand in for Zen
-and Ghostty, which have no Arch Linux ARM packages outside the hardware layer's
-repo. SDDM starts `bin/hyprland-session` directly (no uwsm or vendor session
-entry) and uses the stock `maya` theme; Plymouth uses `bgrt`. The hardware layer
-stays installed for its kernel, firmware and boot packages, but none of its
-desktop config starts: `bin/archmac-system-setup` installs the native session
-and stock themes, and setup masks the extra desktop user services. Update the
-hardware stack with `hardware-update` (keyrings, system packages, boot
-verification) instead of the full desktop update, which would migrate the
-desktop config and restart its shell. Noctalia handles idle/lock
+lists the packages the dotfiles need; Zen comes from the hardware layer's repo
+and Alacritty stands in for Ghostty, which has no Arch Linux ARM package
+outside that repo. SDDM starts `bin/hyprland-session` directly (no uwsm or
+vendor session entry) and uses the stock `maya` theme; Plymouth uses `bgrt`.
+The hardware layer stays installed for its kernel, firmware and boot packages,
+but none of its desktop config starts: `bin/archmac-system-setup` installs the
+native session and stock themes, and setup masks the extra desktop user
+services. Update the hardware stack with `hardware-update` (keyrings, system
+packages, boot verification) instead of the full desktop update, which would
+migrate the desktop config and restart its shell. Noctalia handles idle/lock
 (`noctalia/config.toml`); a small user service follows AC/battery changes using
 `powerprofilesctl` directly.
 
