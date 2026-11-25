@@ -37,6 +37,7 @@ hl.bind(mainMod .. " + CTRL + COMMA",  hl.dsp.exec_cmd("noctalia msg notificatio
 hl.bind(mainMod .. " + ALT + COMMA",   hl.dsp.exec_cmd("noctalia msg notification-invoke-latest"), { description = "Invoke last notification" })
 
 hl.bind("PRINT",         hl.dsp.exec_cmd("noctalia msg screenshot-region"), { description = "Screenshot region" })
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("noctalia msg screenshot-region"), { description = "Screenshot region" })
 hl.bind("SHIFT + PRINT", hl.dsp.exec_cmd("noctalia msg screenshot-fullscreen"), { description = "Screenshot fullscreen" })
 hl.bind(mainMod .. " + PRINT", hl.dsp.exec_cmd("pkill hyprpicker || hyprpicker -a"), { description = "Color picker" })
 
